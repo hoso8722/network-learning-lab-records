@@ -1,0 +1,256 @@
+# exp4 router capture    2026-10-23T00:49:26+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo timeout -s INT 25 tcpdump -i any -n -e -w exp4-router-20261023T004926.pcap   (25秒以内に client から server へ ping)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+243 packets captured
+243 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -r exp4-router-20261023T004926.pcap
+reading from file exp4-router-20261023T004926.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+00:49:29.386544 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 3358631183:3358631259, ack 49030547, win 65535, length 76
+00:49:29.387008 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 76, win 65535, length 0
+00:49:29.407175 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1:37, ack 76, win 65535, length 36
+00:49:29.407644 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 76:112, ack 37, win 65535, length 36
+00:49:29.410631 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 112, win 65535, length 0
+00:49:29.417150 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 112:276, ack 37, win 65535, length 164
+00:49:29.417629 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 276, win 65535, length 0
+00:49:29.427817 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 37:73, ack 276, win 65535, length 36
+00:49:29.428471 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 276:312, ack 73, win 65535, length 36
+00:49:29.431874 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 312, win 65535, length 0
+00:49:29.451713 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 73:109, ack 312, win 65535, length 36
+00:49:29.452075 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 312:348, ack 109, win 65535, length 36
+00:49:29.455430 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 348, win 65535, length 0
+00:49:29.482272 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 109:145, ack 348, win 65535, length 36
+00:49:29.482813 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 348:384, ack 145, win 65535, length 36
+00:49:29.486068 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 384, win 65535, length 0
+00:49:29.514288 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 145:181, ack 384, win 65535, length 36
+00:49:29.514764 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 384:420, ack 181, win 65535, length 36
+00:49:29.517816 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 420, win 65535, length 0
+00:49:29.544633 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 181:217, ack 420, win 65535, length 36
+00:49:29.545006 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 420:456, ack 217, win 65535, length 36
+00:49:29.547899 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 456, win 65535, length 0
+00:49:29.576207 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 217:253, ack 456, win 65535, length 36
+00:49:29.576662 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 456:492, ack 253, win 65535, length 36
+00:49:29.580289 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 492, win 65535, length 0
+00:49:29.606334 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 253:289, ack 492, win 65535, length 36
+00:49:29.606761 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 492:528, ack 289, win 65535, length 36
+00:49:29.609804 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 528, win 65535, length 0
+00:49:29.640998 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 289:325, ack 528, win 65535, length 36
+00:49:29.642116 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 528:564, ack 325, win 65535, length 36
+00:49:29.646102 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 564, win 65535, length 0
+00:49:29.670335 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 325:361, ack 564, win 65535, length 36
+00:49:29.670798 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 564:600, ack 361, win 65535, length 36
+00:49:29.674154 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 600, win 65535, length 0
+00:49:29.700773 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 361:397, ack 600, win 65535, length 36
+00:49:29.701291 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 600:636, ack 397, win 65535, length 36
+00:49:29.705160 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 636, win 65535, length 0
+00:49:29.731390 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 397:433, ack 636, win 65535, length 36
+00:49:29.731770 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 636:672, ack 433, win 65535, length 36
+00:49:29.735304 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 672, win 65535, length 0
+00:49:29.765915 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 433:469, ack 672, win 65535, length 36
+00:49:29.766330 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 672:708, ack 469, win 65535, length 36
+00:49:29.769841 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 708, win 65535, length 0
+00:49:29.796631 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 469:505, ack 708, win 65535, length 36
+00:49:29.796992 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 708:744, ack 505, win 65535, length 36
+00:49:29.800260 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 744, win 65535, length 0
+00:49:29.825488 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 505:541, ack 744, win 65535, length 36
+00:49:29.825871 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 744:780, ack 541, win 65535, length 36
+00:49:29.828592 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 780, win 65535, length 0
+00:49:29.856921 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 541:577, ack 780, win 65535, length 36
+00:49:29.857290 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 780:816, ack 577, win 65535, length 36
+00:49:29.860289 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 816, win 65535, length 0
+00:49:29.887649 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 577:613, ack 816, win 65535, length 36
+00:49:29.888010 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 816:852, ack 613, win 65535, length 36
+00:49:29.892794 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 852, win 65535, length 0
+00:49:29.919017 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 613:649, ack 852, win 65535, length 36
+00:49:29.919616 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 852:888, ack 649, win 65535, length 36
+00:49:29.923055 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 888, win 65535, length 0
+00:49:29.951866 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 649:685, ack 888, win 65535, length 36
+00:49:29.952286 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 888:924, ack 685, win 65535, length 36
+00:49:29.955550 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 924, win 65535, length 0
+00:49:29.981021 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 685:721, ack 924, win 65535, length 36
+00:49:29.981521 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 924:960, ack 721, win 65535, length 36
+00:49:29.984806 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 960, win 65535, length 0
+00:49:30.012655 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 721:757, ack 960, win 65535, length 36
+00:49:30.013247 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 960:996, ack 757, win 65535, length 36
+00:49:30.016906 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 996, win 65535, length 0
+00:49:30.045258 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 757:793, ack 996, win 65535, length 36
+00:49:30.045602 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 996:1032, ack 793, win 65535, length 36
+00:49:30.049163 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1032, win 65535, length 0
+00:49:30.076416 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 793:829, ack 1032, win 65535, length 36
+00:49:30.076706 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1032:1068, ack 829, win 65535, length 36
+00:49:30.079600 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1068, win 65535, length 0
+00:49:30.108276 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 829:865, ack 1068, win 65535, length 36
+00:49:30.108870 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1068:1104, ack 865, win 65535, length 36
+00:49:30.111757 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1104, win 65535, length 0
+00:49:30.139948 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 865:901, ack 1104, win 65535, length 36
+00:49:30.140297 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1104:1140, ack 901, win 65535, length 36
+00:49:30.142234 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1140, win 65535, length 0
+00:49:30.171438 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 901:937, ack 1140, win 65535, length 36
+00:49:30.171910 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1140:1176, ack 937, win 65535, length 36
+00:49:30.175372 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1176, win 65535, length 0
+00:49:30.200766 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 937:973, ack 1176, win 65535, length 36
+00:49:30.201257 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1176:1212, ack 973, win 65535, length 36
+00:49:30.204601 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1212, win 65535, length 0
+00:49:30.232771 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 973:1009, ack 1212, win 65535, length 36
+00:49:30.233257 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1212:1248, ack 1009, win 65535, length 36
+00:49:30.236825 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1248, win 65535, length 0
+00:49:30.263199 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1009:1045, ack 1248, win 65535, length 36
+00:49:30.263936 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1248:1284, ack 1045, win 65535, length 36
+00:49:30.269336 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1284, win 65535, length 0
+00:49:30.293658 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1045:1081, ack 1284, win 65535, length 36
+00:49:30.294267 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1284:1320, ack 1081, win 65535, length 36
+00:49:30.296830 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1320, win 65535, length 0
+00:49:30.325066 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1081:1117, ack 1320, win 65535, length 36
+00:49:30.325600 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1320:1356, ack 1117, win 65535, length 36
+00:49:30.327667 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1356, win 65535, length 0
+00:49:30.356677 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1117:1153, ack 1356, win 65535, length 36
+00:49:30.357143 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1356:1392, ack 1153, win 65535, length 36
+00:49:30.359710 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1392, win 65535, length 0
+00:49:30.388783 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1153:1189, ack 1392, win 65535, length 36
+00:49:30.389462 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1392:1428, ack 1189, win 65535, length 36
+00:49:30.392449 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1428, win 65535, length 0
+00:49:30.419400 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1189:1225, ack 1428, win 65535, length 36
+00:49:30.420155 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1428:1464, ack 1225, win 65535, length 36
+00:49:30.423277 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1464, win 65535, length 0
+00:49:30.449938 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1225:1261, ack 1464, win 65535, length 36
+00:49:30.450509 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1464:1500, ack 1261, win 65535, length 36
+00:49:30.453446 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1500, win 65535, length 0
+00:49:30.481900 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1261:1297, ack 1500, win 65535, length 36
+00:49:30.482641 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1500:1536, ack 1297, win 65535, length 36
+00:49:30.485729 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1536, win 65535, length 0
+00:49:30.515474 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1297:1333, ack 1536, win 65535, length 36
+00:49:30.516170 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1536:1572, ack 1333, win 65535, length 36
+00:49:30.518822 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1572, win 65535, length 0
+00:49:30.545585 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1333:1369, ack 1572, win 65535, length 36
+00:49:30.546192 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1572:1608, ack 1369, win 65535, length 36
+00:49:30.549730 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1608, win 65535, length 0
+00:49:30.577440 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1369:1405, ack 1608, win 65535, length 36
+00:49:30.577944 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1608:1644, ack 1405, win 65535, length 36
+00:49:30.581333 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1644, win 65535, length 0
+00:49:30.607821 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1405:1441, ack 1644, win 65535, length 36
+00:49:30.608578 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1644:1680, ack 1441, win 65535, length 36
+00:49:30.611511 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1680, win 65535, length 0
+00:49:30.638649 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1441:1477, ack 1680, win 65535, length 36
+00:49:30.639179 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1680:1716, ack 1477, win 65535, length 36
+00:49:30.641683 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1716, win 65535, length 0
+00:49:30.670188 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1477:1513, ack 1716, win 65535, length 36
+00:49:30.670720 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1716:1752, ack 1513, win 65535, length 36
+00:49:30.673878 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1752, win 65535, length 0
+00:49:30.703196 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1513:1549, ack 1752, win 65535, length 36
+00:49:30.703700 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1752:1788, ack 1549, win 65535, length 36
+00:49:30.706623 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1788, win 65535, length 0
+00:49:30.731204 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1549:1585, ack 1788, win 65535, length 36
+00:49:30.731716 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1788:1824, ack 1585, win 65535, length 36
+00:49:30.734550 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1824, win 65535, length 0
+00:49:30.764566 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1585:1621, ack 1824, win 65535, length 36
+00:49:30.765440 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1824:1860, ack 1621, win 65535, length 36
+00:49:30.767905 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1860, win 65535, length 0
+00:49:30.794272 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1621:1657, ack 1860, win 65535, length 36
+00:49:30.794841 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1860:1896, ack 1657, win 65535, length 36
+00:49:30.798099 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1896, win 65535, length 0
+00:49:30.825662 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1657:1693, ack 1896, win 65535, length 36
+00:49:30.826414 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1896:1932, ack 1693, win 65535, length 36
+00:49:30.829992 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1932, win 65535, length 0
+00:49:30.857224 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1693:1729, ack 1932, win 65535, length 36
+00:49:30.857815 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1932:1968, ack 1729, win 65535, length 36
+00:49:30.861510 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 1968, win 65535, length 0
+00:49:30.891610 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1729:1765, ack 1968, win 65535, length 36
+00:49:30.892184 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 1968:2004, ack 1765, win 65535, length 36
+00:49:30.895002 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2004, win 65535, length 0
+00:49:30.919992 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1765:1801, ack 2004, win 65535, length 36
+00:49:30.921946 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2004:2040, ack 1801, win 65535, length 36
+00:49:30.925417 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2040, win 65535, length 0
+00:49:30.939113 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1801:1837, ack 2040, win 65535, length 36
+00:49:30.939636 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2040:2076, ack 1837, win 65535, length 36
+00:49:30.943931 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2076, win 65535, length 0
+00:49:30.967132 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1837:1873, ack 2076, win 65535, length 36
+00:49:30.967704 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2076:2112, ack 1873, win 65535, length 36
+00:49:30.971639 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2112, win 65535, length 0
+00:49:30.998884 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1873:1909, ack 2112, win 65535, length 36
+00:49:30.999672 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2112:2148, ack 1909, win 65535, length 36
+00:49:31.003824 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2148, win 65535, length 0
+00:49:31.028383 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1909:1945, ack 2148, win 65535, length 36
+00:49:31.028969 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2148:2184, ack 1945, win 65535, length 36
+00:49:31.033379 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2184, win 65535, length 0
+00:49:31.062368 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1945:1981, ack 2184, win 65535, length 36
+00:49:31.062920 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2184:2220, ack 1981, win 65535, length 36
+00:49:31.066024 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2220, win 65535, length 0
+00:49:31.092701 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 1981:2017, ack 2220, win 65535, length 36
+00:49:31.093444 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2220:2256, ack 2017, win 65535, length 36
+00:49:31.096701 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2256, win 65535, length 0
+00:49:31.121629 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2017:2053, ack 2256, win 65535, length 36
+00:49:31.122173 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2256:2292, ack 2053, win 65535, length 36
+00:49:31.124343 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2292, win 65535, length 0
+00:49:31.155588 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2053:2089, ack 2292, win 65535, length 36
+00:49:31.156520 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2292:2328, ack 2089, win 65535, length 36
+00:49:31.159138 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2328, win 65535, length 0
+00:49:31.185154 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2089:2125, ack 2328, win 65535, length 36
+00:49:31.185778 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2328:2364, ack 2125, win 65535, length 36
+00:49:31.189524 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2364, win 65535, length 0
+00:49:31.215759 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2125:2161, ack 2364, win 65535, length 36
+00:49:31.217357 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2364:2400, ack 2161, win 65535, length 36
+00:49:31.220323 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2400, win 65535, length 0
+00:49:31.246838 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2161:2197, ack 2400, win 65535, length 36
+00:49:31.247607 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2400:2436, ack 2197, win 65535, length 36
+00:49:31.253404 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2436, win 65535, length 0
+00:49:31.278109 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2197:2233, ack 2436, win 65535, length 36
+00:49:31.278605 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2436:2472, ack 2233, win 65535, length 36
+00:49:31.284465 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2472, win 65535, length 0
+00:49:31.312571 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2233:2269, ack 2472, win 65535, length 36
+00:49:31.313227 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2472:2508, ack 2269, win 65535, length 36
+00:49:31.317935 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2508, win 65535, length 0
+00:49:31.343301 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2269:2305, ack 2508, win 65535, length 36
+00:49:31.343825 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2508:2544, ack 2305, win 65535, length 36
+00:49:31.350126 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2544, win 65535, length 0
+00:49:31.372889 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2305:2341, ack 2544, win 65535, length 36
+00:49:31.373402 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2544:2580, ack 2341, win 65535, length 36
+00:49:31.376728 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2580, win 65535, length 0
+00:49:31.404306 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2341:2377, ack 2580, win 65535, length 36
+00:49:31.404958 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2580:2616, ack 2377, win 65535, length 36
+00:49:31.407645 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2616, win 65535, length 0
+00:49:31.437320 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2377:2413, ack 2616, win 65535, length 36
+00:49:31.437958 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2616:2652, ack 2413, win 65535, length 36
+00:49:31.441470 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2652, win 65535, length 0
+00:49:31.468631 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2413:2449, ack 2652, win 65535, length 36
+00:49:31.469216 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2652:2688, ack 2449, win 65535, length 36
+00:49:31.471142 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2688, win 65535, length 0
+00:49:31.497522 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2449:2485, ack 2688, win 65535, length 36
+00:49:31.498376 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2688:2724, ack 2485, win 65535, length 36
+00:49:31.501916 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2724, win 65535, length 0
+00:49:31.529401 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2485:2521, ack 2724, win 65535, length 36
+00:49:31.529913 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2724:2760, ack 2521, win 65535, length 36
+00:49:31.532818 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2760, win 65535, length 0
+00:49:31.560801 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2521:2557, ack 2760, win 65535, length 36
+00:49:31.561353 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2760:2796, ack 2557, win 65535, length 36
+00:49:31.563693 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2796, win 65535, length 0
+00:49:31.594248 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2557:2593, ack 2796, win 65535, length 36
+00:49:31.594778 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2796:2832, ack 2593, win 65535, length 36
+00:49:31.599225 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2832, win 65535, length 0
+00:49:31.623375 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2593:2629, ack 2832, win 65535, length 36
+00:49:31.624523 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2832:2868, ack 2629, win 65535, length 36
+00:49:31.628395 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2868, win 65535, length 0
+00:49:31.653647 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2629:2665, ack 2868, win 65535, length 36
+00:49:31.654554 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2868:2904, ack 2665, win 65535, length 36
+00:49:31.658103 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2904, win 65535, length 0
+00:49:31.685795 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2665:2701, ack 2904, win 65535, length 36
+00:49:31.686678 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2904:2940, ack 2701, win 65535, length 36
+00:49:31.690118 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2940, win 65535, length 0
+00:49:31.716938 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2701:2737, ack 2940, win 65535, length 36
+00:49:31.717455 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2940:2976, ack 2737, win 65535, length 36
+00:49:31.719977 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 2976, win 65535, length 0
+00:49:31.747862 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [P.], seq 2737:2773, ack 2976, win 65535, length 36
+00:49:31.748389 enp0s3 Out IP 10.0.2.15.ssh > 10.0.2.2.53348: Flags [P.], seq 2976:3012, ack 2773, win 65535, length 36
+00:49:31.751515 enp0s3 In  IP 10.0.2.2.53348 > 10.0.2.15.ssh: Flags [.], ack 3012, win 65535, length 0
+00:49:39.013697 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 1, length 64
+00:49:39.013803 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 1, length 64
+00:49:40.043212 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 2, length 64
+00:49:40.043303 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 2, length 64
+00:49:41.065708 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 3, length 64
+00:49:41.065750 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 3, length 64
+00:49:44.371072 enp0s8 In  ARP, Request who-has 192.168.31.1 tell 192.168.31.10, length 46
+00:49:44.371144 enp0s8 Out ARP, Reply 192.168.31.1 is-at 08:00:27:88:5c:75, length 28

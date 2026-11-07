@@ -1,0 +1,17 @@
+# exp4 router fw-zone on   2026-10-23T02:44:35+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8
+success
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s9
+success
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+

@@ -1,0 +1,17 @@
+# exp4 router fw-zone on   2026-10-23T00:36:29+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo firewall-cmd --zone=internal --add-interface=enp0s8
+Error: ZONE_CONFLICT: 'enp0s8' already bound to 'public'
+exit=18
+
+### $ sudo firewall-cmd --zone=internal --add-interface=enp0s9
+success
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s9
+public
+  interfaces: enp0s3 enp0s8
+exit=0
+

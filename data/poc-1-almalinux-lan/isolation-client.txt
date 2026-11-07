@@ -1,0 +1,40 @@
+# isolation check (client)  2026-10-18T14:38:09+09:00
+### $ ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+enp0s3           DOWN           08:00:27:1f:fa:7c <NO-CARRIER,BROADCAST,MULTICAST,UP> 
+enp0s8           UP             08:00:27:af:87:fe <BROADCAST,MULTICAST,UP,LOWER_UP> 
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp0s3           DOWN           
+enp0s8           UP             192.168.10.10/24 
+exit=0
+
+### $ ip route
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101 
+exit=0
+
+### $ nmcli device status
+DEVICE  TYPE      STATE                   CONNECTION 
+enp0s8  ethernet  connected               enp0s8     
+lo      loopback  connected (externally)  lo         
+enp0s3  ethernet  unavailable             --         
+exit=0
+
+### $ ping -c 4 -W 2 192.168.10.20
+PING 192.168.10.20 (192.168.10.20) 56(84) bytes of data.
+64 bytes from 192.168.10.20: icmp_seq=1 ttl=64 time=1.82 ms
+64 bytes from 192.168.10.20: icmp_seq=2 ttl=64 time=1.70 ms
+64 bytes from 192.168.10.20: icmp_seq=3 ttl=64 time=1.35 ms
+64 bytes from 192.168.10.20: icmp_seq=4 ttl=64 time=1.20 ms
+
+--- 192.168.10.20 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3007ms
+rtt min/avg/max/mdev = 1.203/1.515/1.819/0.250 ms
+exit=0
+
+### $ ping -c 2 -W 2 10.0.2.2
+ping: connect: Network is unreachable
+exit=2
+

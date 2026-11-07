@@ -1,0 +1,103 @@
+# ユーザーが端末に実行し、貼り付けた記録(転記。原本のファイルではない)  2026-10-31
+# 個人名は置換した: <WSL_USER>(WSL の user)、<WINDOWS_USER>(Windows のユーザー)。VM の user アカウントはそのまま
+# 対象: router、router2、client(sudo のパスワード入力あり。鍵のパスフレーズ入力あり)
+
+## [1] router(R1)のゾーン(読み取りのみ)
+<WSL_USER>:~$ ssh -t -p 2225 user@127.0.0.1 'hostname -s; sudo firewall-cmd --get-active-zones; sudo firewall-cmd --zone=internal --list-all'
+router
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+internal (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s8 enp0s9
+  sources:
+  services: cockpit dhcpv6-client mdns samba-client ssh
+  ports:
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+## [2] router2(R2)のゾーン(読み取りのみ)
+<WSL_USER>:~$ ssh -t -p 2226 user@127.0.0.1 'hostname -s; sudo firewall-cmd --get-active-zones; sudo firewall-cmd --zone=internal --list-all'
+router2
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+internal (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s8 enp0s9
+  sources:
+  services: cockpit dhcpv6-client mdns samba-client ssh
+  ports:
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+## [3] client の sudoers.d(読み取りのみ)
+<WSL_USER>:~$ ssh -t -p 2222 user@127.0.0.1 'hostname -s; sudo ls -l /etc/sudoers.d/; sudo cat /etc/sudoers.d/*'
+client
+total 4
+-r--r-----. 1 root root 80 Oct 24 13:18 lab-chronyc
+cat: '/etc/sudoers.d/*': No such file or directory
+# 注記: 最後の cat は失敗した。原因は、glob(*)を一般ユーザーのシェルが展開し、ディレクトリの内容を読めないためと考えられる(候補。未検証)。lab-chronyc の内容はこの記録にない。
+
+## [4] ISO のハッシュ(Windows の PowerShell)
+PS C:\Users\<WINDOWS_USER>> Get-FileHash .\Downloads\AlmaLinux-9.8-x86_64-minimal.iso -Algorithm SHA256
+SHA256          7762A4B45A66235726DB145A573658964BF77BF7B9BC1C018AFE86A4CF37CC2E       C:\Users\<WINDOWS_USER>\Downloads\Alm...
+# ISO のファイル名: AlmaLinux-9.8-x86_64-minimal.iso(ダウンロード元の URL は未回答)
+
+## [5] VM の作成時の選択(ユーザーの申告、文章)
+名前: Alma9mini-server または Alma9mini-cli
+ISO イメージ: 上記のファイルを選択
+自動インストール: ユーザー名 user、パスワードは任意
+ハードウェア: メインメモリ 512MB、プロセッサー数 4
+ハードディスク: 20GB
+他はデフォルト
+ネットワークは、AlmaLinux のインストール後に設定した
+
+## [6] メモリの食い違いへの回答(ユーザーの申告、文章。2026-10-31)
+作成時は 1024MB で、後に 512MB に変更した。同時起動すると失敗しやすい程度で、順番に起動すれば 512MB でも動作に問題ない。
+言語、キーボード、パーティション、root の設定は覚えていない。
+
+## [7] ISO のダウンロード元(ユーザーの申告。2026-10-31)
+https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9.8-x86_64-minimal.iso
+# ユーザーによれば、同じサイトに SHA-256 の記載があった: 7762a4b45a66235726db145a573658964bf77bf7b9bc1c018afe86a4cf37cc2e
+# 注記: この値と手元の Get-FileHash の値([4])は、大文字小文字を除いて一致する(下の確認を参照)。サイトの画面そのものは、Claude Code は見ていない(転記)。
+
+## [8] VirtualBox 7.1 マニュアル「Introduction to Networking Modes」の表(ユーザーの転記。2026-10-31)
+# ユーザーの申告した行の順序: VM→ホスト、ホスト→VM、VM↔VM、VM→外部、外部→VM。表の見出し行そのものは転記されていない。
+## Internal Networking
+説明文: "Internal networking. This can be used to create a different kind of software-based network which is visible to selected virtual machines, but not to applications running on the host or to the outside world."
+表(上の順序): – / – / + / – / –
+## NAT
+表(上の順序): + / Port forward / – / + / Port forward
+# 注記: NAT の「VM ↔ VM」が – である点は、貼り付けの並びから読み取った(ユーザーの貼り付けは、この順序の 5 項目)。
+
+## [9] 新規 VM 作成時の追加情報(ユーザーの申告、文章。2026-10-31。スクリーンショットを撮りながら新しく VM を作成した)
+- キーボードと言語は日本語を選択した。
+- メモリを 512MB にすると、ブートが起動せずインストールできなかった。最低でも 1024MB は必要と思われる。VirtualBox の既定の 2048MB で作成し、インストール後に 512MB へ変更すると、うまく起動した(申告。1024MB での確認は未実施)。
+- 作成後の初回起動で、「ISO ファイルが見つからない」と表示された。ISO イメージを選択し直して次に進んだ。
+- 初期設定は root のパスワードのみ。一般ユーザー(user)は作成しなかった。
+- 仮想ディスクなどの選択が必要だった。
+- インストール後の再起動で、起動順が光学ドライブ優先だったため、再びインストール画面が出た。対処は、起動順をハードディスク優先にするか、IDE セカンダリデバイスを空にする。インストール前に起動順を変えておくとよいかもしれない(提案。未検証)。
+- 一般ユーザーの追加(root での useradd など)は、E2 とは別の記事にする案。
+# 注記: 前回([5])の「自動インストール(ユーザー名 user)」とは、今回の手順が異なる。[5] は以前の VM、[9] は今回の新規作成の申告。
+
+## [10] スクリーンショットとの食い違いへの回答(ユーザーの申告、文章。2026-10-31)
+- インストール中のメモリは 1024MB だった(時間はかかったが、インストールは無事に完了した)。[9] の「2048MB で作成し 512MB に変更」は、実際の手順ではなかった。「512MB では起動せずインストールできなかった」の記述は、[9] のまま(画像に失敗の様子はない)。
+- ディスクは、10GB でインストールできるか試したため 10GB になっている。VirtualBox の既定は 20GB だった。
+- 試行しているうちに VM を 2 回作成した。そのため、作成ダイアログの前に VM が存在する画像(082622)がある。不要なので削除するよう依頼があった(画像のコピーを削除。VM の削除は依頼されていない)。
+- プロセッサー数の既定は 1 で、4 に変更した。作成ダイアログの画像(084145)は、変更前に撮ったため 1 になっている。ユーザーが画像を差し替える予定。

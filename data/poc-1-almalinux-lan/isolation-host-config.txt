@@ -1,0 +1,31 @@
+# PoC-1 項目7(旧項目8): ホスト側の VirtualBox アダプター設定(VBoxManage showvminfo の出力)
+# 出所: ユーザーが PowerShell から貼り付けた転記(チャット経由)。整形・補完なし。取得時刻は不明。
+# 取得時の NAT 切断状態: NAT 切断(setlinkstate1 off)の前に取得(手順1)。
+
+PS C:\Users\<WINDOWS_USER>> & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" showvminfo "Alma9mini-cli" --machinereadable | Select-String "^nic[0-9]=|^intnet[0-9]="
+
+nic1="nat"
+intnet2="poc1-lan"
+nic2="intnet"
+nic3="none"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+
+PS C:\Users\<WINDOWS_USER>> & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" showvminfo "Alma9mini-server" --machinereadable | Select-String "^nic[0-9]=|^intnet[0-9]="
+
+nic1="nat"
+intnet2="poc1-lan"
+nic2="intnet"
+nic3="none"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+# 操作ログ(ユーザー申告): 手順3で両VMの NAT リンクを切断(setlinkstate1 off)。実行ログはコマンドのみで出力なし。
+# 手順5で復旧(setlinkstate1 on)した旨の申告あり(コマンド出力の貼り付けはなし)。

@@ -1,0 +1,23 @@
+# exp4 router capture    2026-10-23T01:15:09+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo timeout -s INT 25 tcpdump -i any -n -w exp4-router-20261023T011508.pcap 'not tcp port 22'   (25秒以内に client から server へ ping。SSH は除外)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+10 packets captured
+12 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -r exp4-router-20261023T011508.pcap
+reading from file exp4-router-20261023T011508.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+01:15:19.086099 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 4, seq 1, length 64
+01:15:19.086276 enp0s8 Out IP 192.168.31.1 > 192.168.31.10: ICMP net 192.168.32.20 unreachable, length 92
+01:15:20.088838 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 4, seq 2, length 64
+01:15:20.088961 enp0s8 Out IP 192.168.31.1 > 192.168.31.10: ICMP net 192.168.32.20 unreachable, length 92
+01:15:21.091182 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 4, seq 3, length 64
+01:15:21.091270 enp0s8 Out IP 192.168.31.1 > 192.168.31.10: ICMP net 192.168.32.20 unreachable, length 92
+01:15:24.144265 enp0s8 Out ARP, Request who-has 192.168.31.10 tell 192.168.31.1, length 28
+01:15:24.145315 enp0s8 In  ARP, Reply 192.168.31.10 is-at 08:00:27:5a:8e:0e, length 46
+01:15:24.414003 enp0s8 In  ARP, Request who-has 192.168.31.1 tell 192.168.31.10, length 46
+01:15:24.414025 enp0s8 Out ARP, Reply 192.168.31.1 is-at 08:00:27:88:5c:75, length 28

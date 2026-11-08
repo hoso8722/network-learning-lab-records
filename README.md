@@ -1,6 +1,6 @@
 # network-learning-lab-records
 
-ネットワーク学習サイトの記事が出典とする、ラボ実験の記録とスクリプトです。
+Network-Laboの記事が出典とする、ラボ実験の記録とスクリプトです。
 
 - 実験は、隔離したローカルラボ(Windows 上の VirtualBox の AlmaLinux 9 の VM)で行ったものです。
 - このリポジトリは、非公開の原本リポジトリから、GitHub Actions で自動的に同期されます。直接編集しても、次の同期で上書きされます。

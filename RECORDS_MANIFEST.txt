@@ -10,4 +10,3 @@ data/official-docs-check/official-docs-check-20261103.md
 data/poc-1-almalinux-lan/isolation-client.txt
 data/poc-1-almalinux-lan/isolation-host-config.txt
 data/poc-1-almalinux-lan/snapshot-and-reboot-raw.txt
-docs/NEXT_STEPS.md

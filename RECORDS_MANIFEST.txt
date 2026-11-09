@@ -1,6 +1,5 @@
 data/baseline/baseline-sh-up-20261030T014404.txt
 data/exp-fault-ip/from-router/exp4-router-fw-zone-on-20261023T024435.txt
-data/exp-static-route/README.md
 data/exp-static-route/from-router/exp4-router-capture-20261023T004926.txt
 data/exp-static-route/from-router/exp4-router-capture-20261023T011508.txt
 data/exp-static-route/from-router/exp4-router-defroute-off-20261023T011355.txt

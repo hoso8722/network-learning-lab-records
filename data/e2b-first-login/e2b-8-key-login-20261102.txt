@@ -1,0 +1,38 @@
+# E2b-8(E4 の記事で使う): 公開鍵の配布と、鍵でのログイン  対象: WSL2 の bash、一般ユーザー → VM Alma9mini-cli(127.0.0.1:2222)
+# 出所: ユーザーが貼り付けた出力の転記(取得時刻は不明、2026-11-02)。パスワードとパスフレーズは出力に出ていない(入力は対話)。
+# 鍵: 2026-11-02 03:38 JST に新規作成した ed25519(ファイルの更新時刻)(SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU、コメント lab-vbox-wsl)。公開鍵の本文は記録しない。
+### $ ssh-copy-id -i ~/.ssh/id_ed25519_lab_wsl.pub -p 2222 user@127.0.0.1
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/<WSL_USER>/.ssh/id_ed25519_lab_wsl.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+user@127.0.0.1's password:
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh -p 2222 'user@127.0.0.1'"
+and check to make sure that only the key(s) you wanted were added.
+
+### $ ssh -v -o PreferredAuthentications=publickey -p 2222 user@127.0.0.1 true 2>&1 | grep -E "Offering|Authenticated|Permission denied"
+debug1: Offering public key: /home/<WSL_USER>/.ssh/id_ed25519_lab_wsl ED25519 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU explicit
+Enter passphrase for key '/home/<WSL_USER>/.ssh/id_ed25519_lab_wsl':
+Authenticated to 127.0.0.1 ([127.0.0.1]:2222) using "publickey".
+
+### $ ssh -p 2222 user@127.0.0.1 hostname
+Enter passphrase for key '/home/<WSL_USER>/.ssh/id_ed25519_lab_wsl':
+client
+
+### $ eval "$(ssh-agent -s)"
+Agent pid 1838059
+
+### $ ssh-add -l
+The agent has no identities.
+
+### $ ssh -p 2222 user@127.0.0.1 hostname
+Enter passphrase for key '/home/<WSL_USER>/.ssh/id_ed25519_lab_wsl':
+client
+
+### $ ssh-add -l
+256 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU lab-vbox-wsl (ED25519)
+
+### $ ssh -p 2222 user@127.0.0.1 hostname
+client

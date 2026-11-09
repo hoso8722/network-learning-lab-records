@@ -1,0 +1,62 @@
+# E2b-5: 時刻のずれの確認と手動の修正、ホスト名の設定  対象: VM Alma9mini-cli のログインシェル、user(sudo のパスワードは対話で入力。出力には出ていない)
+# 出所: ユーザーが貼り付けた出力の転記(取得時刻は不明、2026-11-02 の午前)。プロンプトは [user@vbox ~]$ → 設定後 [user@client ~]$。
+# 注: ホストの休止で VM の時計がずれたのは、ユーザーの申告(確認の記録なし)。時計の修正は、ユーザーの承認のもと今回のみ手動で行った。
+# 注: 出力は、貼り付けられた全文(省略なし)。
+### $ date
+Mon Nov  2 05:20:20 JST 2026
+
+### $ timedatectl
+               Local time: Mon 2026-11-02 05:20:24 JST
+           Universal time: Sun 2026-11-01 20:20:24 UTC
+                 RTC time: Sun 2026-11-01 20:17:59
+                Time zone: Asia/Tokyo (JST, +0900)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
+
+### $ sudo chronyc makestep
+200 OK
+
+### $ timedatectl
+               Local time: Mon 2026-11-02 11:17:52 JST
+           Universal time: Mon 2026-11-02 02:17:52 UTC
+                 RTC time: Sun 2026-11-01 20:20:17
+                Time zone: Asia/Tokyo (JST, +0900)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
+
+### $ hostnamectl
+   Static hostname: (unset)
+Transient hostname: vbox
+         Icon name: computer-vm
+           Chassis: vm 🖴
+        Machine ID: b4031d8c20c046eda3698b00b6e3c794
+           Boot ID: 9ae5d8f448fa4a0f888a37addbbaafb9
+    Virtualization: oracle
+  Operating System: AlmaLinux 9.8 (Olive Jaguar)
+       CPE OS Name: cpe:/o:almalinux:almalinux:9::baseos
+            Kernel: Linux 5.14.0-687.5.3.el9_8.x86_64
+      Architecture: x86-64
+   Hardware Vendor: innotek GmbH
+    Hardware Model: VirtualBox
+  Firmware Version: VirtualBox
+
+### $ sudo hostnamectl set-hostname client
+
+### $ hostnamectl
+ Static hostname: client
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: b4031d8c20c046eda3698b00b6e3c794
+         Boot ID: 9ae5d8f448fa4a0f888a37addbbaafb9
+  Virtualization: oracle
+Operating System: AlmaLinux 9.8 (Olive Jaguar)
+     CPE OS Name: cpe:/o:almalinux:almalinux:9::baseos
+          Kernel: Linux 5.14.0-687.5.3.el9_8.x86_64
+    Architecture: x86-64
+ Hardware Vendor: innotek GmbH
+  Hardware Model: VirtualBox
+Firmware Version: VirtualBox
+
+### $ exec $SHELL -l

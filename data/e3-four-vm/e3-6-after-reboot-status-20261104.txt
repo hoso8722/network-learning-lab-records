@@ -1,0 +1,126 @@
+# E3-6: 再起動後(VM を acpipowerbutton で止めて起動し直したあと)の baseline.sh status  対象: WSL2 の bash、一般ユーザー(各 VM で sudo)
+# 出所: ユーザーが貼り付けた出力の転記(2026-11-04 12:54 JST)。起動の直後(約 15 秒〜2 分)の状態。
+# 注: 実際の手順は、スナップショット node-ready への復元を含む予定だったが、復元のコマンドは実行されていない(貼り付けに含まれない)。そのため、router(新しく作り直した VM)には route-test.sh がなく(終了コード 127)、cli・server・router2 には、前回の up で送ったスクリプトが残っている。
+# 注: 「記録:」の行のパスは <PROJECT_ROOT> に置き換えた。
+### $ for n in cli server router2; do vb controlvm "Alma9mini-$n" acpipowerbutton; done
+"Alma9mini-cli" {d1c818bd-daee-4869-83d4-fc1a72dfc0f8}
+"Alma9mini-server" {a1672714-f8ac-4a70-96ef-f8f22b963902}
+"Alma9mini-router2" {204c2457-8085-49b2-8fb4-2d09dc5d0855}
+
+### $ vb list runningvms
+
+### $ for n in cli server router router2; do vb startvm "Alma9mini-$n" --type headless; done
+Waiting for VM "Alma9mini-cli" to power on...
+VM "Alma9mini-cli" has been successfully started.
+Waiting for VM "Alma9mini-server" to power on...
+VM "Alma9mini-server" has been successfully started.
+Waiting for VM "Alma9mini-router" to power on...
+VM "Alma9mini-router" has been successfully started.
+Waiting for VM "Alma9mini-router2" to power on...
+VM "Alma9mini-router2" has been successfully started.
+
+### $ ./labs/common/baseline.sh status
+# baseline.sh  action=status  2026-11-04T12:54:04+09:00  wsl=mirrored
+
+=== router (port 2225) : status ===
+bash: line 1: ./route-test.sh: No such file or directory
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 127（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : status ===
+# exp4 router2 show    2026-11-04T12:54:19+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             fe80::86e5:a8c0:19ca:9504/64
+enp0s9           UP             fe80::d607:fe7e:857c:9081/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+[sudo] password for user:
+public
+  interfaces: enp0s3 enp0s8 enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : status ===
+# exp5 client show   2026-11-04T12:54:47+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             fe80::7a58:eada:5890:f944/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : status ===
+# exp5 server show   2026-11-04T12:54:49+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             fe80::62b1:5355:64ee:1516/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-04T12:54:49+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 0 received, 100% packet loss, time 2029ms
+
+  exit=1
+  判定: 【応答なし】要確認（各 VM の記録を参照）
+
+## まとめ
+  router: 終了コード 127
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 【応答なし】要確認（各 VM の記録を参照）
+記録: <PROJECT_ROOT>/data/baseline/baseline-sh-status-20261104T125404.txt

@@ -1,0 +1,25 @@
+# E4-1: ラボ用の鍵の退避と、新規作成  対象: WSL2 の bash、一般ユーザー(~/.ssh)
+# 出所: ユーザーが貼り付けた出力の転記と、Claude Code の読み取り(stat)。取得時刻は、ファイルの更新時刻が手がかり:
+#       退避先のディレクトリ ~/.ssh/backup-lab-20261101 の作成は 2026-11-02 03:27 JST、新しい鍵 ~/.ssh/id_ed25519_lab_wsl の作成は 2026-11-02 03:38 JST(stat の値。名前の 20261101 は、作業の予定日の名前)。
+# 退避した旧鍵のファイルの更新時刻は 2026-10-24 17:04 JST。旧鍵のフィンガープリントは SHA256:cSA5QqXRFij/wptaRCEmHhSwa+eUdoivZVB4lpWMyMM(コメント lab-vbox-wsl。Claude Code が読み取りで確認)。
+# 注: 他の鍵(id_ed25519、<KEY_NAME>)には触れていない。公開鍵・秘密鍵の本体は記録しない。パスフレーズは対話で入力(出力に出ない。設定した内容は記録なし)。
+### $ mkdir -m 700 ~/.ssh/backup-lab-20261101
+
+### $ mv ~/.ssh/id_ed25519_lab_wsl ~/.ssh/id_ed25519_lab_wsl.pub ~/.ssh/backup-lab-20261101/
+
+### $ ls -l ~/.ssh/backup-lab-20261101/
+total 8
+-rw------- 1 <WSL_USER> <WSL_USER> 444 Oct 24 17:04 id_ed25519_lab_wsl
+-rw-r--r-- 1 <WSL_USER> <WSL_USER>  94 Oct 24 17:04 id_ed25519_lab_wsl.pub
+
+### $ ls -l ~/.ssh/id_ed25519_lab_wsl*
+ls: cannot access '/home/<WSL_USER>/.ssh/id_ed25519_lab_wsl*': No such file or directory
+
+### $ ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_lab_wsl -C lab-vbox-wsl
+Generating public/private ed25519 key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/<WSL_USER>/.ssh/id_ed25519_lab_wsl
+Your public key has been saved in /home/<WSL_USER>/.ssh/id_ed25519_lab_wsl.pub
+The key fingerprint is:
+SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU lab-vbox-wsl

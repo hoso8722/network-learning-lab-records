@@ -1,0 +1,14 @@
+# E2b-4: NAT のポートフォワードの追加  対象: VM Alma9mini-cli(新しいクローン)、WSL2 の bash、一般ユーザー
+# 出所: ユーザーが貼り付けた出力の転記(取得時刻は不明、2026-11-02 の午前)。vb は ~/.bashrc の関数(VBoxManage.exe を呼ぶ)。
+# 注: 1 回目の showvminfo は VM が起動中のとき、2 回目は停止後(VMState="poweroff")。showvminfo の出力は、grep で 2 行だけに絞った。Forwarding の行は出ていない(追加前)。
+# 注: modifyvm は、成功時に何も出力しない(終了コードは記録なし)。追加後の showvminfo は記録なし(E2b-6 で、2222 の接続が通ったことで間接的に確認)。
+### $ vb showvminfo "Alma9mini-cli" --machinereadable | grep -E '^(VMState|Forwarding)'
+VMState="running"
+VMStateChangeTime="2026-11-01T13:25:15.601000000"
+
+### $ vb showvminfo "Alma9mini-cli" --machinereadable | grep -E '^(VMState|Forwarding)'
+VMState="poweroff"
+VMStateChangeTime="2026-11-01T19:38:48.802000000"
+
+### $ vb modifyvm "Alma9mini-cli" --natpf1 "ssh,tcp,127.0.0.1,2222,,22"
+

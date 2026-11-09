@@ -1,0 +1,8 @@
+# E4-0: ~/.ssh/config の、ラボ用のホストの設定(読み取りのみ)  対象: WSL2 の bash、一般ユーザー
+# 出所: Claude Code が awk で、Host 127.0.0.1 のブロックだけを抜き出した出力(2026-11-03)。config の更新時刻は 2026-10-24 17:08 JST(この作業では変更していない)。他のホストの設定は載せない。
+### $ awk '/^Host 127.0.0.1/{p=1;print;next} /^Host /{p=0} p' ~/.ssh/config
+Host 127.0.0.1
+    User user
+    IdentityFile ~/.ssh/id_ed25519_lab_wsl
+    IdentitiesOnly yes
+    AddKeysToAgent yes

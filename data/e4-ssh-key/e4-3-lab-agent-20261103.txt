@@ -1,0 +1,15 @@
+# E4-3: ラボ専用の ssh-agent(labs/common/lab-env-hook.sh)の動作  対象: WSL2 の対話 bash、一般ユーザー
+# 出所: ユーザーが貼り付けた出力の転記。1 つ目(cd の出力)は取得時刻の記録なし(2026-11-02 の夜から 11-03)。2 つ目は 2026-11-03。プロンプトは <WSL_USER>:~$、<WSL_USER>:network-learning-handoff$ → 記録では <WSL_USER> に置換。
+# 仕組み(スクリプトの先頭のコメントによる): ~/.bashrc から source した labs/common/lab-env-hook.sh が、プロジェクトのフォルダーに入ると SSH_AUTH_SOCK をラボ専用の agent(~/.ssh/agent-lab.sock)に切り替え、agent がなければ起動し、鍵(id_ed25519_lab_wsl)が載っていなければ ssh-add(対話端末のときだけ)する。
+# 注: 1 回目のパスフレーズは入力ミス(Bad passphrase)で、やり直して成功した。
+### $ cd network-learning-handoff/
+lab-env: ラボの鍵を ssh-agent に載せます（パスフレーズを入力）
+Enter passphrase for /home/<WSL_USER>/.ssh/id_ed25519_lab_wsl:
+Bad passphrase, try again for /home/<WSL_USER>/.ssh/id_ed25519_lab_wsl:
+Identity added: /home/<WSL_USER>/.ssh/id_ed25519_lab_wsl (lab-vbox-wsl)
+
+### $ ssh-add -l
+256 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU lab-vbox-wsl (ED25519)
+
+### $ ssh -p 2222 user@127.0.0.1 hostname
+client

@@ -1,0 +1,21 @@
+# 環境記録(実測済みの事実のみ。未確認は空欄)
+# 出典: data/poc-0-host/host-environment.txt(収集日時 2026-10-16 09:32 +09:00)、およびユーザーが貼り付けた VBoxManage 出力
+
+host_os: Microsoft Windows 11 Home, Version 10.0.26200 (Build 26200), 64-bit
+host_cpu: AMD Ryzen 7 7735HS (8 cores / 16 logical)
+host_memory_GB: 30.8
+hypervisor: Oracle VirtualBox 7.1.10 (host-environment.txt の導入済みソフト一覧より)
+host_virtualization_state: HypervisorPresent=True, VBS running, WSL2 有効 (host-environment.txt より)
+gns3: 未使用(この記事のデータ範囲では)
+vm_names: Alma9mini-cli (client), Alma9mini-server (server)
+vm_adapters: nic1=nat, nic2=intnet "poc1-lan" (client, server とも変更後を確認済み)
+ssh_port_forward: client 127.0.0.1:2222 -> 22, server 127.0.0.1:2223 -> 22 (ユーザー申告)
+lab_ip_plan: client 192.168.10.10/24, server 192.168.10.20/24 (enp0s8)
+
+linux_distribution: AlmaLinux 9.8 (Olive Jaguar) — client/server とも /etc/os-release で確認 (a02-almalinux-install/raw-output.txt)
+linux_kernel: 5.14.0-687.5.3.el9_8.x86_64 (client/server とも uname -r)
+iso_source_url:
+iso_sha256:
+data_date:
+vm_clock: NTP未同期(System clock synchronized: no)。VM上の時刻はホスト実時刻と約12.5時間ずれる可能性。絶対時刻に使わない (a06 の実測に基づく)
+vm_user: user (A案。a03/a04 の転記は <WSL_USER>)

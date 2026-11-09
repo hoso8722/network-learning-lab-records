@@ -1,0 +1,29 @@
+# E2b-2: SSH が使える前提の確認(読み取りのみ)  VM のコンソール(VirtualBox の画面)、root
+# 出所: ユーザーが撮ったスクリーンショット(data/e2b-first-login/screenshots/original/Screenshot 2026-11-01 214726.png、撮影 2026-11-01 21:47:26)を、
+#       Claude Code が画像を読み取って書き起こした転記。原本は画像。ユーザーの貼り付けた文字ではない。
+# 対象: ウィンドウのタイトルは「Alma9mini (after installed alma-linux) [実行中]」(元の VM。クローンではない)。プロンプトは [root@vbox ~]#
+# 書き起こしの注意: `ss -tln` の列の空白は詰めた(値は画像のとおり)。画面の上部にある `systemctl` のユニット一覧(109 loaded units)は、依頼にないコマンドの出力のため含めない。
+# 終了コードは画像にない(記録なし)。`grep` の出力は、画像では赤字(grep の色付け)。
+### $ systemctl is-active sshd
+active
+
+### $ systemctl is-enabled sshd
+enabled
+
+### $ ss -tln
+State Recv-Q Send-Q Local Address:Port Peer Address:Port
+LISTEN 0 128 0.0.0.0:22 0.0.0.0:*
+LISTEN 0 128 [::]:22 [::]:*
+
+### $ firewall-cmd --state
+running
+
+### $ firewall-cmd --list-services
+cockpit dhcpv6-client ssh
+
+### $ sshd -T | grep -E '^(permitrootlogin|passwordauthentication)'
+permitrootlogin without-password
+passwordauthentication yes
+
+### $ rpm -q openssh-server
+openssh-server-9.9p1-7.el9_8.alma.1.x86_64

@@ -1,0 +1,180 @@
+# E3-1: 元の VM(cli)の状態の記録と、server のクローンの作成(H1、H2 の途中)  対象: cli の中(user)と WSL2 の bash、一般ユーザー
+# 出所: ユーザーが貼り付けた出力の転記。時刻は VM の時計の表示で、cli の poweroff の通知が「Tue 2026-11-03 03:00:18 JST」、server の起動後のログイン(Last login)と poweroff の通知が「2026-11-03 10:22〜10:48 JST」。vb は ~/.bashrc の関数(VBoxManage.exe を呼ぶ)。
+# 注: cli の中のプロンプトは [user@client ~]$、WSL2 のプロンプトは <WSL_USER>:network-learning-handoff$。sudo のパスワードは出力に出ていない。
+# 注: showvminfo は grep で絞った出力(memory、cpus、nic、macaddress、nictype、Forwarding の行だけ)。macaddress2 以降の行は、nic2〜8 が none のため出ていない。
+# 削除: 各 `vb list vms` の出力から、旧 VM(名前が -old で終わる行、5 行)を削除した(ユーザーの判断。旧 VM は VirtualBox に登録されたまま)。
+### $ cat /etc/machine-id
+b4031d8c20c046eda3698b00b6e3c794
+
+### $ ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+256 SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE no comment (ED25519)
+
+### $ ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
+enp0s3           UP             08:00:27:7d:fb:41 <BROADCAST,MULTICAST,UP,LOWER_UP>
+
+### $ vb showvminfo "Alma9mini-cli" --machinereadable | grep -E '^(memory|cpus|nic[0-9]|macaddress[0-9]|nictype[0-9]|Forwarding)'
+memory=512
+cpus=4
+macaddress1="0800277DFB41"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2222,,22"
+nic2="none"
+nic3="none"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ sudo poweroff
+Broadcast message from root@client on pts/1 (Tue 2026-11-03 03:00:18 JST):
+
+The system will power off now!
+
+### $ vb clonevm "Alma9mini-cli" --snapshot "common-ready" --name "Alma9mini-server" --register
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Machine has been successfully cloned as "Alma9mini-server"
+
+### $ vb list vms
+"Alma9mini" {90a6c326-c5f7-4340-a763-be136d9aea76}
+"Alma9mini-cli" {d1c818bd-daee-4869-83d4-fc1a72dfc0f8}
+"Alma9mini-server" {a1672714-f8ac-4a70-96ef-f8f22b963902}
+
+### $ vb showvminfo "Alma9mini-server" --machinereadable | grep -E '^(memory|cpus|nic[0-9]|macaddress[0-9]|nictype[0-9]|Forwarding)'
+memory=512
+cpus=4
+macaddress1="080027C6AE35"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2222,,22"
+nic2="none"
+nic3="none"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb showvminfo "Alma9mini-server" --machinereadable | grep -E '^"(SATA|IDE)'
+"IDE-0-0"="none"
+"IDE-0-1"="none"
+"IDE-1-0"="emptydrive"
+"IDE-IsEjected-1-0"="off"
+"IDE-1-1"="none"
+"SATA-0-0"="C:\\Users\\<WINDOWS_USER>\\VirtualBox VMs\\Alma9mini-server\\Alma9mini-server.vdi"
+"SATA-ImageUUID-0-0"="1d7a4ebd-173d-4f41-adec-70817ee117a8"
+"SATA-hot-pluggable-0-0"="off"
+"SATA-nonrotational-0-0"="off"
+"SATA-discard-0-0"="off"
+
+### $ vb modifyvm "Alma9mini-server" --nat-pf1 delete=ssh
+Oracle VirtualBox Command Line Management Interface Version 7.1.10
+Copyright (C) 2005-2025 Oracle and/or its affiliates
+
+VBoxManage.exe: error: Missing or invalid argument to '--nat-pf'
+(以下、usage の表示。ユーザーが貼り付けた抜粋: VBoxManage modifyvm <uuid | vmname> [--nat-netN= network | default] [--nat-pfN= [rule-name],tcp | udp,[host-IP],hostport,[guest-IP],guestport] [--nat-pfN=delete=rule-name] [--nat-tftp-prefixN=prefix] …。以降は省略)
+
+### $ vb modifyvm "Alma9mini-server" --natpf1 delete ssh
+
+### $ vb showvminfo "Alma9mini-server" --machinereadable | grep -E '^Forwarding'
+
+### $ vb modifyvm "Alma9mini-server" --natpf1 ssh,tcp,127.0.0.1,2223,,22
+
+### $ vb showvminfo "Alma9mini-server" --machinereadable | grep -E '^Forwarding'
+Forwarding(0)="ssh,tcp,127.0.0.1,2223,,22"
+
+### $ vb modifyvm "Alma9mini-server" --nic3 intnet --intnet3 lan-b
+
+### $ vb showvminfo "Alma9mini-server" --machinereadable | grep -E '^(nic[0-9]|macaddress[0-9]|nictype[0-9]|intnet[0-9]|Forwarding)'
+macaddress1="080027C6AE35"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2223,,22"
+nic2="none"
+intnet3="lan-b"
+macaddress3="0800277E3718"
+nic3="intnet"
+nictype3="82540EM"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb startvm "Alma9mini-server" --type headless
+Waiting for VM "Alma9mini-server" to power on...
+VM "Alma9mini-server" has been successfully started.
+
+### $ ssh -p 2223 user@127.0.0.1
+The authenticity of host '[127.0.0.1]:2223 ([127.0.0.1]:2223)' can't be established.
+ED25519 key fingerprint is SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:22: [hashed name]
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[127.0.0.1]:2223' (ED25519) to the list of known hosts.
+Last login: Tue Nov  3 10:22:58 2026
+
+### $ hostname
+client
+
+### $ cat /etc/machine-id
+b4031d8c20c046eda3698b00b6e3c794
+
+### $ ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+256 SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE no comment (ED25519)
+
+### $ ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
+enp0s3           UP             08:00:27:c6:ae:35 <BROADCAST,MULTICAST,UP,LOWER_UP>
+enp0s9           UP             08:00:27:7e:37:18 <BROADCAST,MULTICAST,UP,LOWER_UP>
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP
+
+### $ sudo hostnamectl set-hostname server
+[sudo] password for user:
+
+### $ hostnamectl --static
+server
+
+### $ sudo rm /etc/ssh/ssh_host_*
+
+### $ sudo ssh-keygen -A
+ssh-keygen: generating new host keys: RSA ECDSA ED25519
+
+### $ sudo systemctl restart sshd
+
+### $ ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+256 SHA256:yWB8MiDXjviJ4E1qErZUWCemxR9qwjTLE1KauXlHHds root@server (ED25519)
+
+### $ ssh-keygen -R "[127.0.0.1]:2223"
+# Host [127.0.0.1]:2223 found: line 25
+<WSL_HOME>/.ssh/known_hosts updated.
+Original contents retained as <WSL_HOME>/.ssh/known_hosts.old
+
+### $ ssh -p 2223 user@127.0.0.1
+The authenticity of host '[127.0.0.1]:2223 ([127.0.0.1]:2223)' can't be established.
+ED25519 key fingerprint is SHA256:yWB8MiDXjviJ4E1qErZUWCemxR9qwjTLE1KauXlHHds.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[127.0.0.1]:2223' (ED25519) to the list of known hosts.
+Enter passphrase for key '<WSL_HOME>/.ssh/<KEY_NAME>':
+Last login: Tue Nov  3 10:26:09 2026 from 10.0.2.2
+
+### $ sudo poweroff
+[sudo] password for user:
+
+Broadcast message from root@client on pts/0 (Tue 2026-11-03 10:48:13 JST):
+
+The system will power off now!
+
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+
+### $ vb snapshot "Alma9mini-server" take node-ready
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Snapshot taken. UUID: 846e272f-3aec-4bc8-9960-9aaa10ab1072

@@ -1,0 +1,699 @@
+# E3-4: baseline.sh の up / status / down / status の端末出力(VM 側の出力を含む)  対象: WSL2 の bash、一般ユーザー(各 VM で sudo)
+# 出所: ユーザーが端末に出た出力を貼り付けたものの転記(2026-11-04)。up は 12:59 JST、以降の status / down / status は 19:31〜19:33 JST(WSL2 の時計)。プロンプトの行は含めていない。
+# 注: up と、その後の status の間に、約 6.5 時間の空きがある(ユーザーの申告: 「時間が開いてしまった」)。VM の時計の行(「# exp4 …」「# exp5 …」)は、up の時点では WSL2 の時計と合っているが、status 以降は約 4 時間遅れている(VM の 15:34〜15:36 が、WSL2 の 19:31〜19:33 に当たる)。ホストの休止などが候補(未確認)。
+# 注: baseline.sh が WSL2 に書く記録(data/baseline/baseline-sh-*-20261104T*.txt)には、終了コードと ping の判定だけが残る(VM 側のコマンドの出力は残らない)。VM 側の出力は、この転記にだけある。
+# 注: sudo のパスワードは出力に出ていない。「記録:」の行のパスは、<PROJECT_ROOT> に置き換えた(docs/REDACTION.md)。
+# 注: この記録は、前の回(同日の午前、削除した最初の router を使った回)の同じ操作の記録を、差し替えたもの。前の回の WSL2 側の記録(data/baseline/baseline-sh-*-20261104T0345〜0355)は残してある。
+### $ ./labs/common/baseline.sh up
+# baseline.sh  action=up  2026-11-04T12:59:39+09:00  wsl=mirrored
+
+## スクリプトの送信（scp。鍵認証。同名のファイルは上書き）
+route-test.sh                                                                        100% 8038     1.5MB/s   00:00
+  router: scp=0 chmod/確認=0 pushed:router:route-test.sh
+route-test.sh                                                                        100% 8038     1.4MB/s   00:00
+  router2: scp=0 chmod/確認=0 pushed:router2:route-test.sh
+fault-test.sh                                                                        100% 4965   828.6KB/s   00:00
+  client: scp=0 chmod/確認=0 pushed:client:fault-test.sh
+fault-test.sh                                                                        100% 4965   886.5KB/s   00:00
+  server: scp=0 chmod/確認=0 pushed:server:fault-test.sh
+
+=== router (port 2225) : up ===
+[sudo] password for user:
+# exp4 router prepare    2026-11-04T12:59:46+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo nmcli device set enp0s8 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s8
+exit=0
+
+### $ sudo ip link set enp0s8 up
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr add 192.168.31.1/24 dev enp0s8
+exit=0
+
+### $ sudo ip addr add 192.168.30.1/30 dev enp0s9
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             192.168.31.1/24
+enp0s9           UP             192.168.30.1/30
+exit=0
+
+# exp4 router fwd on   2026-11-04T12:59:47+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+exit=0
+
+# exp4 router fw-zone on   2026-11-04T12:59:47+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8
+success
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s9
+success
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+# exp4 router route add 192.168.32.0/24  2026-11-04T12:59:49+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo ip route add 192.168.32.0/24 via 192.168.30.2
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1
+192.168.32.0/24 via 192.168.30.2 dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : up ===
+[sudo] password for user:
+# exp4 router2 prepare    2026-11-04T12:59:52+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo nmcli device set enp0s8 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s8
+exit=0
+
+### $ sudo ip link set enp0s8 up
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr add 192.168.30.2/30 dev enp0s8
+exit=0
+
+### $ sudo ip addr add 192.168.32.1/24 dev enp0s9
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             192.168.30.2/30
+enp0s9           UP             192.168.32.1/24
+exit=0
+
+# exp4 router2 fwd on   2026-11-04T12:59:53+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+exit=0
+
+# exp4 router2 fw-zone on   2026-11-04T12:59:53+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8
+success
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s9
+success
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+# exp4 router2 route add 192.168.31.0/24  2026-11-04T12:59:55+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo ip route add 192.168.31.0/24 via 192.168.30.1
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s8 proto kernel scope link src 192.168.30.2
+192.168.31.0/24 via 192.168.30.1 dev enp0s8
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.1
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : up ===
+[sudo] password for user:
+# exp5 client base   2026-11-04T12:59:58+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip addr add 192.168.31.10/24 dev enp0s9
+exit=0
+
+### $ sudo ip route add 192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             192.168.31.10/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+# exp5 client guard on  2026-11-04T12:59:58+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo ip route add unreachable 192.168.0.0/16 metric 4000
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : up ===
+[sudo] password for user:
+# exp5 server base   2026-11-04T13:00:01+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip addr add 192.168.32.20/24 dev enp0s9
+exit=0
+
+### $ sudo ip route add 192.168.31.0/24 via 192.168.32.1 dev enp0s9
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             192.168.32.20/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-04T13:00:02+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+  64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=8.01 ms
+  64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.54 ms
+  64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=5.59 ms
+
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 3 received, 0% packet loss, time 2007ms
+  rtt min/avg/max/mdev = 4.535/6.043/8.008/1.454 ms
+  exit=0
+  判定: 基準どおり（ttl=62 で応答あり）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 基準どおり（ttl=62 で応答あり）
+記録: <PROJECT_ROOT>/data/baseline/baseline-sh-up-20261104T125939.txt
+
+### $ ./labs/common/baseline.sh status
+# baseline.sh  action=status  2026-11-04T19:31:48+09:00  wsl=mirrored
+
+=== router (port 2225) : status ===
+# exp4 router show    2026-11-04T15:34:39+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             192.168.31.1/24
+enp0s9           UP             192.168.30.1/30
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1
+192.168.32.0/24 via 192.168.30.2 dev enp0s9
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+[sudo] password for user:
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : status ===
+# exp4 router2 show    2026-11-04T15:34:43+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             192.168.30.2/30
+enp0s9           UP             192.168.32.1/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s8 proto kernel scope link src 192.168.30.2
+192.168.31.0/24 via 192.168.30.1 dev enp0s8
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.1
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+[sudo] password for user:
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : status ===
+# exp5 client show   2026-11-04T15:34:47+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             192.168.31.10/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+192.168.31.1 lladdr 08:00:27:41:49:68 STALE
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : status ===
+# exp5 server show   2026-11-04T15:34:48+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             192.168.32.20/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+192.168.32.1 lladdr 08:00:27:38:28:34 STALE
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-04T15:34:48+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+  64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=5.55 ms
+  64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=12.1 ms
+  64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=4.43 ms
+
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 3 received, 0% packet loss, time 2007ms
+  rtt min/avg/max/mdev = 4.431/7.374/12.142/3.402 ms
+  exit=0
+  判定: 基準どおり（ttl=62 で応答あり）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 基準どおり（ttl=62 で応答あり）
+記録: <PROJECT_ROOT>/data/baseline/baseline-sh-status-20261104T193148.txt
+
+### $ ./labs/common/baseline.sh down
+# baseline.sh  action=down  2026-11-04T19:32:27+09:00  wsl=mirrored
+
+=== router (port 2225) : down ===
+[sudo] password for user:
+# exp4 router teardown    2026-11-04T15:35:24+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo firewall-cmd --reload
+success
+exit=0
+
+既定ルートあり（復旧不要）
+### $ sudo sysctl -w net.ipv4.ip_forward=0
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ sudo ip addr flush dev enp0s8
+exit=0
+
+### $ sudo nmcli device set enp0s8 managed yes
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed yes
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             fe80::14de:679b:5a3d:5835/64
+enp0s9           UP
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : down ===
+[sudo] password for user:
+# exp4 router2 teardown    2026-11-04T15:35:29+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo firewall-cmd --reload
+success
+exit=0
+
+既定ルートあり（復旧不要）
+### $ sudo sysctl -w net.ipv4.ip_forward=0
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ sudo ip addr flush dev enp0s8
+exit=0
+
+### $ sudo nmcli device set enp0s8 managed yes
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed yes
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             fe80::86e5:a8c0:19ca:9504/64
+enp0s9           UP
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : down ===
+[sudo] password for user:
+# exp5 client teardown   2026-11-04T15:36:32+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo ip route del unreachable 192.168.0.0/16 metric 4000
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed yes
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : down ===
+[sudo] password for user:
+# exp5 server teardown   2026-11-04T15:36:35+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo ip route del unreachable 192.168.0.0/16 metric 4000
+RTNETLINK answers: No such process
+exit=2
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed yes
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+記録: <PROJECT_ROOT>/data/baseline/baseline-sh-down-20261104T193227.txt
+
+### $ ./labs/common/baseline.sh status
+# baseline.sh  action=status  2026-11-04T19:33:41+09:00  wsl=mirrored
+
+=== router (port 2225) : status ===
+# exp4 router show    2026-11-04T15:36:42+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             fe80::14de:679b:5a3d:5835/64
+enp0s9           UP             fe80::df47:bed5:c02:aee1/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+[sudo] password for user:
+public
+  interfaces: enp0s3 enp0s8 enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : status ===
+# exp4 router2 show    2026-11-04T15:36:46+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             fe80::86e5:a8c0:19ca:9504/64
+enp0s9           UP             fe80::d607:fe7e:857c:9081/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+[sudo] password for user:
+public
+  interfaces: enp0s3 enp0s8 enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : status ===
+# exp5 client show   2026-11-04T15:36:48+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             fe80::7a58:eada:5890:f944/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : status ===
+# exp5 server show   2026-11-04T15:36:49+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             fe80::62b1:5355:64ee:1516/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-04T15:36:50+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 0 received, 100% packet loss, time 2002ms
+
+  exit=1
+  判定: 【応答なし】要確認（各 VM の記録を参照）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 【応答なし】要確認（各 VM の記録を参照）
+記録: <PROJECT_ROOT>/data/baseline/baseline-sh-status-20261104T193341.txt

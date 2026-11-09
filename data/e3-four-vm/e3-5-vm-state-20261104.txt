@@ -1,0 +1,144 @@
+# E3-5: 5 台の VM の設定とスナップショットの読み取り(Claude Code が WSL2 から実行。読み取りのみ)
+# 出所: 2026-11-04 の夜(baseline.sh の down と status の後。cli・server・router・router2 が起動中、switch は電源オフの状態)に実行。router は 2026-11-04 に作り直した VM。
+# 注: 実際には VBoxManage.exe を絶対パスで呼んだ(スクリプトでは vb の関数が使えないため)。ここでは vb と書いた。出力の CR は除いた。
+# 注: ssh-keygen -F は known_hosts の項目の指紋の表示(ホスト名はハッシュ化されている項目も、-F で引ける)。
+
+### $ vb showvminfo "Alma9mini-cli" --machinereadable | grep -E '^(VMState=|memory|cpus|nic[0-9]|macaddress[0-9]|nictype[0-9]|intnet[0-9]|Forwarding)'
+memory=512
+cpus=4
+VMState="running"
+macaddress1="0800277DFB41"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2222,,22"
+nic2="none"
+intnet3="lan-a"
+macaddress3="080027AE48B1"
+nic3="intnet"
+nictype3="82540EM"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb snapshot "Alma9mini-cli" list
+   Name: common-ready (UUID: 3fc69358-5902-43b7-8f5b-a633d2f143e0)
+      Name: node-ready (UUID: 5a2d383a-a74b-486e-9429-7385bc04bfba) *
+
+### $ vb showvminfo "Alma9mini-server" --machinereadable | grep -E '^(VMState=|memory|cpus|nic[0-9]|macaddress[0-9]|nictype[0-9]|intnet[0-9]|Forwarding)'
+memory=512
+cpus=4
+VMState="running"
+macaddress1="080027C6AE35"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2223,,22"
+nic2="none"
+intnet3="lan-b"
+macaddress3="0800277E3718"
+nic3="intnet"
+nictype3="82540EM"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb snapshot "Alma9mini-server" list
+   Name: node-ready (UUID: 846e272f-3aec-4bc8-9960-9aaa10ab1072) *
+
+### $ vb showvminfo "Alma9mini-router" --machinereadable | grep -E '^(VMState=|memory|cpus|nic[0-9]|macaddress[0-9]|nictype[0-9]|intnet[0-9]|Forwarding)'
+memory=512
+cpus=4
+VMState="running"
+macaddress1="080027DE3533"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2225,,22"
+intnet2="lan-a"
+macaddress2="080027414968"
+nic2="intnet"
+nictype2="82540EM"
+intnet3="transit"
+macaddress3="0800270CC039"
+nic3="intnet"
+nictype3="82540EM"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb snapshot "Alma9mini-router" list
+   Name: node-ready (UUID: 555b0798-c88e-4872-a487-1d218b1fb685) *
+   Description: router: hostname, host key, ports and NICs set; before baseline.sh up
+
+### $ vb showvminfo "Alma9mini-router2" --machinereadable | grep -E '^(VMState=|memory|cpus|nic[0-9]|macaddress[0-9]|nictype[0-9]|intnet[0-9]|Forwarding)'
+memory=512
+cpus=4
+VMState="running"
+macaddress1="08002706DBE9"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2226,,22"
+intnet2="transit"
+macaddress2="0800274B8985"
+nic2="intnet"
+nictype2="82540EM"
+intnet3="lan-b"
+macaddress3="080027382834"
+nic3="intnet"
+nictype3="82540EM"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb snapshot "Alma9mini-router2" list
+   Name: node-ready (UUID: 369eeab5-97f0-4ed8-9576-5a844ff71d35) *
+   Description: router2: hostname, host key, ports and NICs set; before baseline.sh up
+
+### $ vb showvminfo "Alma9mini-switch" --machinereadable | grep -E '^(VMState=|memory|cpus|nic[0-9]|macaddress[0-9]|nictype[0-9]|intnet[0-9]|Forwarding)'
+memory=512
+cpus=4
+VMState="poweroff"
+macaddress1="080027400CE5"
+nic1="nat"
+nictype1="82540EM"
+Forwarding(0)="ssh,tcp,127.0.0.1,2224,,22"
+nic2="none"
+nic3="none"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb snapshot "Alma9mini-switch" list
+   Name: node-ready (UUID: 0dfde7a8-d805-4d70-9726-ac20fb989e76) *
+   Description: switch: hostname, host key, ports and NICs set; before baseline.sh up
+
+### $ ssh-keygen -F "[127.0.0.1]:2222" -l
+[127.0.0.1]:2222 ED25519 SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE
+[127.0.0.1]:2222 RSA SHA256:elJamq5PtpJKkQxmHz9wvqTbkInYT08p9898R4zYg5M
+[127.0.0.1]:2222 ECDSA SHA256:qAFJgar357RKcPKjqkbo0vK2Wjj9S2j1tMmxDNbaous
+
+### $ ssh-keygen -F "[127.0.0.1]:2223" -l
+[127.0.0.1]:2223 ED25519 SHA256:yWB8MiDXjviJ4E1qErZUWCemxR9qwjTLE1KauXlHHds
+[127.0.0.1]:2223 RSA SHA256:3mvv9dghomiYmdnAfDqf6dt5BxVqBuklxA7ekpKVgv4
+[127.0.0.1]:2223 ECDSA SHA256:XlvNqQg/R5Fg6kfUade/Y0S6Vm8muNbKSzRqAegyl18
+
+### $ ssh-keygen -F "[127.0.0.1]:2224" -l
+[127.0.0.1]:2224 ED25519 SHA256:XoJFC5Cji1CxOMfksX1w2+US/xO8FoL95ZHcuqM8LVI
+
+### $ ssh-keygen -F "[127.0.0.1]:2225" -l
+[127.0.0.1]:2225 ED25519 SHA256:N+KLyzV0+jAWcLpmVEXrrbmzzD3MMFg/vU7K4iLfeIU
+[127.0.0.1]:2225 RSA SHA256:WWf57xVG60SPjY7E+Zp/KFK1Z1SRvuCqw+vGfE7NWzo
+[127.0.0.1]:2225 ECDSA SHA256:4prOKjkEH9FAJU3M3D6s1N9o1Y/sx8eGu3zFXbafGSU
+
+### $ ssh-keygen -F "[127.0.0.1]:2226" -l
+[127.0.0.1]:2226 ED25519 SHA256:RZ5TVqpysPLsJMmpHcOvYESjJy1Ji4Lozs7ftWZszM8
+[127.0.0.1]:2226 RSA SHA256:WiKFngg23xO5fvMl+C0kRFTaissDxgQz5/4t0tjgcGo
+[127.0.0.1]:2226 ECDSA SHA256:0hN2vw+VYfQSEtZd3dd/X0gOyf9WFTKGaFLy6uf87kU

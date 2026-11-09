@@ -1,0 +1,21 @@
+# E4-4: スナップショット common-ready の取得と、起動後の鍵でのログイン  対象: WSL2 の bash、一般ユーザー → VM Alma9mini-cli
+# 出所: ユーザーが貼り付けた出力の転記(e2b-7-snapshot-20261102.txt の 2、3 と同じ内容を、embed 用の形式に整えた)。取得時刻は、画像(2026-11-02 203744)のスナップショットの作成欄が 2026/11/02 20:36。
+# 注: vb は ~/.bashrc の関数(VBoxManage.exe を呼ぶ)。VM は電源オフ(VM 内で poweroff した。その出力は記録なし)。
+### $ vb showvminfo "Alma9mini-cli" --machinereadable | grep '^VMState='
+VMState="poweroff"
+
+### $ vb snapshot "Alma9mini-cli" take "common-ready"
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Snapshot taken. UUID: 3fc69358-5902-43b7-8f5b-a633d2f143e0
+
+### $ vb snapshot "Alma9mini-cli" list
+   Name: common-ready (UUID: 3fc69358-5902-43b7-8f5b-a633d2f143e0) *
+
+### $ vb startvm "Alma9mini-cli"
+Waiting for VM "Alma9mini-cli" to power on...
+VM "Alma9mini-cli" has been successfully started.
+
+### $ ssh -p 2222 user@127.0.0.1
+Enter passphrase for key '/home/<WSL_USER>/.ssh/id_ed25519_lab_wsl':
+Last login: Mon Nov  2 20:31:54 2026 from 10.0.2.2
+[user@client ~]$

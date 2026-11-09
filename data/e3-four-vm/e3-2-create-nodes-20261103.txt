@@ -1,0 +1,145 @@
+# E3-2: router の作り直し(削除と create-nodes.sh)、router2 と switch の作成(create-nodes.sh)、cli の NIC(H9)  対象: WSL2 の bash、一般ユーザー。sudo のパスワードは出力に出ていない
+# 削除: `vb list vms` の出力から、旧 VM(名前が -old で終わる行、5 行)を削除した(ユーザーの判断)。
+# 注: router は 2026-11-04 に、最終版のスクリプトで作り直した(最初の router は削除した。削除の操作は記録に含めない)。router2 と switch は 2026-11-03 の実行、cli の NIC は 2026-11-04 の実行。 router2 と switch の実行の末尾の `vb list vms` から、この時点では存在した最初の router の行(のちに削除した VM)も削除した。
+### $ ./labs/common/create-nodes.sh --dry-run router
+作成する VM: router(クローン元 Alma9mini-cli のスナップショット common-ready から)
+=== Alma9mini-router(ポート 2225) ===
+[dry-run] /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe clonevm Alma9mini-cli --snapshot common-ready --name Alma9mini-router --register
+[dry-run] /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --natpf1 delete ssh
+[dry-run] /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --natpf1 ssh,tcp,127.0.0.1,2225,,22
+[dry-run] /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --nic2 intnet --intnet2 lan-a --nictype2 82540EM
+[dry-run] /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --nic3 intnet --intnet3 transit --nictype3 82540EM
+[dry-run] /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe startvm Alma9mini-router --type headless
+[dry-run] ssh-keygen -R "[127.0.0.1]:2225"
+[dry-run] SSH で起動を待つ → ssh -t -p 2225 user@127.0.0.1 sudo (hostnamectl set-hostname router; ホスト鍵の再生成; sshd の再起動)
+[dry-run] ssh-keyscan の fingerprint と VM が表示した fingerprint を照合して、known_hosts に追加
+[dry-run] acpipowerbutton → 停止待ち → snapshot take node-ready
+完了: router
+
+### $ ./labs/common/create-nodes.sh router
+作成する VM: router(クローン元 Alma9mini-cli のスナップショット common-ready から)
+続けますか? (yes/no) yes
+=== Alma9mini-router(ポート 2225) ===
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe clonevm Alma9mini-cli --snapshot common-ready --name Alma9mini-router --register
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Machine has been successfully cloned as "Alma9mini-router"
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --natpf1 delete ssh
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --natpf1 ssh,tcp,127.0.0.1,2225,,22
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --nic2 intnet --intnet2 lan-a --nictype2 82540EM
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router --nic3 intnet --intnet3 transit --nictype3 82540EM
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe startvm Alma9mini-router --type headless
+Waiting for VM "Alma9mini-router" to power on...
+VM "Alma9mini-router" has been successfully started.
+この後 [sudo] password for user: が表示されます。VM の user のパスワードを入力してください
+[sudo] password for user:
+VM が表示した新しい fingerprint: SHA256:N+KLyzV0+jAWcLpmVEXrrbmzzD3MMFg/vU7K4iLfeIU
+known_hosts に追加しました(fingerprint 一致)
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe controlvm Alma9mini-router acpipowerbutton
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe snapshot Alma9mini-router take node-ready --description router: hostname, host key, ports and NICs set; before baseline.sh up
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Snapshot taken. UUID: 555b0798-c88e-4872-a487-1d218b1fb685
+完了: router
+"Alma9mini" {90a6c326-c5f7-4340-a763-be136d9aea76}
+"Alma9mini-cli" {d1c818bd-daee-4869-83d4-fc1a72dfc0f8}
+"Alma9mini-server" {a1672714-f8ac-4a70-96ef-f8f22b963902}
+"Alma9mini-router2" {204c2457-8085-49b2-8fb4-2d09dc5d0855}
+"Alma9mini-switch" {f7ff0dc8-f885-4e32-bbf4-b143af146956}
+"Alma9mini-router" {a3664694-f644-4c58-8cfa-f6c406e2f8c4}
+
+### $ vb snapshot "Alma9mini-router" list
+   Name: node-ready (UUID: 555b0798-c88e-4872-a487-1d218b1fb685) *
+   Description: router: hostname, host key, ports and NICs set; before baseline.sh up
+
+### $ vb showvminfo "Alma9mini-router" --machinereadable | grep -E '^(VMState|macaddress|nic[0-9]|intnet|Forwarding)'
+VMState="poweroff"
+VMStateChangeTime="2026-11-04T03:43:55.590000000"
+macaddress1="080027DE3533"
+nic1="nat"
+Forwarding(0)="ssh,tcp,127.0.0.1,2225,,22"
+intnet2="lan-a"
+macaddress2="080027414968"
+nic2="intnet"
+intnet3="transit"
+macaddress3="0800270CC039"
+nic3="intnet"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ ssh-keygen -F "[127.0.0.1]:2225" -l
+# Host [127.0.0.1]:2225 found: line 23
+[127.0.0.1]:2225 ED25519 SHA256:N+KLyzV0+jAWcLpmVEXrrbmzzD3MMFg/vU7K4iLfeIU
+
+### $ ./labs/common/create-nodes.sh router2 switch
+作成する VM: router2 switch(クローン元 Alma9mini-cli のスナップショット common-ready から)
+続けますか? (yes/no) yes
+=== Alma9mini-router2(ポート 2226) ===
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe clonevm Alma9mini-cli --snapshot common-ready --name Alma9mini-router2 --register
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Machine has been successfully cloned as "Alma9mini-router2"
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router2 --natpf1 delete ssh
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router2 --natpf1 ssh,tcp,127.0.0.1,2226,,22
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router2 --nic2 intnet --intnet2 transit --nictype2 82540EM
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-router2 --nic3 intnet --intnet3 lan-b --nictype3 82540EM
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe startvm Alma9mini-router2 --type headless
+Waiting for VM "Alma9mini-router2" to power on...
+VM "Alma9mini-router2" has been successfully started.
+この後 [sudo] password for user: が表示されます。VM の user のパスワードを入力してください
+[sudo] password for user:
+VM が表示した新しい fingerprint: SHA256:RZ5TVqpysPLsJMmpHcOvYESjJy1Ji4Lozs7ftWZszM8
+known_hosts に追加しました(fingerprint 一致)
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe controlvm Alma9mini-router2 acpipowerbutton
+VBoxManage.exe: error: The object is not ready
+VBoxManage.exe: error: Details: code E_ACCESSDENIED (0x80070005), component ConsoleWrap, interface IConsole, callee IUnknown
+VBoxManage.exe: error: Context: "COMGETTER(RemoteUSBDevices)(ComSafeArrayAsOutParam(coll))" at line 2702 of file VBoxManageInfo.cpp
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe snapshot Alma9mini-router2 take node-ready --description router2: hostname, host key, ports and NICs set; before baseline.sh up
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Snapshot taken. UUID: 369eeab5-97f0-4ed8-9576-5a844ff71d35
+=== Alma9mini-switch(ポート 2224) ===
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe clonevm Alma9mini-cli --snapshot common-ready --name Alma9mini-switch --register
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Machine has been successfully cloned as "Alma9mini-switch"
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-switch --natpf1 delete ssh
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe modifyvm Alma9mini-switch --natpf1 ssh,tcp,127.0.0.1,2224,,22
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe startvm Alma9mini-switch --type headless
+Waiting for VM "Alma9mini-switch" to power on...
+VM "Alma9mini-switch" has been successfully started.
+この後 [sudo] password for user: が表示されます。VM の user のパスワードを入力してください
+[sudo] password for user:
+VM が表示した新しい fingerprint: SHA256:XoJFC5Cji1CxOMfksX1w2+US/xO8FoL95ZHcuqM8LVI
+known_hosts に追加しました(fingerprint 一致)
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe controlvm Alma9mini-switch acpipowerbutton
++ /mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe snapshot Alma9mini-switch take node-ready --description switch: hostname, host key, ports and NICs set; before baseline.sh up
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Snapshot taken. UUID: 0dfde7a8-d805-4d70-9726-ac20fb989e76
+完了: router2 switch
+"Alma9mini" {90a6c326-c5f7-4340-a763-be136d9aea76}
+"Alma9mini-cli" {d1c818bd-daee-4869-83d4-fc1a72dfc0f8}
+"Alma9mini-server" {a1672714-f8ac-4a70-96ef-f8f22b963902}
+"Alma9mini-router2" {204c2457-8085-49b2-8fb4-2d09dc5d0855}
+"Alma9mini-switch" {f7ff0dc8-f885-4e32-bbf4-b143af146956}
+
+### $ vb showvminfo "Alma9mini-cli" --machinereadable | grep VMState=
+VMState="poweroff"
+
+### $ vb modifyvm "Alma9mini-cli" --nic3 intnet --intnet3 lan-a
+
+### $ vb showvminfo "Alma9mini-cli" --machinereadable | grep -E '^(nic[0-9]|macaddress[0-9]|intnet[0-9]|Forwarding)'
+macaddress1="0800277DFB41"
+nic1="nat"
+Forwarding(0)="ssh,tcp,127.0.0.1,2222,,22"
+nic2="none"
+intnet3="lan-a"
+macaddress3="080027AE48B1"
+nic3="intnet"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+
+### $ vb snapshot "Alma9mini-cli" take node-ready
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Snapshot taken. UUID: 5a2d383a-a74b-486e-9429-7385bc04bfba

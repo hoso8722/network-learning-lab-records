@@ -1,0 +1,38 @@
+# 転記(ユーザーが貼った出力と画像の読み取り。2026-11-02。取得時刻は画像の作成欄「2026/11/02 20:36」が目安)
+# 対象: VM Alma9mini-cli(新しいクローン)。操作は WSL2 の bash から(~/.bashrc の関数 vb = VBoxManage.exe のフルパスを呼ぶ)。
+
+# 1. 時刻同期の確認(VM 内、読み取りのみ。chronyc makestep の後)
+[user@client ~]$ chronyc tracking
+Reference ID    : 8E5B6937 (tok2.jp.ntp.li)
+Stratum         : 4
+Ref time (UTC)  : Mon Nov 02 11:33:52 2026
+System time     : 0.000217440 seconds fast of NTP time
+Last offset     : +0.000258966 seconds
+RMS offset      : 1139.654052734 seconds
+⋮ (Frequency 以降は省略)
+[user@client ~]$ chronyc sources
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+^* tok2.jp.ntp.li                3   6   377    20    +69us[ +328us] +/-   44ms
+⋮ (他の 3 行は省略: ^? capricieux.magi-reco.com、^- vmi3026968.contaboserver…、^? 140.245.90.15)
+# 注: RMS offset が約 1140 秒と大きいのは、chronyc makestep による時刻の跳びを含む値かもしれない(この測定は、makestep の約 9 時間後)と考えられる(候補。未確認)。
+# 注: timedatectl の "System clock synchronized" は、この時点では再確認していない。
+
+# 2. スナップショットの取得(VM は電源オフ)
+<WSL_USER>:~$ vb showvminfo "Alma9mini-cli" --machinereadable | grep '^VMState='
+VMState="poweroff"
+<WSL_USER>:~$ vb snapshot "Alma9mini-cli" take "common-ready"
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Snapshot taken. UUID: 3fc69358-5902-43b7-8f5b-a633d2f143e0
+<WSL_USER>:~$ vb snapshot "Alma9mini-cli" list
+   Name: common-ready (UUID: 3fc69358-5902-43b7-8f5b-a633d2f143e0) *
+# 画像 screenshots/original/Screenshot 2026-11-02 203744.png: VirtualBox マネージャーの「スナップショット」タブ。common-ready(作成 2026/11/02 20:36)と「最新の状態(変更)」。VM は Alma9mini-cli(common-re…)で電源オフ。
+
+# 3. 起動と、鍵でのログインの確認
+<WSL_USER>:~$ vb startvm "Alma9mini-cli"
+Waiting for VM "Alma9mini-cli" to power on...
+VM "Alma9mini-cli" has been successfully started.
+<WSL_USER>:~$ ssh -p 2222 user@127.0.0.1
+Enter passphrase for key '/home/<WSL_USER>/.ssh/id_ed25519_lab_wsl':
+Last login: Mon Nov  2 20:31:54 2026 from 10.0.2.2
+[user@client ~]$
+# 注: 再起動後の VM の時計は、ログインの履歴(20:31 JST)とホストの時刻が合っている。再起動で時計がずれない理由は未確認(RTC は、停止前は古い値だった)。

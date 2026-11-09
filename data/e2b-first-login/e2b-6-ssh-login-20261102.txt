@@ -1,0 +1,56 @@
+# E2b-6: 初回の SSH 接続(ホスト鍵の警告、照合、古い記録の削除、再接続)  対象: WSL2 の bash、一般ユーザー → VM Alma9mini-cli(127.0.0.1:2222 → 22)
+# 出所: ユーザーが貼り付けた出力の転記(取得時刻は不明、2026-11-02 の午前)。ただし、`ssh-keygen -F` の 2 つは Claude Code が実行した読み取り(2026-11-02)。
+# 注: WSL のユーザー名は、コミット前のフック(docs/REDACTION.md)で <WSL_USER> に置換済み(原本の貼り付けでは実際のユーザー名)。
+# 注: 「VM のコンソールでの照合」の出力は、画像 screenshots/original/Screenshot 2026-11-02 104442.png の転記(Claude Code が画像から書き起こした)。
+### $ ssh -p 2222 user@127.0.0.1
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ED25519 key sent by the remote host is
+SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE.
+Please contact your system administrator.
+Add correct host key in /home/<WSL_USER>/.ssh/known_hosts to get rid of this message.
+Offending ED25519 key in /home/<WSL_USER>/.ssh/known_hosts:13
+  remove with:
+  ssh-keygen -f '/home/<WSL_USER>/.ssh/known_hosts' -R '[127.0.0.1]:2222'
+Host key for [127.0.0.1]:2222 has changed and you have requested strict checking.
+Host key verification failed.
+
+### $ ssh-keygen -F '[127.0.0.1]:2222' -f ~/.ssh/known_hosts -l
+# Host [127.0.0.1]:2222 found: line 11 
+[127.0.0.1]:2222 ECDSA SHA256:c15T/dk38obcrlNxlNJovemwkmAwxR5lvX811DIqKE4
+# Host [127.0.0.1]:2222 found: line 12 
+[127.0.0.1]:2222 RSA SHA256:fQeNUjpN5k9X7UFe797leDjFSmCI09ybJthSalc2ras
+# Host [127.0.0.1]:2222 found: line 13 
+[127.0.0.1]:2222 ED25519 SHA256:fV76rJ8Xq5LMAumAhNLilkgkU/DgN4PXr/H7LeP+/C8
+
+### $ ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+256 SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE no comment (ED25519)
+
+### $ ssh-keygen -f ~/.ssh/known_hosts -R '[127.0.0.1]:2222'
+# Host [127.0.0.1]:2222 found: line 11
+# Host [127.0.0.1]:2222 found: line 12
+# Host [127.0.0.1]:2222 found: line 13
+/home/<WSL_USER>/.ssh/known_hosts updated.
+Original contents retained as /home/<WSL_USER>/.ssh/known_hosts.old
+
+### $ ssh -p 2222 user@127.0.0.1
+The authenticity of host '[127.0.0.1]:2222 ([127.0.0.1]:2222)' can't be established.
+ED25519 key fingerprint is SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[127.0.0.1]:2222' (ED25519) to the list of known hosts.
+user@127.0.0.1's password:
+Last login: Mon Nov  2 04:46:21 2026
+[user@vbox ~]$
+
+### $ ssh-keygen -F '[127.0.0.1]:2222' -f ~/.ssh/known_hosts -l
+# Host [127.0.0.1]:2222 found: line 25 
+[127.0.0.1]:2222 ED25519 SHA256:5qdRFYbD/h2+U6hJoXRPXHPNDGhpH9aaNQoCGhmvpSE
+# Host [127.0.0.1]:2222 found: line 26 
+[127.0.0.1]:2222 RSA SHA256:elJamq5PtpJKkQxmHz9wvqTbkInYT08p9898R4zYg5M
+# Host [127.0.0.1]:2222 found: line 27 
+[127.0.0.1]:2222 ECDSA SHA256:qAFJgar357RKcPKjqkbo0vK2Wjj9S2j1tMmxDNbaous

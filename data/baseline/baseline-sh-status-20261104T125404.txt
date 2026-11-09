@@ -1,0 +1,33 @@
+# baseline.sh  action=status  2026-11-04T12:54:04+09:00  wsl=mirrored
+
+=== router (port 2225) : status ===
+  ssh 終了コード: 127（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : status ===
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : status ===
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : status ===
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-04T12:54:49+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+  
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 0 received, 100% packet loss, time 2029ms
+  
+  exit=1
+  判定: 【応答なし】要確認（各 VM の記録を参照）
+
+## まとめ
+  router: 終了コード 127
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 【応答なし】要確認（各 VM の記録を参照）
+記録: /home/<WSL_USER>/network-learning-handoff/data/baseline/baseline-sh-status-20261104T125404.txt

@@ -1,0 +1,12 @@
+# E4-2: ssh-agent が動いていないシェルでの表示  対象: WSL2 の bash、一般ユーザー
+# 出所: ユーザーが貼り付けた出力の転記(取得時刻は記録なし。旧鍵の退避(03:27 JST)のあと、新しい鍵の作成(03:38 JST)の前)。
+# 注: 3 つ目の ssh-add は鍵の指定なし。sudo 付きの 2 つ目は、root の環境で動くため意味がない(あなたの agent には届かない)。
+### $ ssh-add -l
+Could not open a connection to your authentication agent.
+
+### $ sudo ssh-add -l
+[sudo] password for <WSL_USER>:
+Could not open a connection to your authentication agent.
+
+### $ ssh-add
+Could not open a connection to your authentication agent.

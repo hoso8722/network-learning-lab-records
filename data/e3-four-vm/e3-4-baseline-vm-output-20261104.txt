@@ -3,7 +3,7 @@
 # 注: up と、その後の status の間に、約 6.5 時間の空きがある(ユーザーの申告: 「時間が開いてしまった」)。VM の時計の行(「# exp4 …」「# exp5 …」)は、up の時点では WSL2 の時計と合っているが、status 以降は約 4 時間遅れている(VM の 15:34〜15:36 が、WSL2 の 19:31〜19:33 に当たる)。ホストの休止などが候補(未確認)。
 # 注: baseline.sh が WSL2 に書く記録(data/baseline/baseline-sh-*-20261104T*.txt)には、終了コードと ping の判定だけが残る(VM 側のコマンドの出力は残らない)。VM 側の出力は、この転記にだけある。
 # 注: sudo のパスワードは出力に出ていない。「記録:」の行のパスは、<PROJECT_ROOT> に置き換えた(docs/REDACTION.md)。
-# 注: この記録は、前の回(同日の午前、削除した最初の router を使った回)の同じ操作の記録を、差し替えたもの。前の回の WSL2 側の記録(data/baseline/baseline-sh-*-20261104T0345〜0355)は残してある。
+# 注: この記録は、同日の午前の同じ操作の記録を、差し替えたもの。
 ### $ ./labs/common/baseline.sh up
 # baseline.sh  action=up  2026-11-04T12:59:39+09:00  wsl=mirrored
 

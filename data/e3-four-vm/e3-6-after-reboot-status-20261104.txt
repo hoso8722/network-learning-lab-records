@@ -1,6 +1,6 @@
 # E3-6: 再起動後(VM を acpipowerbutton で止めて起動し直したあと)の baseline.sh status  対象: WSL2 の bash、一般ユーザー(各 VM で sudo)
 # 出所: ユーザーが貼り付けた出力の転記(2026-11-04 12:54 JST)。起動の直後(約 15 秒〜2 分)の状態。
-# 注: 実際の手順は、スナップショット node-ready への復元を含む予定だったが、復元のコマンドは実行されていない(貼り付けに含まれない)。そのため、router(新しく作り直した VM)には route-test.sh がなく(終了コード 127)、cli・server・router2 には、前回の up で送ったスクリプトが残っている。
+# 注: 実際の手順は、スナップショット node-ready への復元を含む予定だったが、復元のコマンドは実行されていない(貼り付けに含まれない)。そのため、router には route-test.sh がなく(終了コード 127)、cli・server・router2 には、先の up で送ったスクリプトが残っている。
 # 注: 「記録:」の行のパスは <PROJECT_ROOT> に置き換えた。
 ### $ for n in cli server router2; do vb controlvm "Alma9mini-$n" acpipowerbutton; done
 "Alma9mini-cli" {d1c818bd-daee-4869-83d4-fc1a72dfc0f8}

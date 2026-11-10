@@ -2,7 +2,7 @@
 # 出所: ユーザーが貼り付けた出力の転記。時刻は VM の時計の表示で、cli の poweroff の通知が「Tue 2026-11-03 03:00:18 JST」、server の起動後のログイン(Last login)と poweroff の通知が「2026-11-03 10:22〜10:48 JST」。vb は ~/.bashrc の関数(VBoxManage.exe を呼ぶ)。
 # 注: cli の中のプロンプトは [user@client ~]$、WSL2 のプロンプトは <WSL_USER>:network-learning-handoff$。sudo のパスワードは出力に出ていない。
 # 注: showvminfo は grep で絞った出力(memory、cpus、nic、macaddress、nictype、Forwarding の行だけ)。macaddress2 以降の行は、nic2〜8 が none のため出ていない。
-# 削除: 各 `vb list vms` の出力から、旧 VM(名前が -old で終わる行、5 行)を削除した(ユーザーの判断。旧 VM は VirtualBox に登録されたまま)。
+# 削除: 各 `vb list vms` の出力から、このラボと関係のない VM の行(5 行)を除いた。
 ### $ cat /etc/machine-id
 b4031d8c20c046eda3698b00b6e3c794
 

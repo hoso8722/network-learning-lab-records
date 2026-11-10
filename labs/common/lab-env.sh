@@ -10,7 +10,7 @@
 # 復旧       : agent を止める: SSH_AUTH_SOCK=~/.ssh/agent-lab.sock ssh-agent -k、またはソケットの持ち主の ssh-agent を kill。
 #              WSL の再起動でも消える（鍵はメモリ上にあるだけ）。
 # 使い方     : source labs/common/lab-env.sh          （手動）
-#              自動で使うには labs/common/lab-env-hook.sh を ~/.bashrc から読み込む（README の説明を参照）。
+#              自動で使うには labs/common/lab-env-hook.sh を ~/.bashrc から読み込む。
 # 限界       : agent が動いている間は、このユーザーのプロセスなら誰でも agent 経由で鍵を使える（パスフレーズなしで署名できる）。
 #              共有 PC や、信頼できないプロセスを動かす環境では、-t の期限付きで載せる（LAB_KEY_LIFETIME=3600 など）。
 

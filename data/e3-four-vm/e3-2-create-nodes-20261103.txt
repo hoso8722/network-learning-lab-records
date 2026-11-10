@@ -1,6 +1,6 @@
-# E3-2: router の作り直し(削除と create-nodes.sh)、router2 と switch の作成(create-nodes.sh)、cli の NIC(H9)  対象: WSL2 の bash、一般ユーザー。sudo のパスワードは出力に出ていない
-# 削除: `vb list vms` の出力から、旧 VM(名前が -old で終わる行、5 行)を削除した(ユーザーの判断)。
-# 注: router は 2026-11-04 に、最終版のスクリプトで作り直した(最初の router は削除した。削除の操作は記録に含めない)。router2 と switch は 2026-11-03 の実行、cli の NIC は 2026-11-04 の実行。 router2 と switch の実行の末尾の `vb list vms` から、この時点では存在した最初の router の行(のちに削除した VM)も削除した。
+# E3-2: router の作成(create-nodes.sh)、router2 と switch の作成(create-nodes.sh)、cli の NIC(H9)  対象: WSL2 の bash、一般ユーザー。sudo のパスワードは出力に出ていない
+# 削除: `vb list vms` の出力から、このラボと関係のない VM の行(5 行)を除いた。
+# 注: router は 2026-11-04 に、最終版のスクリプトで作った。router2 と switch は 2026-11-03 の実行、cli の NIC は 2026-11-04 の実行。 router2 と switch の実行の末尾の `vb list vms` から、この時点で存在した router の行(最終版のスクリプトで作った router とは別の VM)も除いた。
 ### $ ./labs/common/create-nodes.sh --dry-run router
 作成する VM: router(クローン元 Alma9mini-cli のスナップショット common-ready から)
 === Alma9mini-router(ポート 2225) ===

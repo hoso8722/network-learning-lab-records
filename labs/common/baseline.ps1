@@ -2,7 +2,7 @@
 #
 # 対象ノード : Windows ホスト（PowerShell）から、NAT のポートフォワード経由で client / server / router / router2
 # 実行権限   : 一般ユーザー（VM 側は user アカウント。VM ごとに sudo のパスワードを1回聞かれる）
-# 目的       : 再起動後の再構築手順（docs/LAB_RESTART.md §2 の手順4〜6）を1コマンドにする
+# 目的       : 再起動後の再構築手順を1コマンドにする
 # 前提       : A-1〜A-4 完了（鍵で入れること。ssh-agent に鍵が載っていること）。4台が起動していて、VirtualBox の NIC の接続先
 #              （lan-a / transit / lan-b）が実験4のとおりであること。時刻の確認は別（sync-all-auto.ps1）。
 # 動作 (-Action):

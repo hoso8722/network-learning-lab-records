@@ -1,5 +1,5 @@
 # E3-5: 5 台の VM の設定とスナップショットの読み取り(Claude Code が WSL2 から実行。読み取りのみ)
-# 出所: 2026-11-04 の夜(baseline.sh の down と status の後。cli・server・router・router2 が起動中、switch は電源オフの状態)に実行。router は 2026-11-04 に作り直した VM。
+# 出所: 2026-11-04 の夜(baseline.sh の down と status の後。cli・server・router・router2 が起動中、switch は電源オフの状態)に実行。router は 2026-11-04 に作った VM。
 # 注: 実際には VBoxManage.exe を絶対パスで呼んだ(スクリプトでは vb の関数が使えないため)。ここでは vb と書いた。出力の CR は除いた。
 # 注: ssh-keygen -F は known_hosts の項目の指紋の表示(ホスト名はハッシュ化されている項目も、-F で引ける)。
 

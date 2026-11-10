@@ -1,4 +1,4 @@
-# このプロジェクト（network-learning-handoff）の下にいるときだけ、ラボ専用の ssh-agent を使う（~/.bashrc から source する）
+# このプロジェクトの下にいるときだけ、ラボ専用の ssh-agent を使う（~/.bashrc から source する）
 #
 # 対象ノード : WSL2 の対話 bash
 # 目的       : プロジェクトのフォルダーに入ると、自動でラボ専用 agent に切り替え（必要なら起動・鍵の追加）、出ると元に戻す。
@@ -7,7 +7,7 @@
 #              プロジェクトの外へ出ると、元の値（なければ unset）に戻す。ファイルは変更しない。
 # 復旧       : ~/.bashrc の読み込み行を消して、端末を開き直す。
 
-LAB_PROJECT_DIR="${LAB_PROJECT_DIR:-$HOME/network-learning-handoff}"
+LAB_PROJECT_DIR="${LAB_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"   # 既定は、このスクリプトの 2 つ上（labs/common/ の位置から決める）。別の場所は環境変数で指定
 
 __lab_env_hook() {
   case "$PWD/" in

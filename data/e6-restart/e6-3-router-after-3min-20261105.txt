@@ -1,0 +1,28 @@
+# E6-3: router の再起動の約 3 分後の状態(H3、router の再確認)  対象: WSL2 から router(ポート 2225)へ ssh、一般ユーザー + sudo(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 04:46 JST、WSL2 の時計。再起動は 04:42:25)。sudo のパスワードは出力に出ていない。
+# 注: 1 回目の `sudo firewall-cmd --get-active-zones` で、1 回目のパスワードの入力が間違っていた(「Sorry, try again.」。ユーザーの入力ミス)。2 回目で成功した。続けて、同じコマンドをもう一度実行した(出力は同じ)。
+### $ ssh -p 2225 user@127.0.0.1 'uptime; ip -br addr; nmcli device status'
+ 04:46:24 up 3 min,  0 users,  load average: 0.11, 0.12, 0.05
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP
+enp0s9           UP
+DEVICE  TYPE      STATE                   CONNECTION
+enp0s3  ethernet  connected               enp0s3
+lo      loopback  connected (externally)  lo
+enp0s8  ethernet  disconnected            --
+enp0s9  ethernet  disconnected            --
+
+### $ ssh -t -p 2225 user@127.0.0.1 'sudo firewall-cmd --get-active-zones'
+[sudo] password for user:
+Sorry, try again.
+[sudo] password for user:
+public
+  interfaces: enp0s3
+Connection to 127.0.0.1 closed.
+
+### $ ssh -t -p 2225 user@127.0.0.1 'sudo firewall-cmd --get-active-zones'
+[sudo] password for user:
+public
+  interfaces: enp0s3
+Connection to 127.0.0.1 closed.

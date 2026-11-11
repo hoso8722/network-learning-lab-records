@@ -1,0 +1,42 @@
+# baseline.sh  action=up  2026-11-05T10:46:32+09:00  wsl=mirrored
+
+## スクリプトの送信（scp。鍵認証。同名のファイルは上書き）
+  router: scp=0 chmod/確認=0 pushed:router:route-test.sh
+  router2: scp=0 chmod/確認=0 pushed:router2:route-test.sh
+  client: scp=0 chmod/確認=0 pushed:client:fault-test.sh
+  server: scp=0 chmod/確認=0 pushed:server:fault-test.sh
+
+=== router (port 2225) : up ===
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : up ===
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : up ===
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : up ===
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-05T10:47:00+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+  64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=8.59 ms
+  64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.07 ms
+  64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=5.01 ms
+  
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 3 received, 0% packet loss, time 2013ms
+  rtt min/avg/max/mdev = 4.072/5.889/8.588/1.945 ms
+  exit=0
+  判定: 基準どおり（ttl=62 で応答あり）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 基準どおり（ttl=62 で応答あり）
+記録: /home/<WSL_USER>/network-learning-handoff/data/baseline/baseline-sh-up-20261105T104632.txt

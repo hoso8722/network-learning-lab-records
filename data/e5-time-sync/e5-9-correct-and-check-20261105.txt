@@ -1,0 +1,257 @@
+# E5-9: 補正(sync-all-auto.sh)、補正後の確認(--check-only)、client の chrony の状態(補正の後)(H3、H4)  対象: WSL2 の bash、一般ユーザー(補正は、各 VM で sudo chronyc makestep。BatchMode)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 04:32〜04:34 JST、WSL2 の時計)。プロンプトの行は含めていない。
+# 注: 補正の出力の中の時刻(「# sync-time.sh 2026-11-05T00:46:22+09:00」など)は、各 VM の時計の表示で、補正の前の時刻(約 3 時間 46 分遅れ)。補正の後の表示(04:32:28 など)は、補正で進んだ後の VM の時計。
+# 注: 「記録:」の行のパスは <PROJECT_ROOT> に置き換えた。WSL2 側の記録: data/time-sync/sync-all-auto-sh-20261105T043208.txt、…T043349.txt
+### $ ./labs/common/sync-all-auto.sh
+# sync-all-auto.sh  2026-11-05T04:32:08+09:00  しきい値=2秒  check_only=0  parallel=0  wsl=mirrored
+
+=== client (port 2222) ===
+  vm_utc=1793807177.909791701  差(VM−ホスト)=-13551.180秒
+
+=== server (port 2223) ===
+  vm_utc=1793807178.975010937  差(VM−ホスト)=-13551.022秒
+
+=== switch (port 2224) ===
+  vm_utc=1793820730.997321700  差(VM−ホスト)=-0.133秒
+
+=== router (port 2225) ===
+  vm_utc=1793807180.944847638  差(VM−ホスト)=-13551.228秒
+
+=== router2 (port 2226) ===
+  vm_utc=1793807182.568860395  差(VM−ホスト)=-13550.688秒
+
+## 補正（1回目）: client server router router2（順番、BatchMode。sudo のパスワードは聞かない）
+
+=== client : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-05T00:46:22+09:00
+  ### 補正前
+  date: 2026-11-05T00:46:22+09:00
+  date_utc: 2026-11-04T15:46:22+00:00
+                   RTC time: Wed 2026-11-04 06:18:51
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:16:43 2026
+  System time     : 13550.673828125 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^- 138.2.23.206                  2  10   377     7   -350us[ -350us] +/- 9494us
+  ^* 142.91.108.61                 2  10   377     8   -174us[ -201us] +/- 8435us
+  ^- ntp-jp.vulp.ca                2  10   377     7   -829us[ -829us] +/- 8297us
+  ^- z129114.ppp.asahi-net.or>     2  10   377     7  -1955us[-1955us] +/-   14ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 8E5B6C3D, correction: 0.000000150, skew: 0.179
+  ### 補正後
+  date: 2026-11-05T04:32:28+09:00
+  date_utc: 2026-11-04T19:32:28+00:00
+                   RTC time: Wed 2026-11-04 06:19:06
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:32:19 2026
+  System time     : 0.000000135 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== server : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-05T00:46:39+09:00
+  ### 補正前
+  date: 2026-11-05T00:46:40+09:00
+  date_utc: 2026-11-04T15:46:40+00:00
+                   RTC time: Wed 2026-11-04 06:19:05
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:26:47 2026
+  System time     : 13549.258789062 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^- ntp1.hnd.jp.hojmark.net       2   8   377     8   -763us[ -803us] +/-   31ms
+  ^* 142.91.108.61                 2  10   377     7    +11us[  -29us] +/- 8600us
+  ^+ z129114.ppp.asahi-net.or>     2  10   377     7  -1607us[-1607us] +/-   14ms
+  ^+ 138.2.23.206                  2  10   377     8   -34us[  -74us] +/- 9724us
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 8E5B6C3D, correction: 0.000000142, skew: 0.131
+  ### 補正後
+  date: 2026-11-05T04:32:43+09:00
+  date_utc: 2026-11-04T19:32:43+00:00
+                   RTC time: Wed 2026-11-04 06:19:19
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:32:35 2026
+  System time     : 0.000000131 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== router : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-05T00:46:56+09:00
+  ### 補正前
+  date: 2026-11-05T00:46:56+09:00
+  date_utc: 2026-11-04T15:46:56+00:00
+                   RTC time: Wed 2026-11-04 06:19:18
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:26:39 2026
+  System time     : 13548.325195312 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^- 138.2.23.206                  2  10   377     8   -253us[ -253us] +/- 9634us
+  ^- 208.88.66.8                   2  10   377     8    -46us[  -46us] +/-   27ms
+  ^* 142.91.108.61                 2  10   377    18  +1445us[+1498us] +/-   10ms
+  ^- z129114.ppp.asahi-net.or>     2  10   377    17  -1864us[-1864us] +/-   14ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 8E5B6C3D, correction: 0.000000144, skew: 0.151
+  ### 補正後
+  date: 2026-11-05T04:33:08+09:00
+  date_utc: 2026-11-04T19:33:08+00:00
+                   RTC time: Wed 2026-11-04 06:19:42
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:32:50 2026
+  System time     : 0.000000131 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== router2 : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-05T00:47:23+09:00
+  ### 補正前
+  date: 2026-11-05T00:47:23+09:00
+  date_utc: 2026-11-04T15:47:23+00:00
+                   RTC time: Wed 2026-11-04 06:19:47
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:21:02 2026
+  System time     : 13545.775390625 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^+ 43-229-16-158.ip.neody.a>     3  10   217     7  -1064us[-1064us] +/-   11ms
+  ^+ 138.2.23.206                  2  10   377     7   -378us[ -378us] +/- 9472us
+  ^* 142.91.108.61                 2  10   377    10   +695us[ +720us] +/- 9144us
+  ^+ z129114.ppp.asahi-net.or>     2  10   377     8  -1417us[-1417us] +/-   14ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 8E5B6C3D, correction: 0.000000133, skew: 0.168
+  ### 補正後
+  date: 2026-11-05T04:33:24+09:00
+  date_utc: 2026-11-04T19:33:24+00:00
+                   RTC time: Wed 2026-11-04 06:20:01
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 8E5B6C3D (142.91.108.61)
+  Ref time (UTC)  : Wed Nov 04 19:33:13 2026
+  System time     : 0.000000124 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== client : 補正後の再測定（1回目）===
+  vm_utc=1793820804.713906635  差(VM−ホスト)=-0.312秒
+
+=== server : 補正後の再測定（1回目）===
+  vm_utc=1793820805.589845974  差(VM−ホスト)=-0.326秒
+
+=== router : 補正後の再測定（1回目）===
+  vm_utc=1793820806.578874814  差(VM−ホスト)=-0.343秒
+
+=== router2 : 補正後の再測定（1回目）===
+  vm_utc=1793820807.041337941  差(VM−ホスト)=-0.351秒
+
+## まとめ
+  switch: 補正不要（差 -0.133 秒）
+  client: 補正した（差 -13551.180 → -0.312 秒、1回目）
+  server: 補正した（差 -13551.022 → -0.326 秒、1回目）
+  router: 補正した（差 -13551.228 → -0.343 秒、1回目）
+  router2: 補正した（差 -13550.688 → -0.351 秒、1回目）
+記録: <PROJECT_ROOT>/data/time-sync/sync-all-auto-sh-20261105T043208.txt
+
+### $ labs/common/sync-all-auto.sh --check-only
+# sync-all-auto.sh  2026-11-05T04:33:49+09:00  しきい値=2秒  check_only=1  parallel=0  wsl=mirrored
+
+=== client (port 2222) ===
+  vm_utc=1793820830.005957611  差(VM−ホスト)=-0.203秒
+
+=== server (port 2223) ===
+  vm_utc=1793820831.052738144  差(VM−ホスト)=-0.218秒
+
+=== switch (port 2224) ===
+  vm_utc=1793820832.095157466  差(VM−ホスト)=-0.238秒
+
+=== router (port 2225) ===
+  vm_utc=1793820832.891627293  差(VM−ホスト)=-0.253秒
+
+=== router2 (port 2226) ===
+  vm_utc=1793820833.872417205  差(VM−ホスト)=-0.270秒
+
+## まとめ
+  client: 補正不要（差 -0.203 秒）
+  server: 補正不要（差 -0.218 秒）
+  switch: 補正不要（差 -0.238 秒）
+  router: 補正不要（差 -0.253 秒）
+  router2: 補正不要（差 -0.270 秒）
+記録: <PROJECT_ROOT>/data/time-sync/sync-all-auto-sh-20261105T043349.txt
+
+### $ ssh -p 2222 user@127.0.0.1 'hostnamectl --static; date -Is; timedatectl; chronyc tracking'
+client
+2026-11-05T04:34:00+09:00
+               Local time: Thu 2026-11-05 04:34:00 JST
+           Universal time: Wed 2026-11-04 19:34:00 UTC
+                 RTC time: Wed 2026-11-04 06:20:38
+                Time zone: Asia/Tokyo (JST, +0900)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
+Reference ID    : 8E5B6C3D (142.91.108.61)
+Stratum         : 3
+Ref time (UTC)  : Wed Nov 04 19:32:19 2026
+System time     : 0.000000001 seconds slow of NTP time
+Last offset     : -0.000026984 seconds
+RMS offset      : 860.914611816 seconds
+Frequency       : 64.784 ppm fast
+Residual freq   : +0.004 ppm
+Skew            : 0.179 ppm
+Root delay      : 0.014885438 seconds
+Root dispersion : 0.000311344 seconds
+Update interval : 2.0 seconds
+Leap status     : Normal

@@ -1,0 +1,30 @@
+# E5-4: client の chrony(凡例つきの sources、sourcestats、activity)(H2c)  対象: WSL2 から client(ポート 2222)へ ssh、一般ユーザー(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 03:55 JST ごろ、WSL2 の時計)。
+### $ ssh -p 2222 user@127.0.0.1 'chronyc sources -v; chronyc sourcestats; chronyc activity'
+
+  .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
+ / .- Source state '*' = current best, '+' = combined, '-' = not combined,
+| /             'x' = may be in error, '~' = too variable, '?' = unusable.
+||                                                 .- xxxx [ yyyy ] +/- zzzz
+||      Reachability register (octal) -.           |  xxxx = adjusted offset,
+||      Log2(Polling interval) --.      |          |  yyyy = measured offset,
+||                                \     |          |  zzzz = estimated error.
+||                                 |    |           \
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+===============================================================================
+^- 138.2.23.206                  2   9   377   155   +187us[ +187us] +/- 9653us
+^* 142.91.108.61                 2   9   375   341   -242us[ -357us] +/- 8563us
+^- ntp-jp.vulp.ca                2   9   377   574   +430us[ +325us] +/- 8347us
+^- z129114.ppp.asahi-net.or>     2   8   377   215  -1334us[-1334us] +/-   15ms
+Name/IP Address            NP  NR  Span  Frequency  Freq Skew  Offset  Std Dev
+==============================================================================
+138.2.23.206               28  13   55m     +0.375      0.598  +1552us   716us
+142.91.108.61              27  11   50m     -0.009      0.343  -2953ns   365us
+ntp-jp.vulp.ca             27  16   45m     +0.118      0.481   +344us   530us
+z129114.ppp.asahi-net.or>  15   9   33m     -0.121      0.879  -1228us   493us
+200 OK
+4 sources online
+0 sources offline
+0 sources doing burst (return to online)
+0 sources doing burst (return to offline)
+0 sources with unknown address

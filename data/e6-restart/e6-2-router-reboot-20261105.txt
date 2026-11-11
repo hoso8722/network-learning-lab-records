@@ -1,0 +1,31 @@
+# E6-2: router の再起動(sudo systemctl reboot)と、再起動の約 1 分後の状態(H3、router の分)  対象: WSL2 から router(ポート 2225)へ ssh、一般ユーザー + sudo
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 04:42〜04:44 JST、WSL2 の時計と、VM の時計の表示は同じ)。sudo のパスワードは出力に出ていない。
+### $ ssh -t -p 2225 user@127.0.0.1 'sudo systemctl reboot'
+[sudo] password for user:
+
+Broadcast message from root@router on pts/1 (Thu 2026-11-05 04:42:25 JST):
+
+The system will reboot now!
+
+Connection to 127.0.0.1 closed.
+
+### $ ssh -p 2225 user@127.0.0.1 'uptime; ip -br addr; ip route; sysctl net.ipv4.ip_forward; nmcli device status'
+ 04:43:27 up 0 min,  0 users,  load average: 0.65, 0.16, 0.05
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             fe80::14de:679b:5a3d:5835/64
+enp0s9           UP             fe80::df47:bed5:c02:aee1/64
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+net.ipv4.ip_forward = 0
+DEVICE  TYPE      STATE                                  CONNECTION
+enp0s3  ethernet  connected                              enp0s3
+enp0s8  ethernet  connecting (getting IP configuration)  Wired connection 1
+enp0s9  ethernet  connecting (getting IP configuration)  Wired connection 2
+lo      loopback  connected (externally)                 lo
+
+### $ ssh -t -p 2225 user@127.0.0.1 'sudo firewall-cmd --get-active-zones'
+[sudo] password for user:
+public
+  interfaces: enp0s3 enp0s8 enp0s9
+Connection to 127.0.0.1 closed.

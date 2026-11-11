@@ -1,0 +1,31 @@
+# E5-2: client の chrony の状態(補正の前。H2)  対象: WSL2 から client(ポート 2222)へ ssh、一般ユーザー(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記。時刻は VM の時計の表示(VM の時計は約 3 時間 50 分遅れている。WSL2 の時計では 2026-11-05 03:45 JST ごろ)。
+### $ ssh -p 2222 user@127.0.0.1 'hostnamectl --static; date -Is; timedatectl; chronyc tracking; chronyc sources'
+client
+2026-11-04T23:56:32+09:00
+               Local time: Wed 2026-11-04 23:56:32 JST
+           Universal time: Wed 2026-11-04 14:56:32 UTC
+                 RTC time: Wed 2026-11-04 05:32:50
+                Time zone: Asia/Tokyo (JST, +0900)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
+Reference ID    : 8E5B6C3D (142.91.108.61)
+Stratum         : 3
+Ref time (UTC)  : Wed Nov 04 18:45:00 2026
+System time     : 13780.704101562 seconds slow of NTP time
+Last offset     : -0.000180415 seconds
+RMS offset      : 1312.169799805 seconds
+Frequency       : 64.623 ppm fast
+Residual freq   : -0.011 ppm
+Skew            : 0.462 ppm
+Root delay      : 0.016655849 seconds
+Root dispersion : 0.000345056 seconds
+Update interval : 259.1 seconds
+Leap status     : Normal
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+===============================================================================
+^- 138.2.23.206                  2   8   377   129   +243us[  +67us] +/-   10ms
+^* 142.91.108.61                 2   8   377    72   -251us[ -431us] +/- 8359us
+^- ntp-jp.vulp.ca                2   8   377    72   +190us[ +190us] +/- 9082us
+^- z129114.ppp.asahi-net.or>     2   7   377    71  -1658us[-1658us] +/-   14ms

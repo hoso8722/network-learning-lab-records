@@ -1,0 +1,12 @@
+# E5-3: client の chrony の設定(コメントと空行を除く。H2b)  対象: WSL2 から client(ポート 2222)へ ssh、一般ユーザー(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 03:50 JST ごろ、WSL2 の時計)。
+### $ ssh -p 2222 user@127.0.0.1 'grep -vE "^(#|$)" /etc/chrony.conf'
+pool 2.almalinux.pool.ntp.org iburst
+sourcedir /run/chrony-dhcp
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+keyfile /etc/chrony.keys
+ntsdumpdir /var/lib/chrony
+leapsectz right/UTC
+logdir /var/log/chrony

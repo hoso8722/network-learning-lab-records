@@ -1,0 +1,19 @@
+# E5-8: sync-time.sh を 5 台のホームに送信  対象: WSL2 の bash、一般ユーザー(各 VM のホームにファイルを置く)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 04:29 JST、WSL2 の時計)。
+# 注: ls の時刻は、各 VM の時計の表示。client、server、router、router2 は「Nov 5 00:42」、switch は「Nov 5 04:29」(WSL2 の時計では、5 台とも 04:29 ごろの送信)。4 台は、時計が約 3 時間 47 分遅れていたため、送信時刻が約 3 時間 47 分前に見える。
+### $ for p in 2222 2223 2224 2225 2226; do scp -P $p labs/common/sync-time.sh user@127.0.0.1:~/; ssh -p $p user@127.0.0.1 'chmod +x ~/sync-time.sh; hostname -s; ls -l ~/sync-time.sh'; done
+sync-time.sh                                                                         100% 3169   588.3KB/s   00:00
+client
+-rwxr-xr-x. 1 user user 3169 Nov  5 00:42 /home/user/sync-time.sh
+sync-time.sh                                                                         100% 3169   754.3KB/s   00:00
+server
+-rwxr-xr-x. 1 user user 3169 Nov  5 00:42 /home/user/sync-time.sh
+sync-time.sh                                                                         100% 3169   888.4KB/s   00:00
+switch
+-rwxr-xr-x. 1 user user 3169 Nov  5 04:29 /home/user/sync-time.sh
+sync-time.sh                                                                         100% 3169   635.9KB/s   00:00
+router
+-rwxr-xr-x. 1 user user 3169 Nov  5 00:42 /home/user/sync-time.sh
+sync-time.sh                                                                         100% 3169   621.4KB/s   00:00
+router2
+-rwxr-xr-x. 1 user user 3169 Nov  5 00:42 /home/user/sync-time.sh

@@ -1,0 +1,114 @@
+# E6-4: router2、client、server の再起動(sudo systemctl reboot)と、再起動の約 1 分後・約 6 分後の状態(H3)  対象: WSL2 から 3 台へ ssh、一般ユーザー + sudo
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 10:31〜10:38 JST、WSL2 の時計と VM の時計の表示は同じ)。sudo のパスワードは出力に出ていない。
+# 注: 再起動から確認までの待ち時間は、1 回目: `sleep 90` のあと(uptime で 1 分)、2 回目: 約 4 分の待ちのあと(uptime で 6 分)。
+# 注: 1 回目の貼り付けは、同じ出力が 2 回貼られていた。1 回分だけ記録した。
+### $ for p in 2226 2222 2223; do ssh -t -p $p user@127.0.0.1 'sudo systemctl reboot'; done
+[sudo] password for user:
+
+Broadcast message from root@router2 on pts/1 (Thu 2026-11-05 10:31:22 JST):
+
+The system will reboot now!
+
+Connection to 127.0.0.1 closed.
+[sudo] password for user:
+
+Broadcast message from root@client on pts/2 (Thu 2026-11-05 10:31:26 JST):
+
+The system will reboot now!
+
+Connection to 127.0.0.1 closed.
+[sudo] password for user:
+
+Broadcast message from root@server on pts/1 (Thu 2026-11-05 10:31:30 JST):
+
+The system will reboot now!
+
+Connection to 127.0.0.1 closed.
+
+### $ sleep 90; for p in 2226 2222 2223; do echo "=== port $p (約 90 秒後) ==="; ssh -p $p user@127.0.0.1 'hostname -s; uptime; ip -br addr; ip route; sysctl net.ipv4.ip_forward; nmcli device status'; done; ssh -t -p 2226 user@127.0.0.1 'sudo firewall-cmd --get-active-zones'
+
+=== port 2226 (約 90 秒後) ===
+router2
+ 10:33:27 up 1 min,  0 users,  load average: 0.10, 0.06, 0.02
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             fe80::86e5:a8c0:19ca:9504/64
+enp0s9           UP             fe80::d607:fe7e:857c:9081/64
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+net.ipv4.ip_forward = 0
+DEVICE  TYPE      STATE                                  CONNECTION
+enp0s3  ethernet  connected                              enp0s3
+enp0s8  ethernet  connecting (getting IP configuration)  Wired connection 1
+enp0s9  ethernet  connecting (getting IP configuration)  Wired connection 2
+lo      loopback  connected (externally)                 lo
+=== port 2222 (約 90 秒後) ===
+client
+ 10:33:28 up 1 min,  0 users,  load average: 0.39, 0.14, 0.05
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             fe80::7a58:eada:5890:f944/64
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+net.ipv4.ip_forward = 0
+DEVICE  TYPE      STATE                                  CONNECTION
+enp0s3  ethernet  connected                              enp0s3
+enp0s9  ethernet  connecting (getting IP configuration)  Wired connection 1
+lo      loopback  connected (externally)                 lo
+=== port 2223 (約 90 秒後) ===
+server
+ 10:33:29 up 1 min,  0 users,  load average: 0.08, 0.05, 0.01
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             fe80::62b1:5355:64ee:1516/64
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+net.ipv4.ip_forward = 0
+DEVICE  TYPE      STATE                                  CONNECTION
+enp0s3  ethernet  connected                              enp0s3
+enp0s9  ethernet  connecting (getting IP configuration)  Wired connection 1
+lo      loopback  connected (externally)                 lo
+[sudo] password for user:
+public
+  interfaces: enp0s3 enp0s8 enp0s9
+Connection to 127.0.0.1 closed.
+
+### $ for p in 2226 2222 2223; do echo "=== port $p (約 6 分後) ==="; ssh -p $p user@127.0.0.1 'hostname -s; uptime; ip -br addr; nmcli device status'; done
+=== port 2226 (約 6 分後) ===
+router2
+ 10:38:02 up 6 min,  0 users,  load average: 0.04, 0.06, 0.02
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP
+enp0s9           UP
+DEVICE  TYPE      STATE                   CONNECTION
+enp0s3  ethernet  connected               enp0s3
+lo      loopback  connected (externally)  lo
+enp0s8  ethernet  disconnected            --
+enp0s9  ethernet  disconnected            --
+=== port 2222 (約 6 分後) ===
+client
+ 10:38:03 up 6 min,  0 users,  load average: 0.00, 0.05, 0.02
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP
+DEVICE  TYPE      STATE                   CONNECTION
+enp0s3  ethernet  connected               enp0s3
+lo      loopback  connected (externally)  lo
+enp0s9  ethernet  disconnected            --
+=== port 2223 (約 6 分後) ===
+server
+ 10:38:04 up 6 min,  0 users,  load average: 0.00, 0.01, 0.00
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP
+DEVICE  TYPE      STATE                   CONNECTION
+enp0s3  ethernet  connected               enp0s3
+lo      loopback  connected (externally)  lo
+enp0s9  ethernet  disconnected            --
+
+### $ ssh -t -p 2226 user@127.0.0.1 'sudo firewall-cmd --get-active-zones'
+[sudo] password for user:
+public
+  interfaces: enp0s3
+Connection to 127.0.0.1 closed.

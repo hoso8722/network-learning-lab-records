@@ -1,0 +1,7 @@
+# E5-5: client の sudoers.d の確認(H5)  対象: WSL2 から client(ポート 2222)へ ssh -t、一般ユーザー + sudo(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 03:5x JST、WSL2 の時計)。sudo のパスワードは出力に出ていない。
+### $ ssh -t -p 2222 user@127.0.0.1 'sudo ls -l /etc/sudoers.d/ && sudo cat /etc/sudoers.d/lab-chronyc'
+[sudo] password for user:
+total 0
+cat: /etc/sudoers.d/lab-chronyc: No such file or directory
+Connection to 127.0.0.1 closed.

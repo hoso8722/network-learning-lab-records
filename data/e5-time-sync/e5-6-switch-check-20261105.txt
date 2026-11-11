@@ -1,0 +1,15 @@
+# E5-6: switch を起動して、ずれを測定(H1 の switch 分)  対象: WSL2 の bash、一般ユーザー(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 04:10 JST、WSL2 の時計)。switch は、このコマンドの直前に起動した(電源オフからの起動)。
+### $ vb startvm "Alma9mini-switch" --type headless
+Waiting for VM "Alma9mini-switch" to power on...
+VM "Alma9mini-switch" has been successfully started.
+
+### $ labs/common/sync-all-auto.sh --check-only --only switch
+# sync-all-auto.sh  2026-11-05T04:10:44+09:00  しきい値=2秒  check_only=1  parallel=0  wsl=mirrored
+
+=== switch (port 2224) ===
+  vm_utc=1793819445.943811854  差(VM−ホスト)=-0.378秒
+
+## まとめ
+  switch: 補正不要（差 -0.378 秒）
+記録: <PROJECT_ROOT>/data/time-sync/sync-all-auto-sh-20261105T041044.txt

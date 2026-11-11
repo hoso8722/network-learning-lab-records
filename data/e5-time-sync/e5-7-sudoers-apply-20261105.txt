@@ -1,0 +1,110 @@
+# E5-7: sudoers.d の設定(check → apply → check。5 台)  対象: WSL2 から 5 台へ ssh、一般ユーザー + sudo(apply)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 04:11〜04:13 JST、WSL2 の時計)。sudo のパスワードは出力に出ていない。
+# 注: switch の apply で、1 回目の sudo のパスワードの入力が間違っていた(「Sorry, try again.」。ユーザーの入力ミス)。この行の先頭に、端末の表示に混ざった数字が出ていた。パスワードの入力が先に画面に出た可能性が否定できないため、記録からは削除した(原因は未確認。`data/baseline/README.md` に、同様の混入の記述がある)。
+# 注: 「記録:」の行のパスは <PROJECT_ROOT> に置き換えた。
+### $ labs/common/setup-sudo-chronyc.sh check
+# setup-sudo-chronyc.sh  action=check  2026-11-05T04:11:12+09:00
+
+=== client (port 2222) : check ===
+chronyc_path:/usr/bin/chronyc
+sudo: a password is required
+  終了コード: 1(0 = 2 つとも、パスワードなしで実行可能)
+
+=== server (port 2223) : check ===
+chronyc_path:/usr/bin/chronyc
+sudo: a password is required
+  終了コード: 1(0 = 2 つとも、パスワードなしで実行可能)
+
+=== switch (port 2224) : check ===
+chronyc_path:/usr/bin/chronyc
+sudo: a password is required
+  終了コード: 1(0 = 2 つとも、パスワードなしで実行可能)
+
+=== router (port 2225) : check ===
+chronyc_path:/usr/bin/chronyc
+sudo: a password is required
+  終了コード: 1(0 = 2 つとも、パスワードなしで実行可能)
+
+=== router2 (port 2226) : check ===
+chronyc_path:/usr/bin/chronyc
+sudo: a password is required
+  終了コード: 1(0 = 2 つとも、パスワードなしで実行可能)
+
+記録: <PROJECT_ROOT>/data/time-sync/setup-sudo-chronyc-sh-check-20261105T041112.txt
+
+### $ labs/common/setup-sudo-chronyc.sh apply
+# setup-sudo-chronyc.sh  action=apply  2026-11-05T04:12:45+09:00
+
+=== client (port 2222) : apply ===
+[sudo] password for user:
+/tmp/lab-chronyc.sudoers: parsed OK
+apply-ok:client
+Connection to 127.0.0.1 closed.
+  終了コード: 0(0 で apply-ok:client が表示されていれば成功)
+
+=== server (port 2223) : apply ===
+[sudo] password for user:
+/tmp/lab-chronyc.sudoers: parsed OK
+apply-ok:server
+Connection to 127.0.0.1 closed.
+  終了コード: 0(0 で apply-ok:server が表示されていれば成功)
+
+=== switch (port 2224) : apply ===
+[sudo] password for user:
+Sorry, try again.
+[sudo] password for user:
+/tmp/lab-chronyc.sudoers: parsed OK
+apply-ok:switch
+Connection to 127.0.0.1 closed.
+  終了コード: 0(0 で apply-ok:switch が表示されていれば成功)
+
+=== router (port 2225) : apply ===
+[sudo] password for user:
+/tmp/lab-chronyc.sudoers: parsed OK
+apply-ok:router
+Connection to 127.0.0.1 closed.
+  終了コード: 0(0 で apply-ok:router が表示されていれば成功)
+
+=== router2 (port 2226) : apply ===
+[sudo] password for user:
+/tmp/lab-chronyc.sudoers: parsed OK
+apply-ok:router2
+Connection to 127.0.0.1 closed.
+  終了コード: 0(0 で apply-ok:router2 が表示されていれば成功)
+
+記録: <PROJECT_ROOT>/data/time-sync/setup-sudo-chronyc-sh-apply-20261105T041245.txt
+
+### $ labs/common/setup-sudo-chronyc.sh check
+# setup-sudo-chronyc.sh  action=check  2026-11-05T04:13:06+09:00
+
+=== client (port 2222) : check ===
+chronyc_path:/usr/bin/chronyc
+/usr/bin/chronyc burst 4/4
+/usr/bin/chronyc makestep
+  終了コード: 0(0 = 2 つとも、パスワードなしで実行可能)
+
+=== server (port 2223) : check ===
+chronyc_path:/usr/bin/chronyc
+/usr/bin/chronyc burst 4/4
+/usr/bin/chronyc makestep
+  終了コード: 0(0 = 2 つとも、パスワードなしで実行可能)
+
+=== switch (port 2224) : check ===
+chronyc_path:/usr/bin/chronyc
+/usr/bin/chronyc burst 4/4
+/usr/bin/chronyc makestep
+  終了コード: 0(0 = 2 つとも、パスワードなしで実行可能)
+
+=== router (port 2225) : check ===
+chronyc_path:/usr/bin/chronyc
+/usr/bin/chronyc burst 4/4
+/usr/bin/chronyc makestep
+  終了コード: 0(0 = 2 つとも、パスワードなしで実行可能)
+
+=== router2 (port 2226) : check ===
+chronyc_path:/usr/bin/chronyc
+/usr/bin/chronyc burst 4/4
+/usr/bin/chronyc makestep
+  終了コード: 0(0 = 2 つとも、パスワードなしで実行可能)
+
+記録: <PROJECT_ROOT>/data/time-sync/setup-sudo-chronyc-sh-check-20261105T041306.txt

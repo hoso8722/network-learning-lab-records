@@ -1,0 +1,28 @@
+# E6-7: 再起動と強制終了のあとの時刻の確認(H8。E5 の素材にもなる)  対象: WSL2 の bash、一般ユーザー(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 10:49 JST、WSL2 の時計)。
+# 注: 「記録:」の行のパスは <PROJECT_ROOT> に置き換えた。
+### $ labs/common/sync-all-auto.sh --check-only
+# sync-all-auto.sh  2026-11-05T10:49:22+09:00  しきい値=2秒  check_only=1  parallel=0  wsl=mirrored
+
+=== client (port 2222) ===
+  vm_utc=1793843363.136714114  差(VM−ホスト)=-0.505秒
+
+=== server (port 2223) ===
+  vm_utc=1793843363.917262586  差(VM−ホスト)=-0.539秒
+
+=== switch (port 2224) ===
+  vm_utc=1793843364.678698633  差(VM−ホスト)=-0.560秒
+
+=== router (port 2225) ===
+  vm_utc=1793843365.379177121  差(VM−ホスト)=-0.602秒
+
+=== router2 (port 2226) ===
+  vm_utc=1793843366.509309296  差(VM−ホスト)=-0.620秒
+
+## まとめ
+  client: 補正不要（差 -0.505 秒）
+  server: 補正不要（差 -0.539 秒）
+  switch: 補正不要（差 -0.560 秒）
+  router: 補正不要（差 -0.602 秒）
+  router2: 補正不要（差 -0.620 秒）
+記録: <PROJECT_ROOT>/data/time-sync/sync-all-auto-sh-20261105T104922.txt

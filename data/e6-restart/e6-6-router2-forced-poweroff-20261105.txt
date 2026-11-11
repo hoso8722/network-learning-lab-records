@@ -1,0 +1,344 @@
+# E6-6: router2 の強制終了(vb controlvm poweroff)と、起動後の状態、baseline.sh up(H6)  対象: WSL2 の bash、一般ユーザー(sudo は journalctl と up)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 10:43〜10:47 JST、WSL2 の時計と VM の時計の表示は同じ)。sudo のパスワードは出力に出ていない。
+# 注: journalctl の出力は、`head -30` で先頭の 30 行まで(省略は、コマンドによる)。
+# 注: up の前の router、client、server は、手順 2 の up のまま(実行時の設定が残っている)。このため、up の router の `sysctl net.ipv4.ip_forward` は 1、client の guard は「File exists」(exit=2)になっている。
+# 注: up のあとの status の VM 側の出力は、記録に含めない(同じ形式のため)。WSL2 側の記録: data/baseline/baseline-sh-status-20261105T104714.txt(ping ttl=62、損失 0%)
+# 注: 「記録:」の行のパスは <PROJECT_ROOT> に置き換えた。
+### $ vb controlvm "Alma9mini-router2" poweroff
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+
+### $ vb showvminfo "Alma9mini-router2" --machinereadable | grep VMState=
+VMState="poweroff"
+
+### $ vb startvm "Alma9mini-router2" --type headless
+Waiting for VM "Alma9mini-router2" to power on...
+VM "Alma9mini-router2" has been successfully started.
+
+### $ sleep 90
+
+### $ ssh -t -p 2226 user@127.0.0.1 'uptime; sudo journalctl -b -p warning | head -30'
+ 10:46:10 up 2 min,  1 user,  load average: 0.50, 0.22, 0.08
+[sudo] password for user:
+Nov 05 10:44:11 localhost kernel: [Firmware Bug]: TSC doesn't count with P0 frequency!
+Nov 05 10:44:11 localhost kernel: crashkernel: invalid size
+Nov 05 10:44:11 localhost kernel: Warning: Deprecated Hardware is detected: x86_64-v2:AuthenticAMD:AMD Ryzen 7 7735HS with Radeon Graphics will not be maintained in a future major release and may be disabled
+Nov 05 10:44:11 localhost kernel: Speculative Return Stack Overflow: IBPB-extending microcode not applied!
+Nov 05 10:44:11 localhost kernel: Speculative Return Stack Overflow: WARNING: See https://kernel.org/doc/html/latest/admin-guide/hw-vuln/srso.html for mitigation options.
+Nov 05 10:44:11 localhost kernel: APIC calibration not consistent with PM-Timer: 143ms instead of 100ms
+Nov 05 10:44:11 localhost kernel: amd_pstate: The CPPC feature is supported but currently disabled by the BIOS.
+                                  Please enable it if your BIOS has the CPPC option.
+Nov 05 10:44:11 localhost kernel: amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+Nov 05 10:44:11 localhost systemd[1]: Invalid DMI field header.
+Nov 05 10:44:12 localhost kernel: device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+Nov 05 10:44:12 localhost kernel: Warning: Unmaintained driver is detected: e1000
+Nov 05 10:44:12 localhost kernel: Warning: Unmaintained driver is detected: e1000_init_module
+Nov 05 10:44:12 localhost kernel: Warning: Unmaintained driver is detected: e1000
+Nov 05 10:44:12 localhost kernel: Warning: Unmaintained driver is detected: e1000
+Nov 05 10:44:13 localhost kernel: vmwgfx 0000:00:02.0: [drm] *ERROR* vmwgfx seems to be running on an unsupported hypervisor.
+Nov 05 10:44:13 localhost kernel: vmwgfx 0000:00:02.0: [drm] *ERROR* This configuration is likely broken.
+Nov 05 10:44:13 localhost kernel: vmwgfx 0000:00:02.0: [drm] *ERROR* Please switch to a supported graphics device to avoid problems.
+Nov 05 10:44:13 localhost kernel: Must use shrinker_alloc() to dynamically allocate the shrinker
+Nov 05 10:44:23 router2 systemd[1]: Invalid DMI field header.
+Nov 05 10:44:24 router2 lvm[660]: PV /dev/sda2 online, VG almalinux_vbox is complete.
+Nov 05 10:45:15 router2 NetworkManager[777]: <warn>  [1793843115.7794] device (enp0s8): Activation: failed for connection 'Wired connection 1'
+Nov 05 10:45:15 router2 NetworkManager[777]: <warn>  [1793843115.7807] device (enp0s9): Activation: failed for connection 'Wired connection 2'
+Nov 05 10:45:29 router2 systemd[1]: NetworkManager-wait-online.service: Failed with result 'exit-code'.
+Nov 05 10:45:29 router2 systemd[1]: Failed to start Network Manager Wait Online.
+Nov 05 10:45:30 router2 systemd[1]: kdump.service: Failed with result 'exit-code'.
+Nov 05 10:45:30 router2 systemd[1]: Failed to start Crash recovery kernel arming.
+Nov 05 10:46:00 router2 NetworkManager[777]: <warn>  [1793843160.7862] device (enp0s8): Activation: failed for connection 'Wired connection 1'
+Nov 05 10:46:00 router2 NetworkManager[777]: <warn>  [1793843160.7874] device (enp0s9): Activation: failed for connection 'Wired connection 2'
+Connection to 127.0.0.1 closed.
+
+### $ labs/common/baseline.sh up
+# baseline.sh  action=up  2026-11-05T10:46:32+09:00  wsl=mirrored
+
+## スクリプトの送信（scp。鍵認証。同名のファイルは上書き）
+route-test.sh                                                                        100% 8038     2.1MB/s   00:00
+  router: scp=0 chmod/確認=0 pushed:router:route-test.sh
+route-test.sh                                                                        100% 8038     1.2MB/s   00:00
+  router2: scp=0 chmod/確認=0 pushed:router2:route-test.sh
+fault-test.sh                                                                        100% 4965   792.1KB/s   00:00
+  client: scp=0 chmod/確認=0 pushed:client:fault-test.sh
+fault-test.sh                                                                        100% 4965     1.0MB/s   00:00
+  server: scp=0 chmod/確認=0 pushed:server:fault-test.sh
+
+=== router (port 2225) : up ===
+[sudo] password for user:
+# exp4 router prepare    2026-11-05T10:46:41+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo nmcli device set enp0s8 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s8
+exit=0
+
+### $ sudo ip link set enp0s8 up
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr add 192.168.31.1/24 dev enp0s8
+exit=0
+
+### $ sudo ip addr add 192.168.30.1/30 dev enp0s9
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             192.168.31.1/24
+enp0s9           UP             192.168.30.1/30
+exit=0
+
+# exp4 router fwd on   2026-11-05T10:46:41+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+exit=0
+
+# exp4 router fw-zone on   2026-11-05T10:46:42+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8
+success
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s9
+success
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+# exp4 router route add 192.168.32.0/24  2026-11-05T10:46:43+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo ip route add 192.168.32.0/24 via 192.168.30.2
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1
+192.168.32.0/24 via 192.168.30.2 dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : up ===
+[sudo] password for user:
+# exp4 router2 prepare    2026-11-05T10:46:46+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo nmcli device set enp0s8 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s8
+exit=0
+
+### $ sudo ip link set enp0s8 up
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr add 192.168.30.2/30 dev enp0s8
+exit=0
+
+### $ sudo ip addr add 192.168.32.1/24 dev enp0s9
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             192.168.30.2/30
+enp0s9           UP             192.168.32.1/24
+exit=0
+
+# exp4 router2 fwd on   2026-11-05T10:46:47+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+exit=0
+
+# exp4 router2 fw-zone on   2026-11-05T10:46:48+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8
+success
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s9
+success
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+# exp4 router2 route add 192.168.31.0/24  2026-11-05T10:46:50+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo ip route add 192.168.31.0/24 via 192.168.30.1
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s8 proto kernel scope link src 192.168.30.2
+192.168.31.0/24 via 192.168.30.1 dev enp0s8
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.1
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : up ===
+[sudo] password for user:
+# exp5 client base   2026-11-05T10:46:54+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip addr add 192.168.31.10/24 dev enp0s9
+exit=0
+
+### $ sudo ip route add 192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             192.168.31.10/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+# exp5 client guard on  2026-11-05T10:46:55+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo ip route add unreachable 192.168.0.0/16 metric 4000
+RTNETLINK answers: File exists
+exit=2
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : up ===
+[sudo] password for user:
+# exp5 server base   2026-11-05T10:46:59+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip addr add 192.168.32.20/24 dev enp0s9
+exit=0
+
+### $ sudo ip route add 192.168.31.0/24 via 192.168.32.1 dev enp0s9
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             192.168.32.20/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+
+Connection to 127.0.0.1 closed.
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-05T10:47:00+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+  64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=8.59 ms
+  64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.07 ms
+  64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=5.01 ms
+
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 3 received, 0% packet loss, time 2013ms
+  rtt min/avg/max/mdev = 4.072/5.889/8.588/1.945 ms
+  exit=0
+  判定: 基準どおり（ttl=62 で応答あり）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 基準どおり（ttl=62 で応答あり）
+記録: <PROJECT_ROOT>/data/baseline/baseline-sh-up-20261105T104632.txt

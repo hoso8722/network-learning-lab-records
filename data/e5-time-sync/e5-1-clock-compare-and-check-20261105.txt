@@ -1,0 +1,33 @@
+# E5-1: WSL2 の時計とホストの時計の比較(H6)と、全 VM のずれの測定(H1、--check-only)  対象: WSL2 の bash、一般ユーザー(読み取りのみ)
+# 出所: ユーザーが実行して貼り付けた出力の転記(2026-11-05 03:41〜03:43 JST、WSL2 の時計)。
+# 注: H6 の出力は、WSL2 の値(date)と Windows の値(powershell.exe)が交互に 3 組。powershell.exe の起動に時間がかかるため、Windows の値は、直前の WSL2 の値より遅く出る。
+# 注: 「記録:」の行のパスは <PROJECT_ROOT> に置き換えた。このコマンドの WSL2 側の記録: data/time-sync/sync-all-auto-sh-20261105T034336.txt
+### $ for i in 1 2 3; do date -u +%Y-%m-%dT%H:%M:%S.%3NZ; powershell.exe -NoProfile -Command "(Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ')"; done
+2026-11-04T18:41:27.471Z
+2026-11-04T18:41:29.319Z
+2026-11-04T18:41:29.396Z
+2026-11-04T18:41:29.964Z
+2026-11-04T18:41:30.011Z
+2026-11-04T18:41:30.595Z
+
+### $ labs/common/sync-all-auto.sh --check-only --only client,server,router,router2
+# sync-all-auto.sh  2026-11-05T03:43:36+09:00  しきい値=2秒  check_only=1  parallel=0  wsl=mirrored
+
+=== client (port 2222) ===
+  vm_utc=1793804023.617231899  差(VM−ホスト)=-13793.901秒
+
+=== server (port 2223) ===
+  vm_utc=1793804025.187395831  差(VM−ホスト)=-13793.685秒
+
+=== router (port 2225) ===
+  vm_utc=1793804026.456628556  差(VM−ホスト)=-13793.913秒
+
+=== router2 (port 2226) ===
+  vm_utc=1793804028.347306871  差(VM−ホスト)=-13793.333秒
+
+## まとめ
+  client: 【ずれあり】差 -13793.901 秒（--check-only のため補正せず）
+  server: 【ずれあり】差 -13793.685 秒（--check-only のため補正せず）
+  router: 【ずれあり】差 -13793.913 秒（--check-only のため補正せず）
+  router2: 【ずれあり】差 -13793.333 秒（--check-only のため補正せず）
+記録: <PROJECT_ROOT>/data/time-sync/sync-all-auto-sh-20261105T034336.txt

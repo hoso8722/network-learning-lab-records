@@ -1,0 +1,184 @@
+# 実験2 本試験(手順5〜8)の生データ(転記)
+# 出所: ユーザーが端末から貼り付けた転記(チャット経由)。整形・補完なし。
+# 注記: 手順6の `switch show` は、貼り付けが `bridge fdb show` の途中から始まっている(最初の `bridge vlan show` の部分は未提出)。
+# 前提: switch の NIC は起動前に allow-all を設定済み(attempt1/README.md 参照)。手順5の時点で server のポートは VLAN 10。
+
+## 手順5: client ping20(server は VLAN 10 のアクセスポート)
+[user@client ~]$ ./switch-test.sh client ping20
+# exp2 client ping20   2026-10-20T03:00:07+09:00
+### $ ping -c 3 -W 2 -I enp0s9.20 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) from 192.168.120.10 enp0s9.20: 56(84) bytes of data.
+From 192.168.120.10 icmp_seq=1 Destination Host Unreachable
+From 192.168.120.10 icmp_seq=2 Destination Host Unreachable
+From 192.168.120.10 icmp_seq=3 Destination Host Unreachable
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2069ms
+pipe 3
+exit=1
+
+## 手順6: switch show(抜粋: 貼り付けのとおり、fdb から)
+### $ bridge fdb show br br0
+08:00:27:5a:8e:0e dev enp0s8 vlan 20 master br0
+08:00:27:b7:09:ad dev enp0s8 vlan 20 master br0 permanent
+08:00:27:b7:09:ad dev enp0s8 vlan 10 master br0 permanent
+08:00:27:b7:09:ad dev enp0s8 master br0 permanent
+01:00:5e:00:00:01 dev enp0s8 self permanent
+08:00:27:3e:ac:f1 dev enp0s9 vlan 10 master br0 permanent
+08:00:27:3e:ac:f1 dev enp0s9 master br0 permanent
+01:00:5e:00:00:01 dev enp0s9 self permanent
+33:33:00:00:00:01 dev enp0s9 self permanent
+33:33:00:00:00:01 dev br0 self permanent
+01:00:5e:00:00:6a dev br0 self permanent
+33:33:00:00:00:6a dev br0 self permanent
+01:00:5e:00:00:01 dev br0 self permanent
+33:33:ff:3e:ac:f1 dev br0 self permanent
+exit=0
+(### ip -d link show br0 と ### ip -br link は省略。br0 は vlan_filtering 1、vlan_default_pvid 0、stp_state 0、fdb_n_learned 1。)
+
+## 手順7: server のポートを VLAN 20 に変更
+[user@switch ~]$ ./switch-test.sh switch server-vlan 20
+# exp2 switch server-vlan 20  2026-10-20T03:02:58+09:00
+### $ sudo bridge vlan del vid 10 dev enp0s9
+exit=0
+### $ sudo bridge vlan del vid 20 dev enp0s9
+exit=0
+### $ sudo bridge vlan add vid 20 dev enp0s9 pvid untagged
+exit=0
+### $ bridge vlan show
+port              vlan-id
+enp0s8            10
+                  20
+enp0s9            20 PVID Egress Untagged
+exit=0
+
+## 手順8: server が VLAN 20 の状態で client の ping10 と ping20
+[user@client ~]$ ./switch-test.sh client ping10
+# exp2 client ping10   2026-10-20T03:04:24+09:00
+### $ ping -c 3 -W 2 -I enp0s9.10 192.168.110.20
+PING 192.168.110.20 (192.168.110.20) from 192.168.110.10 enp0s9.10: 56(84) bytes of data.
+
+--- 192.168.110.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2057ms
+
+exit=1
+
+[user@client ~]$ ./switch-test.sh client ping20
+# exp2 client ping20   2026-10-20T03:04:32+09:00
+### $ ping -c 3 -W 2 -I enp0s9.20 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) from 192.168.120.10 enp0s9.20: 56(84) bytes of data.
+64 bytes from 192.168.120.20: icmp_seq=1 ttl=64 time=5.18 ms
+64 bytes from 192.168.120.20: icmp_seq=2 ttl=64 time=1.77 ms
+64 bytes from 192.168.120.20: icmp_seq=3 ttl=64 time=1.94 ms
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2014ms
+rtt min/avg/max/mdev = 1.771/2.966/5.183/1.569 ms
+exit=0
+
+## 手順8の補足: client の近隣テーブル(ユーザー提出。取得時点は手順8〜9の間または後で、正確な時刻は不明)
+[user@client ~]$ ip neigh show dev enp0s9.10
+192.168.110.20 FAILED
+
+## 手順9: switch のトランク側ポート(client 側)から VLAN 20 を外す(server のポートは VLAN 20 のまま)
+[user@switch ~]$ ./switch-test.sh switch p1-vlan20 off
+# exp2 switch p1-vlan20 off  2026-10-20T03:11:17+09:00
+### $ sudo bridge vlan del vid 20 dev enp0s8
+exit=0
+### $ bridge vlan show
+port              vlan-id
+enp0s8            10
+enp0s9            20 PVID Egress Untagged
+exit=0
+
+## 手順10: client ping20(許可 VLAN から 20 を外した状態)
+[user@client ~]$ ./switch-test.sh client ping20
+# exp2 client ping20   2026-10-20T03:12:14+09:00
+### $ ping -c 3 -W 2 -I enp0s9.20 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) from 192.168.120.10 enp0s9.20: 56(84) bytes of data.
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2081ms
+
+exit=1
+
+## 手順11: 復旧(VLAN 20 を戻す)
+[user@switch ~]$ ./switch-test.sh switch p1-vlan20 on
+# exp2 switch p1-vlan20 on  2026-10-20T03:13:04+09:00
+### $ sudo bridge vlan add vid 20 dev enp0s8
+exit=0
+### $ bridge vlan show
+port              vlan-id
+enp0s8            10
+                  20
+enp0s9            20 PVID Egress Untagged
+exit=0
+
+## 手順12: client ping20(復旧後)
+[user@client ~]$ ./switch-test.sh client ping20
+# exp2 client ping20   2026-10-20T03:13:41+09:00
+### $ ping -c 3 -W 2 -I enp0s9.20 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) from 192.168.120.10 enp0s9.20: 56(84) bytes of data.
+64 bytes from 192.168.120.20: icmp_seq=1 ttl=64 time=4.39 ms
+64 bytes from 192.168.120.20: icmp_seq=2 ttl=64 time=2.34 ms
+64 bytes from 192.168.120.20: icmp_seq=3 ttl=64 time=2.36 ms
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2022ms
+rtt min/avg/max/mdev = 2.339/3.030/4.388/0.960 ms
+exit=0
+
+## 手順13: client tagcap → 未提出(貼り付けは手順12の ping20 の再掲だった)
+
+## 手順14: server capture(server のポートは VLAN 20、25秒以内に client から ping20 を実行)
+[user@server ~]$ ./switch-test.sh server capture
+# exp2 server capture   2026-10-20T03:29:42+09:00
+### $ sudo timeout -s INT 25 tcpdump -i enp0s9 -n -e -w exp2-server.pcap   (25秒以内に client から ping を実行)
+dropped privs to tcpdump
+tcpdump: listening on enp0s9, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10 packets captured
+10 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -e -r exp2-server.pcap
+reading from file exp2-server.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+03:29:53.628744 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.120.10 > 192.168.120.20: ICMP echo request, id 22, seq 1, length 64
+03:29:53.628877 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.120.20 > 192.168.120.10: ICMP echo reply, id 22, seq 1, length 64
+03:29:54.640186 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.120.10 > 192.168.120.20: ICMP echo request, id 22, seq 2, length 64
+03:29:54.640261 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.120.20 > 192.168.120.10: ICMP echo reply, id 22, seq 2, length 64
+03:29:55.648605 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.120.10 > 192.168.120.20: ICMP echo request, id 22, seq 3, length 64
+03:29:55.648701 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.120.20 > 192.168.120.10: ICMP echo reply, id 22, seq 3, length 64
+03:29:58.770473 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype ARP (0x0806), length 42: Request who-has 192.168.120.10 tell 192.168.120.20, length 28
+03:29:58.772730 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype ARP (0x0806), length 60: Reply 192.168.120.10 is-at 08:00:27:5a:8e:0e, length 46
+03:29:59.111699 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype ARP (0x0806), length 60: Request who-has 192.168.120.20 tell 192.168.120.10, length 46
+03:29:59.111744 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype ARP (0x0806), length 42: Reply 192.168.120.20 is-at 08:00:27:7e:40:4e, length 28
+
+## 手順14b: server のポートを VLAN 10 に戻す
+[user@switch ~]$ ./switch-test.sh switch server-vlan 10
+# exp2 switch server-vlan 10  2026-10-20T03:31:00+09:00
+### $ sudo bridge vlan del vid 10 dev enp0s9
+exit=0
+### $ sudo bridge vlan del vid 20 dev enp0s9
+exit=0
+### $ sudo bridge vlan add vid 10 dev enp0s9 pvid untagged
+exit=0
+### $ bridge vlan show
+port              vlan-id
+enp0s8            10
+                  20
+enp0s9            10 PVID Egress Untagged
+exit=0
+
+## 手順15: client mtu(VLAN 10、1500 バイトの IP パケット、フラグメント禁止)
+[user@client ~]$ ./switch-test.sh client mtu
+# exp2 client mtu   2026-10-20T03:32:44+09:00
+# 1472 バイト + ヘッダ28 = 1500 バイトの IP パケットを、フラグメント禁止(-M do)で送る
+### $ ping -c 2 -W 2 -M do -s 1472 -I enp0s9.10 192.168.110.20
+PING 192.168.110.20 (192.168.110.20) from 192.168.110.10 enp0s9.10: 1472(1500) bytes of data.
+1480 bytes from 192.168.110.20: icmp_seq=1 ttl=64 time=5.29 ms
+1480 bytes from 192.168.110.20: icmp_seq=2 ttl=64 time=4.11 ms
+
+--- 192.168.110.20 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 4.114/4.703/5.292/0.589 ms
+exit=0

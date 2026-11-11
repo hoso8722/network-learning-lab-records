@@ -1,0 +1,25 @@
+# vlan-test capture (server)  2026-10-18T21:49:01+09:00
+### $ sudo timeout -s INT 40 tcpdump -i enp0s8 -n -e -w vlan-test.pcap vlan   (40秒以内に client から ping を実行)
+dropped privs to tcpdump
+tcpdump: listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+15 packets captured
+15 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -e -r vlan-test.pcap
+reading from file vlan-test.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+21:49:06.064718 08:00:27:af:87:fe > 33:33:00:00:00:02, ethertype 802.1Q (0x8100), length 74: vlan 10, p 0, ethertype IPv6 (0x86dd), fe80::a00:27ff:feaf:87fe > ff02::2: ICMP6, router solicitation, length 16
+21:49:08.723088 08:00:27:3a:d0:cc > 33:33:00:00:00:02, ethertype 802.1Q (0x8100), length 74: vlan 10, p 0, ethertype IPv6 (0x86dd), fe80::a00:27ff:fe3a:d0cc > ff02::2: ICMP6, router solicitation, length 16
+21:49:10.966503 08:00:27:af:87:fe > Broadcast, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.100.20 tell 192.168.100.10, length 46
+21:49:10.966563 08:00:27:3a:d0:cc > 08:00:27:af:87:fe, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Reply 192.168.100.20 is-at 08:00:27:3a:d0:cc, length 28
+21:49:10.968087 08:00:27:af:87:fe > 08:00:27:3a:d0:cc, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.10 > 192.168.100.20: ICMP echo request, id 4, seq 1, length 64
+21:49:10.968287 08:00:27:3a:d0:cc > 08:00:27:af:87:fe, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.20 > 192.168.100.10: ICMP echo reply, id 4, seq 1, length 64
+21:49:11.970720 08:00:27:af:87:fe > 08:00:27:3a:d0:cc, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.10 > 192.168.100.20: ICMP echo request, id 4, seq 2, length 64
+21:49:11.970792 08:00:27:3a:d0:cc > 08:00:27:af:87:fe, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.20 > 192.168.100.10: ICMP echo reply, id 4, seq 2, length 64
+21:49:12.973344 08:00:27:af:87:fe > 08:00:27:3a:d0:cc, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.10 > 192.168.100.20: ICMP echo request, id 4, seq 3, length 64
+21:49:12.973416 08:00:27:3a:d0:cc > 08:00:27:af:87:fe, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.20 > 192.168.100.10: ICMP echo reply, id 4, seq 3, length 64
+21:49:13.975040 08:00:27:af:87:fe > 08:00:27:3a:d0:cc, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.10 > 192.168.100.20: ICMP echo request, id 4, seq 4, length 64
+21:49:13.975148 08:00:27:3a:d0:cc > 08:00:27:af:87:fe, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.100.20 > 192.168.100.10: ICMP echo reply, id 4, seq 4, length 64
+21:49:16.402295 08:00:27:3a:d0:cc > 08:00:27:af:87:fe, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.100.10 tell 192.168.100.20, length 28
+21:49:16.403445 08:00:27:af:87:fe > 08:00:27:3a:d0:cc, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Reply 192.168.100.10 is-at 08:00:27:af:87:fe, length 46
+21:49:40.468909 08:00:27:3a:d0:cc > 33:33:00:00:00:02, ethertype 802.1Q (0x8100), length 74: vlan 10, p 0, ethertype IPv6 (0x86dd), fe80::a00:27ff:fe3a:d0cc > ff02::2: ICMP6, router solicitation, length 16

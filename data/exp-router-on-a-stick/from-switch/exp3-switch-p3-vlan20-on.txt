@@ -1,0 +1,13 @@
+# exp3 switch p3-vlan20 on  2026-10-21T10:34:58+09:00  host=switch
+# ホスト名の確認: OK（host=switch と role=switch が一致）
+### $ sudo bridge vlan add vid 20 dev enp0s10
+exit=0
+
+### $ bridge vlan show
+port              vlan-id  
+enp0s8            10 PVID Egress Untagged
+enp0s9            20 PVID Egress Untagged
+enp0s10           10
+                  20
+exit=0
+

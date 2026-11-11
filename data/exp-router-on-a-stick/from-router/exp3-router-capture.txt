@@ -1,0 +1,22 @@
+# exp3 router capture   2026-10-21T10:33:53+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo timeout -s INT 25 tcpdump -i enp0s8 -n -e -w exp3-router.pcap   (25秒以内に client から server へ ping)
+dropped privs to tcpdump
+tcpdump: listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+11 packets captured
+11 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -e -r exp3-router.pcap
+reading from file exp3-router.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+10:34:00.343556 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 9, seq 1, length 64
+10:34:00.343675 08:00:27:88:5c:75 > Broadcast, ethertype 802.1Q (0x8100), length 46: vlan 20, p 0, ethertype ARP (0x0806), Request who-has 192.168.120.20 tell 192.168.120.1, length 28
+10:34:01.365163 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 9, seq 2, length 64
+10:34:01.381367 08:00:27:88:5c:75 > Broadcast, ethertype 802.1Q (0x8100), length 46: vlan 20, p 0, ethertype ARP (0x0806), Request who-has 192.168.120.20 tell 192.168.120.1, length 28
+10:34:02.385452 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 9, seq 3, length 64
+10:34:02.405407 08:00:27:88:5c:75 > Broadcast, ethertype 802.1Q (0x8100), length 46: vlan 20, p 0, ethertype ARP (0x0806), Request who-has 192.168.120.20 tell 192.168.120.1, length 28
+10:34:03.428624 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable, length 92
+10:34:03.428994 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable, length 92
+10:34:03.429109 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable, length 92
+10:34:08.742462 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.110.10 tell 192.168.110.1, length 28
+10:34:08.744742 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Reply 192.168.110.10 is-at 08:00:27:5a:8e:0e, length 46

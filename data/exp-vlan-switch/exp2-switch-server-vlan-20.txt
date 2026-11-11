@@ -1,0 +1,17 @@
+# exp2 switch server-vlan 20  2026-10-20T03:02:58+09:00
+### $ sudo bridge vlan del vid 10 dev enp0s9
+exit=0
+
+### $ sudo bridge vlan del vid 20 dev enp0s9
+exit=0
+
+### $ sudo bridge vlan add vid 20 dev enp0s9 pvid untagged
+exit=0
+
+### $ bridge vlan show
+port              vlan-id  
+enp0s8            10
+                  20
+enp0s9            20 PVID Egress Untagged
+exit=0
+

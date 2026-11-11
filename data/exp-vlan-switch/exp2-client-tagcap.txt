@@ -1,0 +1,27 @@
+# exp2 client tagcap   2026-10-20T03:40:51+09:00
+### $ sudo timeout -s INT 12 tcpdump -i enp0s9 -n -e -w exp2-client.pcap   (バックグラウンド)
+timeout: failed to run command ‘tcpdump’: No such file or directory
+### $ ping -c 3 -W 2 -I enp0s9.10 192.168.110.20
+PING 192.168.110.20 (192.168.110.20) from 192.168.110.10 enp0s9.10: 56(84) bytes of data.
+64 bytes from 192.168.110.20: icmp_seq=1 ttl=64 time=63.6 ms
+64 bytes from 192.168.110.20: icmp_seq=2 ttl=64 time=2.25 ms
+64 bytes from 192.168.110.20: icmp_seq=3 ttl=64 time=3.12 ms
+
+--- 192.168.110.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2017ms
+rtt min/avg/max/mdev = 2.249/23.000/63.629/28.730 ms
+exit=0
+
+### $ ping -c 3 -W 2 -I enp0s9.20 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) from 192.168.120.10 enp0s9.20: 56(84) bytes of data.
+From 192.168.120.10 icmp_seq=1 Destination Host Unreachable
+From 192.168.120.10 icmp_seq=2 Destination Host Unreachable
+From 192.168.120.10 icmp_seq=3 Destination Host Unreachable
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2088ms
+pipe 3
+exit=1
+
+### $ tcpdump -n -e -r exp2-client.pcap
+./switch-test.sh: line 114: tcpdump: command not found

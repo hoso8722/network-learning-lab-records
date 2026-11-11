@@ -1,0 +1,39 @@
+# 実験3 teardown と確認の転記（2026-10-22）
+# 出所: ユーザーが各VMの端末から貼り付けた出力（チャット経由）。整形・補完なし。
+# 注記: teardown の出力ファイル(exp3-*-teardown.txt)は、回収(pull)より後に作られたため回収していない。
+
+## router teardown（2026-10-22T02:58:32+09:00, host=router）
+firewall-cmd --zone=internal --remove-interface=enp0s8.10 → success / .20 → success
+ip link del enp0s8.10, enp0s8.20 → exit=0
+sysctl -w net.ipv4.ip_forward=0 → net.ipv4.ip_forward = 0
+nmcli device set enp0s8 managed yes → exit=0
+ip -br addr: enp0s3 10.0.2.15/24 ..., enp0s8 UP（アドレスなし）
+
+## switch teardown（2026-10-22T02:58:55+09:00, host=switch）
+ip link del br0 → exit=0
+nmcli device set enp0s8 / enp0s9 / enp0s10 managed yes → exit=0
+ip -br link: enp0s3, enp0s8, enp0s9, enp0s10 とも UP
+
+## client teardown（2026-10-22T03:00:20+09:00, host=client）
+ip route del 192.168.120.0/24 dev enp0s9 / ip addr del 192.168.110.10/24 dev enp0s9 / nmcli managed yes → すべて exit=0
+ip -br addr: enp0s8 192.168.10.10/24, enp0s9 UP（アドレスなし）
+
+## server teardown（2026-10-22T03:00:42+09:00, host=server）
+ip route del 192.168.110.0/24 dev enp0s9 / ip addr del 192.168.120.20/24 dev enp0s9 / nmcli managed yes → すべて exit=0
+ip -br addr: enp0s8 192.168.10.20/24, enp0s9 UP（アドレスなし）
+
+## teardown 後の確認（ip -br addr）
+router:  enp0s3 10.0.2.15/24 ..., enp0s8 UP 192.168.10.20/24        ← クローン元(server)のプロファイルのアドレスが再適用された
+switch:  enp0s3 10.0.2.15/24 ..., enp0s8 UP 192.168.10.20/24, enp0s9 UP fe80::88ce:73e5:145d:5ebb/64, enp0s10 UP fe80::2c23:d95:90a7:fe9/64   ← 同上
+server:  enp0s3 10.0.2.15/24 ..., enp0s8 UP 192.168.10.20/24, enp0s9 UP fe80::1395:c908:daf9:776f/64
+client:  enp0s3 10.0.2.15/24 ..., enp0s8 UP 192.168.10.10/24, enp0s9 UP fe80::2a61:66d:23dc:76a7/64
+
+## スナップショット（Windows PowerShell、ユーザー提出）
+4台に "exp3-done" を取得（説明: 実験3完了。teardown済み、電源OFF）。UUID:
+  d7a4d39b-473e-4fe4-bf27-922ae187eafb / b652c8d4-180c-474c-9d3c-2dbb6d75e56a / cc98d90b-8d86-4f28-a972-e3bdfef84722 / 8dba8239-45e9-4fff-b3ed-e94462d46137
+（出力は VM 名と UUID の対応を示さない。取得時に電源OFFだったかは出力からは確認できない。）
+
+## 追記: スナップショットの電源状態（2026-10-22、ユーザー申告）
+「電源OFFでスナップショットは取りました」（ログでの確認は未実施）。
+各VMのメモリを 512MB に変更した（ユーザー申告。スナップショット exp3-done の取得後。VMの設定はスナップショットに含まれるため、
+exp3-done へ復元するとメモリ設定は 1024MB に戻る）。

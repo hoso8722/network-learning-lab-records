@@ -1,0 +1,12 @@
+# exp2 client mtu   2026-10-20T03:32:44+09:00
+# 1472 バイト + ヘッダ28 = 1500 バイトの IP パケットを、フラグメント禁止(-M do)で送る
+### $ ping -c 2 -W 2 -M do -s 1472 -I enp0s9.10 192.168.110.20
+PING 192.168.110.20 (192.168.110.20) from 192.168.110.10 enp0s9.10: 1472(1500) bytes of data.
+1480 bytes from 192.168.110.20: icmp_seq=1 ttl=64 time=5.29 ms
+1480 bytes from 192.168.110.20: icmp_seq=2 ttl=64 time=4.11 ms
+
+--- 192.168.110.20 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 4.114/4.703/5.292/0.589 ms
+exit=0
+

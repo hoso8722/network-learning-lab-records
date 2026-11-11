@@ -1,0 +1,67 @@
+# 実験2 試行1(ping10 失敗)の生データ(転記)
+# 出所: ユーザーが端末から貼り付けた転記(チャット経由)。取得時刻は不明な箇所あり。整形・補完なし。
+# 注記: switch の tcpdump 出力のうち1つはプロンプトが [<WSL_USER>@switch ~]$、もう1つは [user@switch ~]$(同一VMへの別セッション)。
+
+## [1] server: ip -br addr(prepare 済みの状態)
+[user@server ~]$ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fea1:ef2d/64 fe80::a00:27ff:fea1:ef2d/64
+enp0s8           UP             192.168.10.20/24
+enp0s9           UP             192.168.110.20/24 192.168.120.20/24
+
+## [2] switch: client 側ポート enp0s8 を ping10 中にキャプチャ
+[<WSL_USER>@switch ~]$ sudo timeout -s INT 15 tcpdump -i enp0s8 -n -e -c 10
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+11:29:45.904243 08:00:27:5a:8e:0e > Broadcast, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.110.20 tell 192.168.110.10, length 46
+11:29:46.979800 08:00:27:5a:8e:0e > Broadcast, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.110.20 tell 192.168.110.10, length 46
+11:29:48.046696 08:00:27:5a:8e:0e > Broadcast, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.110.20 tell 192.168.110.10, length 46
+
+3 packets captured
+3 packets received by filter
+0 packets dropped by kernel
+
+## [3] switch: server 側ポート enp0s9 を同時にキャプチャ
+[user@switch ~]$ sudo timeout -s INT 15 tcpdump -i enp0s9 -n -e -c 10
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s9, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+11:29:45.904306 08:00:27:5a:8e:0e > Broadcast, ethertype ARP (0x0806), length 60: Request who-has 192.168.110.20 tell 192.168.110.10, length 46
+11:29:46.979862 08:00:27:5a:8e:0e > Broadcast, ethertype ARP (0x0806), length 60: Request who-has 192.168.110.20 tell 192.168.110.10, length 46
+11:29:48.046716 08:00:27:5a:8e:0e > Broadcast, ethertype ARP (0x0806), length 60: Request who-has 192.168.110.20 tell 192.168.110.10, length 46
+
+3 packets captured
+3 packets received by filter
+0 packets dropped by kernel
+
+## [4] switch: bridge link / fdb
+[user@switch ~]$ bridge link show
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br0 state forwarding priority 32 cost 5
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br0 state forwarding priority 32 cost 5
+[user@switch ~]$ bridge fdb show br br0
+08:00:27:5a:8e:0e dev enp0s8 vlan 10 master br0
+08:00:27:b7:09:ad dev enp0s8 vlan 20 master br0 permanent
+08:00:27:b7:09:ad dev enp0s8 vlan 10 master br0 permanent
+08:00:27:b7:09:ad dev enp0s8 master br0 permanent
+01:00:5e:00:00:01 dev enp0s8 self permanent
+08:00:27:3e:ac:f1 dev enp0s9 vlan 10 master br0 permanent
+08:00:27:3e:ac:f1 dev enp0s9 master br0 permanent
+01:00:5e:00:00:01 dev enp0s9 self permanent
+33:33:00:00:00:01 dev enp0s9 self permanent
+33:33:00:00:00:01 dev br0 self permanent
+01:00:5e:00:00:6a dev br0 self permanent
+33:33:00:00:00:6a dev br0 self permanent
+01:00:5e:00:00:01 dev br0 self permanent
+33:33:ff:3e:ac:f1 dev br0 self permanent
+
+## [5] client: 近隣テーブルとインターフェース
+[user@client ~]$ ip neigh show dev enp0s9.10
+192.168.110.20 FAILED
+[user@client ~]$ ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
+enp0s3           UP             08:00:27:1f:fa:7c <BROADCAST,MULTICAST,UP,LOWER_UP>
+enp0s8           UP             08:00:27:af:87:fe <BROADCAST,MULTICAST,UP,LOWER_UP>
+enp0s9           UP             08:00:27:5a:8e:0e <BROADCAST,MULTICAST,UP,LOWER_UP>
+enp0s9.10@enp0s9 UP             08:00:27:5a:8e:0e <BROADCAST,MULTICAST,UP,LOWER_UP>
+enp0s9.20@enp0s9 UP             08:00:27:5a:8e:0e <BROADCAST,MULTICAST,UP,LOWER_UP>

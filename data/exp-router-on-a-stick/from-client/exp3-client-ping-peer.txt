@@ -1,0 +1,13 @@
+# exp3 client ping-peer   2026-10-21T10:35:20+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ping -c 3 -W 2 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) 56(84) bytes of data.
+64 bytes from 192.168.120.20: icmp_seq=1 ttl=63 time=6.74 ms
+64 bytes from 192.168.120.20: icmp_seq=2 ttl=63 time=4.88 ms
+64 bytes from 192.168.120.20: icmp_seq=3 ttl=63 time=4.75 ms
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 4.754/5.457/6.742/0.909 ms
+exit=0
+

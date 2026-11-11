@@ -1,0 +1,10 @@
+# exp2 switch p1-vlan20 off  2026-10-20T03:11:17+09:00
+### $ sudo bridge vlan del vid 20 dev enp0s8
+exit=0
+
+### $ bridge vlan show
+port              vlan-id  
+enp0s8            10
+enp0s9            20 PVID Egress Untagged
+exit=0
+

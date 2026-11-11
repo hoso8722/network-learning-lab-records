@@ -1,0 +1,10 @@
+# exp3 client trace   2026-10-21T10:30:10+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ tracepath -n 192.168.120.20
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  192.168.110.1                                         2.888ms 
+ 1:  192.168.110.1                                         3.024ms 
+ 2:  192.168.120.20                                        4.895ms !H
+     Resume: pmtu 1500 
+exit=0
+

@@ -1,0 +1,37 @@
+# exp3 switch build   2026-10-21T03:59:04+09:00  host=switch
+# ホスト名の確認: OK（host=switch と role=switch が一致）
+### $ sudo ip link add name br0 type bridge vlan_filtering 1 vlan_default_pvid 0
+exit=0
+
+### $ sudo ip link set enp0s8 master br0
+exit=0
+
+### $ sudo ip link set enp0s9 master br0
+exit=0
+
+### $ sudo ip link set enp0s10 master br0
+exit=0
+
+### $ sudo ip link set br0 up
+exit=0
+
+### $ sudo bridge vlan add vid 10 dev enp0s8 pvid untagged
+exit=0
+
+### $ sudo bridge vlan add vid 20 dev enp0s9 pvid untagged
+exit=0
+
+### $ sudo bridge vlan add vid 10 dev enp0s10
+exit=0
+
+### $ sudo bridge vlan add vid 20 dev enp0s10
+exit=0
+
+### $ bridge vlan show
+port              vlan-id  
+enp0s8            10 PVID Egress Untagged
+enp0s9            20 PVID Egress Untagged
+enp0s10           10
+                  20
+exit=0
+

@@ -1,0 +1,13 @@
+# exp3 server ping-gw   2026-10-21T04:16:54+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ ping -c 3 -W 2 192.168.120.1
+PING 192.168.120.1 (192.168.120.1) 56(84) bytes of data.
+64 bytes from 192.168.120.1: icmp_seq=1 ttl=64 time=28.3 ms
+64 bytes from 192.168.120.1: icmp_seq=2 ttl=64 time=2.54 ms
+64 bytes from 192.168.120.1: icmp_seq=3 ttl=64 time=2.52 ms
+
+--- 192.168.120.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2024ms
+rtt min/avg/max/mdev = 2.515/11.103/28.261/12.132 ms
+exit=0
+

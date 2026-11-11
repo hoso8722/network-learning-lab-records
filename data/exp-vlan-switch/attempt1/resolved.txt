@@ -1,0 +1,39 @@
+# 試行1 解決後の生データ(転記)
+# 出所: ユーザーが端末から貼り付けた転記(チャット経由)。整形・補完なし。
+# 実施した対処(ユーザー申告): switch VM を停止 → modifyvm で NIC2/NIC3 を allow-all に設定 → 起動 →
+#   switch-test.sh switch prepare / build をやり直し → client で ping10 を再実行。
+#   (modifyvm の実行出力、prepare/build の再実行出力は未提出)
+
+## client: ping10 → 成功
+[user@client ~]$ ./switch-test.sh client ping10
+# exp2 client ping10   2026-10-19T12:39:35+09:00
+### $ ping -c 3 -W 2 -I enp0s9.10 192.168.110.20
+PING 192.168.110.20 (192.168.110.20) from 192.168.110.10 enp0s9.10: 56(84) bytes of data.
+64 bytes from 192.168.110.20: icmp_seq=1 ttl=64 time=3.07 ms
+64 bytes from 192.168.110.20: icmp_seq=2 ttl=64 time=2.28 ms
+64 bytes from 192.168.110.20: icmp_seq=3 ttl=64 time=2.73 ms
+
+--- 192.168.110.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2010ms
+rtt min/avg/max/mdev = 2.278/2.692/3.074/0.325 ms
+exit=0
+
+## switch: server 側ポート enp0s9 のキャプチャ(ping10 と並行)
+# 注意: この VM の時計は client と約10時間ずれている(02:52 と 12:39)。相対時間のみ使える。
+[user@switch ~]$ sudo timeout -s INT 15 tcpdump -i enp0s9 -n -e -c 10
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s9, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+02:52:25.043239 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.110.10 > 192.168.110.20: ICMP echo request, id 10, seq 1, length 64
+02:52:25.044338 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.110.20 > 192.168.110.10: ICMP echo reply, id 10, seq 1, length 64
+02:52:26.042135 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.110.10 > 192.168.110.20: ICMP echo request, id 10, seq 2, length 64
+02:52:26.043198 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.110.20 > 192.168.110.10: ICMP echo reply, id 10, seq 2, length 64
+02:52:27.053628 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.110.10 > 192.168.110.20: ICMP echo request, id 10, seq 3, length 64
+02:52:27.054790 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.110.20 > 192.168.110.10: ICMP echo reply, id 10, seq 3, length 64
+02:52:29.909060 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype ARP (0x0806), length 60: Request who-has 192.168.110.20 tell 192.168.110.10, length 46
+02:52:29.909956 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype ARP (0x0806), length 60: Reply 192.168.110.20 is-at 08:00:27:7e:40:4e, length 46
+02:52:29.927816 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype ARP (0x0806), length 60: Request who-has 192.168.110.10 tell 192.168.110.20, length 46
+02:52:29.928832 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype ARP (0x0806), length 60: Reply 192.168.110.10 is-at 08:00:27:5a:8e:0e, length 46
+10 packets captured
+10 packets received by filter
+0 packets dropped by kernel

@@ -1,0 +1,335 @@
+# 実験3 本試験(手順0〜5)の生データ(転記)
+# 出所: ユーザーが各VMの端末から貼り付けた転記(チャット経由)。整形・補完なし。
+# 前提: ホスト名の確認(router-test.sh の先頭)はすべて OK。switch の NIC は起動前に allow-all、router は memory=512。
+# 注記: switch prepare の出力(03:46:10)は、会話中の直前のメッセージで提出済みのため、ここでは build 以降を記載する。
+
+## 手順0b: switch build
+[user@switch ~]$ ./router-test.sh switch build
+# exp3 switch build   2026-10-21T03:59:04+09:00  host=switch
+### $ sudo ip link add name br0 type bridge vlan_filtering 1 vlan_default_pvid 0     exit=0
+### $ sudo ip link set enp0s8 master br0     exit=0
+### $ sudo ip link set enp0s9 master br0     exit=0
+### $ sudo ip link set enp0s10 master br0    exit=0
+### $ sudo ip link set br0 up                exit=0
+### $ sudo bridge vlan add vid 10 dev enp0s8 pvid untagged   exit=0
+### $ sudo bridge vlan add vid 20 dev enp0s9 pvid untagged   exit=0
+### $ sudo bridge vlan add vid 10 dev enp0s10   exit=0
+### $ sudo bridge vlan add vid 20 dev enp0s10   exit=0
+### $ bridge vlan show
+port              vlan-id
+enp0s8            10 PVID Egress Untagged
+enp0s9            20 PVID Egress Untagged
+enp0s10           10
+                  20
+exit=0
+(元の出力は各コマンドの間に空行あり。コマンドと exit の対応は転記のとおり。ここでは1行にまとめて表記した。)
+
+## 手順1: router prepare
+# exp3 router prepare   2026-10-21T03:59:55+09:00  host=router
+(sudo nmcli device set enp0s8 managed no / ip addr flush dev enp0s8 / ip link set enp0s8 up /
+ ip link add link enp0s8 name enp0s8.10 type vlan id 10 / 同 .20 id 20 /
+ ip addr add 192.168.110.1/24 dev enp0s8.10 / ip addr add 192.168.120.1/24 dev enp0s8.20 / ip link set .10 .20 up: すべて exit=0)
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe35:b67e/64 fe80::a00:27ff:fe35:b67e/64
+enp0s8           UP
+enp0s8.10@enp0s8 UP             192.168.110.1/24 fe80::a00:27ff:fe88:5c75/64
+enp0s8.20@enp0s8 UP             192.168.120.1/24 fe80::a00:27ff:fe88:5c75/64
+exit=0
+
+## 手順2: client prepare
+# exp3 client prepare   2026-10-21T04:09:08+09:00  host=client
+(nmcli managed no / ip link set enp0s9 up / ip addr add 192.168.110.10/24 dev enp0s9 /
+ ip route add 192.168.120.0/24 via 192.168.110.1 dev enp0s9: すべて exit=0)
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe1f:fa7c/64 fe80::a00:27ff:fe1f:fa7c/64
+enp0s8           UP             192.168.10.10/24
+enp0s9           UP             192.168.110.10/24 fe80::2a61:66d:23dc:76a7/64
+exit=0
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101
+192.168.110.0/24 dev enp0s9 proto kernel scope link src 192.168.110.10
+192.168.120.0/24 via 192.168.110.1 dev enp0s9
+exit=0
+
+## 手順2: server prepare
+# exp3 server prepare   2026-10-21T04:15:48+09:00  host=server
+(nmcli managed no / ip link set enp0s9 up / ip addr add 192.168.120.20/24 dev enp0s9 /
+ ip route add 192.168.110.0/24 via 192.168.120.1 dev enp0s9: すべて exit=0)
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fea1:ef2d/64 fe80::a00:27ff:fea1:ef2d/64
+enp0s8           UP             192.168.10.20/24
+enp0s9           UP             192.168.120.20/24
+exit=0
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.20 metric 101
+192.168.110.0/24 via 192.168.120.1 dev enp0s9
+192.168.120.0/24 dev enp0s9 proto kernel scope link src 192.168.120.20
+exit=0
+
+## 手順3: client ping-gw
+# exp3 client ping-gw   2026-10-21T04:16:24+09:00  host=client
+### $ ping -c 3 -W 2 192.168.110.1
+64 bytes from 192.168.110.1: icmp_seq=1 ttl=64 time=6.57 ms
+64 bytes from 192.168.110.1: icmp_seq=2 ttl=64 time=2.56 ms
+64 bytes from 192.168.110.1: icmp_seq=3 ttl=64 time=2.56 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 2.558/3.896/6.572/1.891 ms
+exit=0
+
+## 手順4: server ping-gw
+# exp3 server ping-gw   2026-10-21T04:16:54+09:00  host=server
+### $ ping -c 3 -W 2 192.168.120.1
+64 bytes from 192.168.120.1: icmp_seq=1 ttl=64 time=28.3 ms
+64 bytes from 192.168.120.1: icmp_seq=2 ttl=64 time=2.54 ms
+64 bytes from 192.168.120.1: icmp_seq=3 ttl=64 time=2.52 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2024ms
+rtt min/avg/max/mdev = 2.515/11.103/28.261/12.132 ms
+exit=0
+
+## 手順5: client ping-peer(router の ip_forward = 0)
+# exp3 client ping-peer   2026-10-21T04:17:27+09:00  host=client
+### $ ping -c 3 -W 2 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) 56(84) bytes of data.
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2053ms
+exit=1
+
+## 手順6: router fwd on
+[user@router ~]$ ./router-test.sh router fwd on
+# exp3 router fwd on  2026-10-21T04:19:47+09:00  host=router
+### $ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+exit=0
+
+## 手順7: client ping-peer(転送有効後)→ 予想外: 失敗
+[user@client ~]$ ./router-test.sh client ping-peer
+# exp3 client ping-peer   2026-10-21T04:20:26+09:00  host=client
+### $ ping -c 3 -W 2 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) 56(84) bytes of data.
+From 192.168.110.1 icmp_seq=1 Packet filtered
+From 192.168.110.1 icmp_seq=2 Packet filtered
+From 192.168.110.1 icmp_seq=3 Packet filtered
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2003ms
+
+exit=1
+
+## 手順8: client trace
+[user@client ~]$ ./router-test.sh client trace
+# exp3 client trace   2026-10-21T04:23:40+09:00  host=client
+### $ tracepath -n 192.168.120.20
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  192.168.110.1                                         3.570ms
+ 1:  192.168.110.1                                         2.742ms
+ 2:  192.168.110.1                                         2.990ms !H
+     Resume: pmtu 1500
+exit=0
+
+## 診断: router の firewalld(読み取りのみ)
+[user@router ~]$ sudo firewall-cmd --state
+running
+[user@router ~]$ sudo firewall-cmd --get-active-zones
+public
+  interfaces: enp0s3 enp0s8
+[user@router ~]$ sudo firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports:
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+[user@router ~]$ sudo nft list table inet firewalld | grep -n -i -E "forward|reject|drop"
+72:             meta nfproto ipv6 fib saddr . mark . iif oif missing drop
+80:             ct state invalid drop
+82:             reject with icmpx admin-prohibited
+85:     chain filter_FORWARD {
+86:             type filter hook forward priority filter + 10; policy accept;
+90:             ct state invalid drop
+91:             ip6 daddr { ::/96, ::ffff:0.0.0.0/96, 2002::/24, 2002:a00::/24, 2002:7f00::/24, 2002:a9fe::/32, 2002:ac10::/28, 2002:c0a8::/32, 2002:e000::/19 } reject with icmpv6 addr-unreachable
+92:             jump filter_FORWARD_ZONES
+93:             reject with icmpx admin-prohibited
+100:            ip6 daddr { ::/96, ::ffff:0.0.0.0/96, 2002::/24, 2002:a00::/24, 2002:7f00::/24, 2002:a9fe::/32, 2002:ac10::/28, 2002:c0a8::/32, 2002:e000::/19 } reject with icmpv6 addr-unreachable
+118:    chain filter_FORWARD_POLICIES_pre {
+121:    chain filter_FORWARD_ZONES {
+127:    chain filter_FORWARD_POLICIES_post {
+145:            reject with icmpx admin-prohibited
+192:            jump filter_FORWARD_POLICIES_pre
+198:            jump filter_FORWARD_POLICIES_post
+199:            reject with icmpx admin-prohibited
+
+## 手順9相当: router の capture(client の ping-peer と並行、転送有効・firewalld の既定のまま)
+# exp3 router capture   2026-10-21T04:35:18+09:00  host=router
+10 packets captured / 10 packets received by filter / 0 packets dropped by kernel
+04:35:35.230502 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 4, seq 1, length 64
+04:35:35.230666 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable - admin prohibited filter, length 92
+04:35:36.232607 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 4, seq 2, length 64
+04:35:36.232717 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable - admin prohibited filter, length 92
+04:35:37.240304 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 4, seq 3, length 64
+04:35:37.240445 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable - admin prohibited filter, length 92
+04:35:40.353195 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.110.1 tell 192.168.110.10, length 46
+04:35:40.353251 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Reply 192.168.110.1 is-at 08:00:27:88:5c:75, length 28
+04:35:40.679128 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.110.10 tell 192.168.110.1, length 28
+04:35:40.681429 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Reply 192.168.110.10 is-at 08:00:27:5a:8e:0e, length 46
+
+## client: ping-peer(同じ時間帯、同じ失敗)
+# exp3 client ping-peer   2026-10-21T04:35:35+09:00  host=client
+From 192.168.110.1 icmp_seq=1..3 Packet filtered / 3 packets transmitted, 0 received, +3 errors, 100% packet loss
+
+## 診断(router、読み取りのみ)と firewall の変更
+[user@router ~]$ sudo firewall-cmd --get-zone-of-interface=enp0s8.10
+no zone
+[user@router ~]$ sudo firewall-cmd --zone=internal --list-all
+internal
+  target: default
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services: cockpit dhcpv6-client mdns samba-client ssh
+  ports:
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+[user@router ~]$ sudo nft list chain inet firewalld filter_FORWARD_ZONES
+table inet firewalld {
+        chain filter_FORWARD_ZONES {
+                iifname "enp0s8" goto filter_FWD_public
+                iifname "enp0s3" goto filter_FWD_public
+                goto filter_FWD_public
+        }
+}
+[user@router ~]$ sudo nft list chain inet firewalld filter_FORWARD
+table inet firewalld {
+        chain filter_FORWARD {
+                type filter hook forward priority filter + 10; policy accept;
+                ct state { established, related } accept
+                ct status dnat accept
+                iifname "lo" accept
+                ct state invalid drop
+                ip6 daddr { ::/96, ::ffff:0.0.0.0/96, 2002::/24, 2002:a00::/24, 2002:7f00::/24, 2002:a9fe::/32, 2002:ac10::/28, 2002:c0a8::/32, 2002:e000::/19 } reject with icmpv6 addr-unreachable
+                jump filter_FORWARD_ZONES
+                reject with icmpx admin-prohibited
+        }
+}
+[user@router ~]$ sudo firewall-cmd --zone=internal --add-interface=enp0s8.10
+success
+[user@router ~]$ sudo firewall-cmd --zone=internal --add-interface=enp0s8.20
+success
+[user@router ~]$ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8.10 enp0s8.20
+public
+  interfaces: enp0s3 enp0s8
+
+## 手順7(再): client ping-peer → 成功
+# exp3 client ping-peer   2026-10-21T10:19:25+09:00  host=client
+64 bytes from 192.168.120.20: icmp_seq=1 ttl=63 time=4.60 ms
+64 bytes from 192.168.120.20: icmp_seq=2 ttl=63 time=4.78 ms
+64 bytes from 192.168.120.20: icmp_seq=3 ttl=63 time=4.19 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2006ms
+rtt min/avg/max/mdev = 4.187/4.521/4.778/0.247 ms
+
+## 手順9: router capture(上の ping と並行)
+# exp3 router capture   2026-10-21T10:19:08+09:00  host=router
+20 packets captured / 20 packets received by filter / 0 packets dropped by kernel
+(各 ping: vlan 10 で echo request 到着 → vlan 20 で echo request 送出 → vlan 20 で echo reply 到着 → vlan 10 で echo reply 送出)
+10:19:25.665808 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ... vlan 10, ... 192.168.110.10 > 192.168.120.20: ICMP echo request, id 6, seq 1
+10:19:25.665894 08:00:27:88:5c:75 > 08:00:27:7e:40:4e, ... vlan 20, ... 192.168.110.10 > 192.168.120.20: ICMP echo request, id 6, seq 1
+10:19:25.667968 08:00:27:7e:40:4e > 08:00:27:88:5c:75, ... vlan 20, ... 192.168.120.20 > 192.168.110.10: ICMP echo reply, id 6, seq 1
+10:19:25.667991 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ... vlan 10, ... 192.168.120.20 > 192.168.110.10: ICMP echo reply, id 6, seq 1
+(seq 2, 3 も同じパターン。続けて ARP の往復が vlan 10 と vlan 20 の両方で記録されている。ここでは seq 1 のみ転記し、他は要約。省略箇所は「元の20行のうち16行」。完全な出力は pcap 未回収のため、回収次第 差し替える。)
+
+## 手順8(再): client trace(転送が通る状態)
+[user@client ~]$ ./router-test.sh client trace
+# exp3 client trace   2026-10-21T10:30:10+09:00  host=client
+### $ tracepath -n 192.168.120.20
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  192.168.110.1                                         2.888ms
+ 1:  192.168.110.1                                         3.024ms
+ 2:  192.168.120.20                                        4.895ms !H
+     Resume: pmtu 1500
+exit=0
+
+## 手順10a: switch のトランク側(router 向け P3=enp0s10)から VLAN 20 を外す
+[user@switch ~]$ ./router-test.sh switch p3-vlan20 off
+# exp3 switch p3-vlan20 off  2026-10-21T10:30:53+09:00  host=switch
+### $ sudo bridge vlan del vid 20 dev enp0s10
+exit=0
+### $ bridge vlan show
+port              vlan-id
+enp0s8            10 PVID Egress Untagged
+enp0s9            20 PVID Egress Untagged
+enp0s10           10
+exit=0
+
+## 手順10b: client ping-peer(許可 VLAN 不足の状態)
+# 注意: 次の出力は 10:33:23 の実行。下の router の capture(10:34:00 の ping)とは別の実行。capture と対応する ping の出力は未提出。
+[user@client ~]$ ./router-test.sh client ping-peer
+# exp3 client ping-peer   2026-10-21T10:33:23+09:00  host=client
+### $ ping -c 3 -W 2 192.168.120.20
+PING 192.168.120.20 (192.168.120.20) 56(84) bytes of data.
+
+--- 192.168.120.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2043ms
+
+exit=1
+
+## 手順10b: router capture(10:34:00 の ping と並行)
+# exp3 router capture   2026-10-21T10:33:53+09:00  host=router
+11 packets captured / 11 packets received by filter / 0 packets dropped by kernel
+10:34:00.343556 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 9, seq 1, length 64
+10:34:00.343675 08:00:27:88:5c:75 > Broadcast, ethertype 802.1Q (0x8100), length 46: vlan 20, p 0, ethertype ARP (0x0806), Request who-has 192.168.120.20 tell 192.168.120.1, length 28
+10:34:01.365163 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 9, seq 2, length 64
+10:34:01.381367 08:00:27:88:5c:75 > Broadcast, ethertype 802.1Q (0x8100), length 46: vlan 20, p 0, ethertype ARP (0x0806), Request who-has 192.168.120.20 tell 192.168.120.1, length 28
+10:34:02.385452 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.10 > 192.168.120.20: ICMP echo request, id 9, seq 3, length 64
+10:34:02.405407 08:00:27:88:5c:75 > Broadcast, ethertype 802.1Q (0x8100), length 46: vlan 20, p 0, ethertype ARP (0x0806), Request who-has 192.168.120.20 tell 192.168.120.1, length 28
+10:34:03.428624 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable, length 92
+10:34:03.428994 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable, length 92
+10:34:03.429109 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 130: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.110.1 > 192.168.110.10: ICMP host 192.168.120.20 unreachable, length 92
+10:34:08.742462 08:00:27:88:5c:75 > 08:00:27:5a:8e:0e, ethertype 802.1Q (0x8100), length 46: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 192.168.110.10 tell 192.168.110.1, length 28
+10:34:08.744742 08:00:27:5a:8e:0e > 08:00:27:88:5c:75, ethertype 802.1Q (0x8100), length 64: vlan 10, p 0, ethertype ARP (0x0806), Reply 192.168.110.10 is-at 08:00:27:5a:8e:0e, length 46
+
+## 手順10c: P3 に VLAN 20 を戻す
+[user@switch ~]$ ./router-test.sh switch p3-vlan20 on
+# exp3 switch p3-vlan20 on  2026-10-21T10:34:58+09:00  host=switch
+### $ sudo bridge vlan add vid 20 dev enp0s10
+exit=0
+### $ bridge vlan show
+port              vlan-id
+enp0s8            10 PVID Egress Untagged
+enp0s9            20 PVID Egress Untagged
+enp0s10           10
+                  20
+exit=0
+
+## 手順10d: client ping-peer(復旧後)
+# exp3 client ping-peer   2026-10-21T10:35:20+09:00  host=client
+64 bytes from 192.168.120.20: icmp_seq=1 ttl=63 time=6.74 ms
+64 bytes from 192.168.120.20: icmp_seq=2 ttl=63 time=4.88 ms
+64 bytes from 192.168.120.20: icmp_seq=3 ttl=63 time=4.75 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 4.754/5.457/6.742/0.909 ms
+exit=0

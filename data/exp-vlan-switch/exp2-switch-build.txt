@@ -1,0 +1,29 @@
+# exp2 switch build   2026-10-20T02:50:01+09:00
+### $ sudo ip link add name br0 type bridge vlan_filtering 1 vlan_default_pvid 0
+exit=0
+
+### $ sudo ip link set enp0s8 master br0
+exit=0
+
+### $ sudo ip link set enp0s9 master br0
+exit=0
+
+### $ sudo ip link set br0 up
+exit=0
+
+### $ sudo bridge vlan add vid 10 dev enp0s8
+exit=0
+
+### $ sudo bridge vlan add vid 20 dev enp0s8
+exit=0
+
+### $ sudo bridge vlan add vid 10 dev enp0s9 pvid untagged
+exit=0
+
+### $ bridge vlan show
+port              vlan-id  
+enp0s8            10
+                  20
+enp0s9            10 PVID Egress Untagged
+exit=0
+

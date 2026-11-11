@@ -1,0 +1,20 @@
+# exp2 server capture   2026-10-20T03:29:42+09:00
+### $ sudo timeout -s INT 25 tcpdump -i enp0s9 -n -e -w exp2-server.pcap   (25秒以内に client から ping を実行)
+dropped privs to tcpdump
+tcpdump: listening on enp0s9, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10 packets captured
+10 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -e -r exp2-server.pcap
+reading from file exp2-server.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+03:29:53.628744 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.120.10 > 192.168.120.20: ICMP echo request, id 22, seq 1, length 64
+03:29:53.628877 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.120.20 > 192.168.120.10: ICMP echo reply, id 22, seq 1, length 64
+03:29:54.640186 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.120.10 > 192.168.120.20: ICMP echo request, id 22, seq 2, length 64
+03:29:54.640261 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.120.20 > 192.168.120.10: ICMP echo reply, id 22, seq 2, length 64
+03:29:55.648605 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype IPv4 (0x0800), length 98: 192.168.120.10 > 192.168.120.20: ICMP echo request, id 22, seq 3, length 64
+03:29:55.648701 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype IPv4 (0x0800), length 98: 192.168.120.20 > 192.168.120.10: ICMP echo reply, id 22, seq 3, length 64
+03:29:58.770473 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype ARP (0x0806), length 42: Request who-has 192.168.120.10 tell 192.168.120.20, length 28
+03:29:58.772730 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype ARP (0x0806), length 60: Reply 192.168.120.10 is-at 08:00:27:5a:8e:0e, length 46
+03:29:59.111699 08:00:27:5a:8e:0e > 08:00:27:7e:40:4e, ethertype ARP (0x0806), length 60: Request who-has 192.168.120.20 tell 192.168.120.10, length 46
+03:29:59.111744 08:00:27:7e:40:4e > 08:00:27:5a:8e:0e, ethertype ARP (0x0806), length 42: Reply 192.168.120.20 is-at 08:00:27:7e:40:4e, length 28

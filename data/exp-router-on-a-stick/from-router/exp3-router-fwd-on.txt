@@ -1,0 +1,6 @@
+# exp3 router fwd on  2026-10-21T04:19:47+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+exit=0
+

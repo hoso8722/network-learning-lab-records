@@ -1,0 +1,41 @@
+# exp3 router prepare   2026-10-21T03:59:55+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo nmcli device set enp0s8 managed no
+exit=0
+
+### $ sudo ip addr flush dev enp0s8
+exit=0
+
+### $ sudo ip link set enp0s8 up
+exit=0
+
+### $ sudo ip link add link enp0s8 name enp0s8.10 type vlan id 10
+exit=0
+
+### $ sudo ip link add link enp0s8 name enp0s8.20 type vlan id 20
+exit=0
+
+### $ sudo ip addr add 192.168.110.1/24 dev enp0s8.10
+exit=0
+
+### $ sudo ip addr add 192.168.120.1/24 dev enp0s8.20
+exit=0
+
+### $ sudo ip link set enp0s8.10 up
+exit=0
+
+### $ sudo ip link set enp0s8.20 up
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe35:b67e/64 fe80::a00:27ff:fe35:b67e/64 
+enp0s8           UP             
+enp0s8.10@enp0s8 UP             192.168.110.1/24 fe80::a00:27ff:fe88:5c75/64 
+enp0s8.20@enp0s8 UP             192.168.120.1/24 fe80::a00:27ff:fe88:5c75/64 
+exit=0
+

@@ -1,0 +1,187 @@
+# 実験4 手順0（prepare）の生データ（転記）
+# 出所: ユーザーが各VMの端末から貼り付けた転記（チャット経由）。整形・補完なし。ここでは各コマンドの exit=0 と、最後の ip -br addr / ip route のみ転記。
+# 前提: 各 VM は 512MB。VirtualBox 設定は host-nic-config.txt（未保存の場合は会話中の提出を参照）。ホスト名の確認は4台とも OK。
+
+## client prepare（2026-10-23T00:15:50+09:00, host=client）
+nmcli managed no / ip link set enp0s9 up / ip addr add 192.168.31.10/24 dev enp0s9 / ip route add 192.168.32.0/24 via 192.168.31.1 dev enp0s9 : すべて exit=0
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe1f:fa7c/64 fe80::a00:27ff:fe1f:fa7c/64
+enp0s8           UP             192.168.10.10/24
+enp0s9           UP             192.168.31.10/24 fe80::2a61:66d:23dc:76a7/64
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+
+## server prepare（2026-10-23T00:17:23+09:00, host=server）
+nmcli managed no / ip link set enp0s9 up / ip addr add 192.168.32.20/24 dev enp0s9 / ip route add 192.168.31.0/24 via 192.168.32.1 dev enp0s9 : すべて exit=0
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fea1:ef2d/64 fe80::a00:27ff:fea1:ef2d/64
+enp0s8           UP             192.168.10.20/24
+enp0s9           UP             192.168.32.20/24
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.20 metric 101
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+
+## router(R1) prepare（2026-10-23T00:18:00+09:00, host=router）
+enp0s8/enp0s9: nmcli managed no / ip addr flush / ip link set up、ip addr add 192.168.31.1/24 dev enp0s8、ip addr add 192.168.30.1/30 dev enp0s9 : すべて exit=0
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe35:b67e/64 fe80::a00:27ff:fe35:b67e/64
+enp0s8           UP             192.168.31.1/24
+enp0s9           UP             192.168.30.1/30
+
+## router2(R2) prepare（2026-10-23T00:18:26+09:00, host=router2）
+enp0s8/enp0s9: nmcli managed no / ip addr flush / ip link set up、ip addr add 192.168.30.2/30 dev enp0s8、ip addr add 192.168.32.1/24 dev enp0s9 : すべて exit=0
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe33:b301/64 fe80::a00:27ff:fe33:b301/64
+enp0s8           UP             192.168.30.2/30
+enp0s9           UP             192.168.32.1/24
+
+# 手順1〜4（2026-10-23、ユーザー実行・提出。転記）
+
+## 手順1: router の fwd on / fw-zone on（2026-10-23T00:36:17, 00:36:29）
+net.ipv4.ip_forward = 1 （exit=0）
+### $ sudo firewall-cmd --zone=internal --add-interface=enp0s8
+Error: ZONE_CONFLICT: 'enp0s8' already bound to 'public'
+exit=18
+### $ sudo firewall-cmd --zone=internal --add-interface=enp0s9
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s9
+public
+  interfaces: enp0s3 enp0s8
+
+## 手順1: router2 の fwd on / fw-zone on（2026-10-23T00:37:45, 00:37:54）— router と同じ結果
+net.ipv4.ip_forward = 1 （exit=0）
+--add-interface=enp0s8 → Error: ZONE_CONFLICT: 'enp0s8' already bound to 'public' （exit=18）
+--add-interface=enp0s9 → success
+--get-active-zones → internal: enp0s9 / public: enp0s3 enp0s8
+
+## 手順2: ping-gw
+client（00:39:04）: ping -c 3 192.168.31.1 → 3/3、0% loss、rtt min/avg/max/mdev = 1.130/1.673/2.380/0.523 ms、ttl=64
+server（00:39:27）: ping -c 3 192.168.32.1 → 3/3、0% loss、rtt min/avg/max/mdev = 1.477/7.928/19.742/8.365 ms、ttl=64
+
+## 手順3: router → router2 の直結（00:41:05）
+ping -c 3 192.168.30.2 → 3/3、0% loss、rtt min/avg/max/mdev = 1.444/1.765/2.292/0.375 ms、ttl=64
+
+## 手順4: client ping-peer（00:49:38、経路なし。R1 は既定ルート(NAT)あり、enp0s8 は public のまま）
+ping -c 3 -W 2 192.168.32.20 → 3 transmitted, 0 received, 100% packet loss, time 2052ms（エラーメッセージなし）。exit=1
+
+## 手順4: router の capture（00:49:26 開始、-i any、SSH を除外せず）
+243 packets captured / 243 received by filter / 0 dropped。
+SSH（10.0.2.15.ssh と 10.0.2.2.53348 の間、enp0s3）が 235 行（ここでは省略。元の出力に全て含まれている）。ラボの通信に関する8行:
+00:49:39.013697 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 1, length 64
+00:49:39.013803 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 1, length 64
+00:49:40.043212 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 2, length 64
+00:49:40.043303 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 2, length 64
+00:49:41.065708 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 3, length 64
+00:49:41.065750 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 3, seq 3, length 64
+00:49:44.371072 enp0s8 In  ARP, Request who-has 192.168.31.1 tell 192.168.31.10, length 46
+00:49:44.371144 enp0s8 Out ARP, Reply 192.168.31.1 is-at 08:00:27:88:5c:75, length 28
+
+# 手順A〜D（2026-10-23、ユーザー実行・提出。転記）
+
+## 手順A: enp0s8 を internal へ移動（router、router2 とも同じ結果）
+$ sudo firewall-cmd --zone=internal --change-interface=enp0s8 → success
+$ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s9 enp0s8
+public
+  interfaces: enp0s3
+
+## 手順B: router-test.sh の更新版を送信（router、router2）
+route-test.sh 100% 7598 、scp_exit: 0、remote_host=router / remote_host=router2
+
+## 手順C: defroute off（router 01:13:55、router2 01:14:27）と、経路なしの ping
+router: ip route → 10.0.2.0/24 dev enp0s3, 192.168.30.0/30 dev enp0s9, 192.168.31.0/24 dev enp0s8（default なし）
+router2: ip route → 10.0.2.0/24 dev enp0s3, 192.168.30.0/30 dev enp0s8, 192.168.32.0/24 dev enp0s9（default なし）
+client ping-peer（01:15:19）:
+From 192.168.31.1 icmp_seq=1 Destination Net Unreachable
+From 192.168.31.1 icmp_seq=2 Destination Net Unreachable
+From 192.168.31.1 icmp_seq=3 Destination Net Unreachable
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2005ms
+router capture（01:15:09、-i any、'not tcp port 22'）: 10 packets captured / 12 received by filter / 0 dropped
+01:15:19.086099 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 4, seq 1, length 64
+01:15:19.086276 enp0s8 Out IP 192.168.31.1 > 192.168.31.10: ICMP net 192.168.32.20 unreachable, length 92
+01:15:20.088838 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 4, seq 2, length 64
+01:15:20.088961 enp0s8 Out IP 192.168.31.1 > 192.168.31.10: ICMP net 192.168.32.20 unreachable, length 92
+01:15:21.091182 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 4, seq 3, length 64
+01:15:21.091270 enp0s8 Out IP 192.168.31.1 > 192.168.31.10: ICMP net 192.168.32.20 unreachable, length 92
+01:15:24.144265 enp0s8 Out ARP, Request who-has 192.168.31.10 tell 192.168.31.1, length 28
+01:15:24.145315 enp0s8 In  ARP, Reply 192.168.31.10 is-at 08:00:27:5a:8e:0e, length 46
+01:15:24.414003 enp0s8 In  ARP, Request who-has 192.168.31.1 tell 192.168.31.10, length 46
+01:15:24.414025 enp0s8 Out ARP, Reply 192.168.31.1 is-at 08:00:27:88:5c:75, length 28
+
+## 手順D1: router に route add 192.168.32.0/24 via 192.168.30.2（01:18:14）後の client ping-peer（R2 に戻り経路なし）
+router ip route: 10.0.2.0/24 dev enp0s3, 192.168.30.0/30 dev enp0s9, 192.168.31.0/24 dev enp0s8, 192.168.32.0/24 via 192.168.30.2 dev enp0s9
+client ping-peer（01:19:08）: 3 transmitted, 0 received, 100% packet loss, time 2048ms（エラーメッセージなし）
+client ping-peer（01:20:27、router2 の capture と並行）: 3 transmitted, 0 received, 100% packet loss, time 2070ms（同上）
+router2 capture（01:20:20、-i any、'not tcp port 22'）: 5 packets captured / 7 received by filter / 0 dropped
+01:20:27.304381 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 6, seq 1, length 64
+01:20:28.351280 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 6, seq 2, length 64
+01:20:29.375061 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 6, seq 3, length 64
+01:20:32.369143 enp0s8 In  ARP, Request who-has 192.168.30.2 tell 192.168.30.1, length 46
+01:20:32.369163 enp0s8 Out ARP, Reply 192.168.30.2 is-at 08:00:27:e3:dd:05, length 28
+(注: R2 の enp0s9 から server への echo request は出ていない)
+
+## 手順D2: router2 に route add 192.168.31.0/24 via 192.168.30.1（01:21:48）後
+router2 ip route:
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100        ← defroute off(01:14:27)の後に復活している
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s8 proto kernel scope link src 192.168.30.2
+192.168.31.0/24 via 192.168.30.1 dev enp0s8
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.1
+client ping-peer（01:22:15）:
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=3.27 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.70 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=4.00 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2015ms
+rtt min/avg/max/mdev = 3.267/3.987/4.699/0.584 ms
+client trace（01:22:23）: tracepath -n 192.168.32.20
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  192.168.31.1                                          1.615ms
+ 1:  192.168.31.1                                          2.250ms
+ 2:  no reply
+ 3:  192.168.32.20                                         9.597ms !H
+     Resume: pmtu 1500
+
+# rp_filter の診断と teardown（2026-10-23、ユーザー実行・提出。転記）
+
+## router2: 診断（読み取りのみ）
+[user@router2 ~]$ sysctl net.ipv4.conf.all.rp_filter net.ipv4.conf.default.rp_filter net.ipv4.conf.enp0s8.rp_filter
+net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.enp0s8.rp_filter = 1
+[user@router2 ~]$ nstat -az | grep -i -E 'reverse|rpfilter'
+TcpExtArpFilter                 0                  0.0
+TcpExtIPReversePathFilter       7                  0.0
+
+## teardown（client 01:35:45 → server 01:36:16 → router 01:36:46 → router2 01:37:14）
+client: ip route del 192.168.32.0/24 / ip addr del 192.168.31.10/24 / nmcli managed yes → すべて exit=0。ip -br addr: enp0s8 192.168.10.10/24、enp0s9 UP（アドレスなし）
+server: ip route del 192.168.31.0/24 / ip addr del 192.168.32.20/24 / nmcli managed yes → すべて exit=0。ip -br addr: enp0s8 192.168.10.20/24、enp0s9 UP（アドレスなし）
+router: firewall-cmd --reload → success、ip route replace default via 10.0.2.2 dev enp0s3 metric 100 → exit=0、ip_forward=0、enp0s8/enp0s9 の addr flush と managed yes → exit=0
+  ip -br addr: enp0s3 10.0.2.15/24 ...、enp0s8 UP、enp0s9 UP（アドレスなし）
+  teardown 後の ip route:
+    default via 10.0.2.2 dev enp0s3 metric 100                         ← teardown の replace で追加
+    default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 ← NetworkManager（DHCP）が復活させていたもの
+    10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+router2: firewall-cmd --reload → success、ip route replace default ... → exit=0、ip_forward=0、enp0s8/enp0s9 の addr flush と managed yes → exit=0
+  ip -br addr: enp0s3 10.0.2.15/24 ...、enp0s8 UP、enp0s9 UP（アドレスなし）
+  teardown 後の ip route:
+    default via 10.0.2.2 dev enp0s3 metric 100
+    10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100

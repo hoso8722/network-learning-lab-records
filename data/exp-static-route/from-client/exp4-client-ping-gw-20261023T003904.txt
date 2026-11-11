@@ -1,0 +1,13 @@
+# exp4 client ping-gw    2026-10-23T00:39:04+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ping -c 3 -W 2 192.168.31.1
+PING 192.168.31.1 (192.168.31.1) 56(84) bytes of data.
+64 bytes from 192.168.31.1: icmp_seq=1 ttl=64 time=2.38 ms
+64 bytes from 192.168.31.1: icmp_seq=2 ttl=64 time=1.51 ms
+64 bytes from 192.168.31.1: icmp_seq=3 ttl=64 time=1.13 ms
+
+--- 192.168.31.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2009ms
+rtt min/avg/max/mdev = 1.130/1.673/2.380/0.523 ms
+exit=0
+

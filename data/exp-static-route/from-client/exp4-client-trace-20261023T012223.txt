@@ -1,0 +1,11 @@
+# exp4 client trace    2026-10-23T01:22:23+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ tracepath -n 192.168.32.20
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  192.168.31.1                                          1.615ms 
+ 1:  192.168.31.1                                          2.250ms 
+ 2:  no reply
+ 3:  192.168.32.20                                         9.597ms !H
+     Resume: pmtu 1500 
+exit=0
+

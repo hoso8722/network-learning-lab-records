@@ -1,0 +1,82 @@
+# E6-8: router と client の再起動の後のゾーンと guard(F5)  対象: WSL2 の bash、一般ユーザー(再起動は sudo)
+# 出所: ユーザーが script で取った端末の記録(2026-11-11 10:01〜10:09 JST、WSL2 の時計)から、date、再起動のメッセージ、ゾーンと ip route の出力を抜いた。
+# 注: 「### $」の行は、入力したコマンドを端末の編集の文字が混じらない形で書き直したもの。出力の行は原文のまま(制御文字と CR は除いた)。
+# 注: 手順 6(client の再起動)を 2 回実行したため、client は 10:06:01 と 10:06:56 の 2 回再起動した。
+# 注: 以降の「### $」の行の末尾の括弧は、どの時点の出力かを示す(後から付けた)。
+# 注: 状態の確認と復旧の全体の出力(ping を含む)は、baseline.sh が保存した data/baseline/baseline-sh-{status,up}-20261111T1001xx〜T1009xx.txt にある(VM 側の出力は含まない)。この記録の「抜粋」の行は、端末の記録から抜いた。
+# 注: 「sudo のパスワードの入力待ちの行」は除いた(パスワードは画面に出ていない)。抜粋の間は、「--- 省略 ---」の行で区切った。
+### $ date; labs/common/baseline.sh status   (記録: data/baseline/baseline-sh-status-20261111T100127.txt)
+Wed Nov 11 10:01:27 JST 2026
+### $ date; ssh -t -p 2225 user@127.0.0.1 'sudo systemctl reboot'   (router)
+Wed Nov 11 10:01:54 JST 2026
+Broadcast message from root@router on pts/1 (Wed 2026-11-11 10:02:24 JST):
+
+The system will reboot now!
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+### $ until ssh -o BatchMode=yes -o ConnectTimeout=3 -p 2225 user@127.0.0.1 true; do sleep 5; done; date
+Connection timed out during banner exchange
+Connection to 127.0.0.1 port 2225 timed out
+Connection timed out during banner exchange
+Connection to 127.0.0.1 port 2225 timed out
+Connection timed out during banner exchange
+Connection to 127.0.0.1 port 2225 timed out
+Connection timed out during banner exchange
+Connection to 127.0.0.1 port 2225 timed out
+Wed Nov 11 10:03:13 JST 2026
+### $ date; ssh -t -p 2222 user@127.0.0.1 'sudo systemctl reboot'   (client、1 回目)
+Wed Nov 11 10:05:58 JST 2026
+Broadcast message from root@client on pts/2 (Wed 2026-11-11 10:06:01 JST):
+
+The system will reboot now!
+### $ date; ssh -t -p 2222 user@127.0.0.1 'sudo systemctl reboot'   (client、2 回目)
+Wed Nov 11 10:06:14 JST 2026
+Broadcast message from root@client on pts/1 (Wed 2026-11-11 10:06:56 JST):
+
+The system will reboot now!
+### $ until ssh -o BatchMode=yes -o ConnectTimeout=3 -p 2222 user@127.0.0.1 true; do sleep 5; done; date
+Connection timed out during banner exchange
+Connection to 127.0.0.1 port 2222 timed out
+Wed Nov 11 10:07:41 JST 2026
+### $ sudo firewall-cmd --get-active-zones   (router の再起動の直後(10:03:31 の status))
+public
+  interfaces: enp0s3 enp0s8 enp0s9
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router の up の後(10:03:54))
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+### $ ip -br addr   (client の再起動の直後(10:08:28 の show))
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             fe80::7a58:eada:5890:f944/64
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+exit=0
+
+### $ sudo ip route add unreachable 192.168.0.0/16 metric 4000   (client の up の後(10:08:45))
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+### $ ip -br addr   (client の最後の status(10:09:27 の show))
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             192.168.31.10/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0

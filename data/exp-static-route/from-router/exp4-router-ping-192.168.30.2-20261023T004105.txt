@@ -1,0 +1,13 @@
+# exp4 router ping 192.168.30.2   2026-10-23T00:41:05+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ ping -c 3 -W 2 192.168.30.2
+PING 192.168.30.2 (192.168.30.2) 56(84) bytes of data.
+64 bytes from 192.168.30.2: icmp_seq=1 ttl=64 time=2.29 ms
+64 bytes from 192.168.30.2: icmp_seq=2 ttl=64 time=1.44 ms
+64 bytes from 192.168.30.2: icmp_seq=3 ttl=64 time=1.56 ms
+
+--- 192.168.30.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2009ms
+rtt min/avg/max/mdev = 1.444/1.765/2.292/0.375 ms
+exit=0
+

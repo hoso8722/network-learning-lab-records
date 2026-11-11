@@ -1,0 +1,11 @@
+# 実験 4: router2 の rp_filter の診断(読み取りのみ)  対象: router2(ホスト名 router2)、一般ユーザー
+# 出所: `run1-raw-transcribed.txt` の「rp_filter の診断と teardown」の節(「router2: 診断(読み取りのみ)」)の転記。ユーザーが router2 の端末で実行して貼り付けた出力。コマンドの行(プロンプト付き)を「### $ …」の形に直しただけで、出力の行は、そのまま。取得時刻は記録にない(転記の節の並びから、2026-10-23 の手順 D2 の後、teardown の前、と考えられる)。
+# 注: この記録は、元の転記ファイルと同じ日に、同じ内容を、コマンドごとのブロック形式にしたもの(`scripts/embed.py` の抜粋のため)。
+### $ sysctl net.ipv4.conf.all.rp_filter net.ipv4.conf.default.rp_filter net.ipv4.conf.enp0s8.rp_filter
+net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.enp0s8.rp_filter = 1
+
+### $ nstat -az | grep -i -E 'reverse|rpfilter'
+TcpExtArpFilter                 0                  0.0
+TcpExtIPReversePathFilter       7                  0.0

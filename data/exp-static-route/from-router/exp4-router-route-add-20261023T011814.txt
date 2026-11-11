@@ -1,0 +1,12 @@
+# exp4 router route add 192.168.32.0/24  2026-10-23T01:18:14+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo ip route add 192.168.32.0/24 via 192.168.30.2
+exit=0
+
+### $ ip route
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1 
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1 
+192.168.32.0/24 via 192.168.30.2 dev enp0s9 
+exit=0
+

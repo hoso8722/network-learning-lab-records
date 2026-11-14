@@ -1,0 +1,29 @@
+# exp8 server cert make expired  2026-10-25T13:37:36+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ openssl req -new -newkey rsa:2048 -nodes -keyout /home/user/tls-lab/certs/expired.key -out /home/user/tls-lab/certs/expired.csr -subj /CN=www.lab.example -addext subjectAltName=DNS:www.lab.example
+..+.........+.....+.......+............+....................+...+...+......+++++++++++++++++++++++++++++++++++++++*..+.+...+.....+....+..+...+.......+++++++++++++++++++++++++++++++++++++++*........+...+.......+.....+...+.+......+..............+.+..+......+.......+........+......+................+...+......+...+.....+.+..............+......+.+...+..+....+......+...........+....+........+......+.+...+..+.++++++
+.....+...+.+..+.............+......+......+.........+.....+...+.+......+.....+.+.........+...+.....+++++++++++++++++++++++++++++++++++++++*....+......+.+++++++++++++++++++++++++++++++++++++++*...+........+..........+..+.+............+......+.....+.......+..+.+..+.........+....+..+...+....+...+...+..........................+...+.+..+....+.....+...............+......+...+......+....+..+.......+........+............+...+....+...+...+..+.+.....+......+.+..+.......+...+...+........+..........+..+...+.......+.........+...+.....+.......+......+.........+........+.+...............+..+...+.........++++++
+-----
+exit=0
+
+### $ openssl ca -batch -config /home/user/tls-lab/ca/ca.cnf -in /home/user/tls-lab/certs/expired.csr -out /home/user/tls-lab/certs/expired.crt -notext -startdate 20260101000000Z -enddate 20260110000000Z
+Using configuration from /home/user/tls-lab/ca/ca.cnf
+Check that the request matches the signature
+Signature ok
+The Subject's Distinguished Name is as follows
+commonName            :ASN.1 12:'www.lab.example'
+Certificate is to be certified until Jan 10 00:00:00 2026 GMT (-288 days)
+
+Write out database with 1 new entries
+Database updated
+exit=0
+
+### $ openssl x509 -in /home/user/tls-lab/certs/expired.crt -noout -subject -issuer -dates -ext subjectAltName
+subject=CN=www.lab.example
+issuer=CN=Lab Test CA
+notBefore=Jan  1 00:00:00 2026 GMT
+notAfter=Jan 10 00:00:00 2026 GMT
+X509v3 Subject Alternative Name: 
+    DNS:www.lab.example
+exit=0
+

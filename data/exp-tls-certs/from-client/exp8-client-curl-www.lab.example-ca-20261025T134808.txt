@@ -1,0 +1,50 @@
+# exp8 client curl www.lab.example ca  2026-10-25T13:48:08+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -sv --max-time 5 --cacert /home/user/lab-ca.crt --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/
+* Added www.lab.example:443:192.168.32.20 to DNS cache
+* Hostname www.lab.example was found in DNS cache
+*   Trying 192.168.32.20:443...
+* Connected to www.lab.example (192.168.32.20) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+*  CAfile: /home/user/lab-ca.crt
+* TLSv1.0 (OUT), TLS header, Certificate Status (22):
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.2 (IN), TLS header, Certificate Status (22):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS header, Finished (20):
+* TLSv1.3 (IN), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.2 (OUT), TLS header, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS header, Unknown (23):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server accepted to use http/1.1
+* Server certificate:
+*  subject: CN=www.lab.example
+*  start date: Oct 25 04:36:36 2026 GMT
+*  expire date: Nov 24 04:36:36 2026 GMT
+*  subjectAltName: host "www.lab.example" matched cert's "www.lab.example"
+*  issuer: CN=Lab Test CA
+*  SSL certificate verify ok.
+* TLSv1.2 (OUT), TLS header, Unknown (23):
+> GET / HTTP/1.1
+> Host: www.lab.example
+> User-Agent: curl/7.76.1
+> Accept: */*
+> 
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+curl_exit=0   (0=成功、35=TLS ハンドシェイク失敗、60=証明書の検証失敗、7=接続できない、28=タイムアウト)
+

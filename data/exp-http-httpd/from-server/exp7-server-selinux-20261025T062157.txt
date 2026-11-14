@@ -1,0 +1,23 @@
+# exp7 server selinux   2026-10-25T06:21:57+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ getenforce
+Enforcing
+exit=0
+
+### $ ls -lZ /var/www/html /var/www/cgi-bin
+/var/www/cgi-bin:
+total 8
+-rwxr-xr-x. 1 root root unconfined_u:object_r:httpd_sys_script_exec_t:s0 30 Oct 25 06:07 bad.cgi
+-rwxr-xr-x. 1 root root unconfined_u:object_r:httpd_sys_script_exec_t:s0 58 Oct 25 06:07 ok.cgi
+
+/var/www/html:
+total 12
+-rw-r--r--. 1 root root unconfined_u:object_r:httpd_sys_content_t:s0 10 Oct 25 06:07 index.html
+-rw-------. 1 root root unconfined_u:object_r:httpd_sys_content_t:s0 13 Oct 25 06:07 perm.html
+-rw-r--r--. 1 user user unconfined_u:object_r:user_home_t:s0         20 Oct 25 06:07 selinux.html
+exit=0
+
+### $ sudo grep -a AVC /var/log/audit/audit.log | tail -n 5
+type=AVC msg=audit(1792876893.083:2198): avc:  denied  { read } for  pid=3372 comm="httpd" name="selinux.html" dev="dm-0" ino=763252 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=0
+type=AVC msg=audit(1792876893.116:2199): avc:  denied  { read } for  pid=3372 comm="httpd" name="selinux.html" dev="dm-0" ino=763252 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=0
+

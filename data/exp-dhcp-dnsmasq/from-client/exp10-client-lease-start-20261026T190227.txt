@@ -1,0 +1,33 @@
+# exp10 client lease-start    2026-10-26T19:02:27+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo nmcli device set enp0s9 managed yes
+exit=0
+
+### $ sudo nmcli connection delete lab-dhcp
+Error: unknown connection 'lab-dhcp'.
+Error: cannot delete unknown connection(s): 'lab-dhcp'.
+exit=10
+
+### $ sudo nmcli connection add type ethernet ifname enp0s9 con-name lab-dhcp ipv4.method auto ipv4.never-default yes ipv4.ignore-auto-dns yes ipv4.dhcp-timeout 20 ipv6.method disabled connection.autoconnect no
+Connection 'lab-dhcp' (24ee90e3-9466-47ec-8d29-83862ee0e14a) successfully added.
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo nmcli connection up lab-dhcp   （最大 約20秒）
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/389)
+exit=0  elapsed=0.34s
+
+### $ ip -br addr show enp0s9
+enp0s9           UP             192.168.31.77/24 
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101 
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.77 metric 102 
+exit=0
+

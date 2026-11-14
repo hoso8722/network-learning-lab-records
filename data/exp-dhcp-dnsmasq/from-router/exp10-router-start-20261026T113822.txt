@@ -1,0 +1,14 @@
+# exp10 router start    2026-10-26T11:38:22+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo systemctl start dnsmasq
+exit=0
+
+### $ systemctl is-active dnsmasq
+active
+exit=0
+
+### $ sudo ss -lunp sport = :67
+State  Recv-Q Send-Q  Local Address:Port Peer Address:PortProcess                           
+UNCONN 0      0      0.0.0.0%enp0s8:67        0.0.0.0:*    users:(("dnsmasq",pid=9108,fd=4))
+exit=0
+

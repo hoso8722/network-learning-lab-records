@@ -1,0 +1,9 @@
+# exp6 client curl     2026-10-24T00:50:34+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -v --no-progress-meter --max-time 5 -o /dev/null -w 'http_code=%{http_code} time_total=%{time_total}s\n' http://192.168.32.20:8080/
+*   Trying 192.168.32.20:8080...
+* Connection timed out after 5008 milliseconds
+* Closing connection 0
+curl: (28) Connection timed out after 5008 milliseconds
+http_code=000 time_total=5.008319s
+curl_exit=28   (0=成功 / 7=接続できない(拒否・到達不能) / 28=タイムアウト)

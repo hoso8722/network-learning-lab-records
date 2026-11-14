@@ -1,0 +1,8 @@
+# exp9 client direct    2026-10-26T08:36:15+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -sv --max-time 8 -o /dev/null -w 'http_code=%{http_code}\n' http://192.168.32.20/
+* Connected to 192.168.32.20 (192.168.32.20) port 80 (#0)
+< HTTP/1.1 200 OK
+http_code=200
+curl_exit=0
+

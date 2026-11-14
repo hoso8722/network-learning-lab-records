@@ -1,0 +1,14 @@
+# exp7 server start   2026-10-25T06:15:47+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo systemctl start httpd
+exit=0
+
+### $ systemctl is-active httpd
+active
+exit=0
+
+### $ sudo ss -tlnp sport = :80
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                                                                                                 
+LISTEN 0      511                *:80              *:*    users:(("httpd",pid=3382,fd=4),("httpd",pid=3373,fd=4),("httpd",pid=3372,fd=4),("httpd",pid=3370,fd=4))
+exit=0
+

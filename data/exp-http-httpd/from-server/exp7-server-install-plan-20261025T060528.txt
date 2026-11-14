@@ -1,0 +1,33 @@
+# exp7 server install-plan   2026-10-25T06:05:28+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo dnf install --assumeno httpd
+Last metadata expiration check: 1:18:23 ago on Sun Oct 25 04:47:09 2026.
+Dependencies resolved.
+================================================================================
+ Package                   Arch       Version               Repository     Size
+================================================================================
+Installing:
+ httpd                     x86_64     2.4.62-13.el9_8.9     appstream      47 k
+Installing dependencies:
+ almalinux-logos-httpd     noarch     90.7-1.el9            appstream      18 k
+ apr                       x86_64     1.7.0-12.el9_3        appstream     122 k
+ apr-util                  x86_64     1.6.1-23.el9_8.1      appstream      94 k
+ apr-util-bdb              x86_64     1.6.1-23.el9_8.1      appstream      12 k
+ httpd-core                x86_64     2.4.62-13.el9_8.9     appstream     1.4 M
+ httpd-filesystem          noarch     2.4.62-13.el9_8.9     appstream      14 k
+ httpd-tools               x86_64     2.4.62-13.el9_8.9     appstream      81 k
+ mailcap                   noarch     2.1.49-5.el9          baseos         32 k
+Installing weak dependencies:
+ apr-util-openssl          x86_64     1.6.1-23.el9_8.1      appstream      14 k
+ mod_http2                 x86_64     2.0.26-6.el9_8.2      appstream     163 k
+ mod_lua                   x86_64     2.4.62-13.el9_8.9     appstream      61 k
+
+Transaction Summary
+================================================================================
+Install  12 Packages
+
+Total download size: 2.0 M
+Installed size: 6.1 M
+Operation aborted.
+exit=1
+

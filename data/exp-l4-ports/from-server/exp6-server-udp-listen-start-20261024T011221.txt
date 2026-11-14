@@ -1,0 +1,10 @@
+# exp6 server udp-listen start    2026-10-24T01:12:21+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+起動: pid 1824
+### $ ss -ulnp
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                           
+UNCONN 0      0      192.168.32.20:9999      0.0.0.0:*    users:(("python3",pid=1824,fd=3))
+UNCONN 0      0          127.0.0.1:323       0.0.0.0:*                                     
+UNCONN 0      0              [::1]:323          [::]:*                                     
+exit=0
+

@@ -1,0 +1,14 @@
+# exp6 server capture     2026-10-24T00:50:40+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo timeout -s INT 25 tcpdump -i enp0s9 -nn -w exp6-server-20261024T005040.pcap 'tcp port 8080 or udp port 9999 or icmp'   (25秒以内に client から接続)
+dropped privs to tcpdump
+tcpdump: listening on enp0s9, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+3 packets captured
+3 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -nn -r exp6-server-20261024T005040.pcap
+reading from file exp6-server-20261024T005040.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+00:50:44.966312 IP 192.168.31.10.34230 > 192.168.32.20.8080: Flags [S], seq 2881402407, win 64240, options [mss 1460,sackOK,TS val 394333032 ecr 0,nop,wscale 6], length 0
+00:50:45.986342 IP 192.168.31.10.34230 > 192.168.32.20.8080: Flags [S], seq 2881402407, win 64240, options [mss 1460,sackOK,TS val 394334052 ecr 0,nop,wscale 6], length 0
+00:50:48.032526 IP 192.168.31.10.34230 > 192.168.32.20.8080: Flags [S], seq 2881402407, win 64240, options [mss 1460,sackOK,TS val 394336098 ecr 0,nop,wscale 6], length 0

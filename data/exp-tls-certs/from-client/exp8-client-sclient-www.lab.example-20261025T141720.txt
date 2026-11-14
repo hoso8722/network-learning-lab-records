@@ -1,0 +1,31 @@
+# exp8 client sclient www.lab.example   2026-10-25T14:17:20+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ openssl s_client -connect 192.168.32.20:443 -servername www.lab.example -CAfile ~/lab-ca.crt -verify_hostname www.lab.example </dev/null
+depth=1 CN=Lab Test CA
+verify return:1
+depth=0 CN=www.lab.example
+verify error:num=9:certificate is not yet valid
+verify return:1
+depth=0 CN=www.lab.example
+verify return:1
+Certificate chain
+ 0 s:CN=www.lab.example
+   i:CN=Lab Test CA
+   a:PKEY: RSA, 2048 (bit); sigalg: sha256WithRSAEncryption
+   v:NotBefore: Nov  1 00:00:00 2027 GMT; NotAfter: Dec  1 00:00:00 2027 GMT
+subject=CN=www.lab.example
+issuer=CN=Lab Test CA
+Verification error: certificate is not yet valid
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Protocol: TLSv1.3
+Verify return code: 9 (certificate is not yet valid)
+s_client_exit=0
+
+### $ openssl s_client ... | openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+subject=CN=www.lab.example
+issuer=CN=Lab Test CA
+notBefore=Nov  1 00:00:00 2027 GMT
+notAfter=Dec  1 00:00:00 2027 GMT
+X509v3 Subject Alternative Name: 
+    DNS:www.lab.example
+

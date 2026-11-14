@@ -1,0 +1,60 @@
+# exp11 router logs 40   2026-10-28T09:39:49+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo journalctl -u frr --no-pager -n 40
+Oct 27 13:26:07 router systemd[1]: /usr/lib/systemd/system/frr.service:20: PIDFile= references a path below legacy directory /var/run/, updating /var/run/frr/watchfrr.pid → /run/frr/watchfrr.pid; please update the unit file accordingly.
+Oct 27 13:26:07 router systemd[1]: Starting FRRouting...
+Oct 27 13:26:07 router frrinit.sh[1085]: Starting watchfrr with command: '  /usr/libexec/frr/watchfrr  -d  -F traditional   zebra ospfd staticd'
+Oct 27 13:26:07 router watchfrr[1090]: [T83RR-8SM5G] watchfrr 8.5.3 starting: vty@0
+Oct 27 13:26:07 router watchfrr[1090]: [ZCJ3S-SPH5S] zebra state -> down : initial connection attempt failed
+Oct 27 13:26:07 router watchfrr[1090]: [ZCJ3S-SPH5S] ospfd state -> down : initial connection attempt failed
+Oct 27 13:26:07 router watchfrr[1090]: [ZCJ3S-SPH5S] staticd state -> down : initial connection attempt failed
+Oct 27 13:26:07 router watchfrr[1090]: [YFT0P-5Q5YX] Forked background command [pid 1091]: /usr/libexec/frr/watchfrr.sh restart all
+Oct 27 13:26:07 router frrinit.sh[1095]: /usr/libexec/frr/frrcommon.sh: line 216: kill: `': not a pid or valid job spec
+Oct 27 13:26:07 router frrinit.sh[1097]: /usr/libexec/frr/frrcommon.sh: line 216: kill: `': not a pid or valid job spec
+Oct 27 13:26:07 router frrinit.sh[1096]: /usr/libexec/frr/frrcommon.sh: line 216: kill: `': not a pid or valid job spec
+Oct 27 13:26:08 router frrinit.sh[1101]: 2026/10/27 13:26:08 ZEBRA: [NNACN-54BDA][EC 4043309110] Disabling MPLS support (no kernel support)
+Oct 27 13:26:08 router watchfrr[1090]: [VTVCM-Y2NW3] Configuration Read in Took: 00:00:00
+Oct 27 13:26:08 router watchfrr[1090]: [QDG3Y-BY5TN] zebra state -> up : connect succeeded
+Oct 27 13:26:08 router watchfrr[1090]: [QDG3Y-BY5TN] ospfd state -> up : connect succeeded
+Oct 27 13:26:08 router watchfrr[1090]: [QDG3Y-BY5TN] staticd state -> up : connect succeeded
+Oct 27 13:26:08 router watchfrr[1090]: [KWE5Q-QNGFC] all daemons up, doing startup-complete notify
+Oct 27 13:26:08 router frrinit.sh[1085]: Started watchfrr
+Oct 27 13:26:08 router systemd[1]: Started FRRouting.
+Oct 27 13:49:26 router watchfrr[1090]: [YZRX4-ZXG0C][EC 100663315] Thread Starvation: {(thread *)0x55d137335e80 arg=0x55d137335c20 timer  r=-4.154     wakeup_send_echo() &(dmn)->t_wakeup from watchfrr/watchfrr.c:705} was scheduled to pop greater than 4s ago
+Oct 28 02:40:42 router watchfrr[1090]: [YZRX4-ZXG0C][EC 100663315] Thread Starvation: {(thread *)0x55d137345680 arg=0x55d137335f30 timer  r=-1079.662  wakeup_send_echo() &(dmn)->t_wakeup from watchfrr/watchfrr.c:705} was scheduled to pop greater than 4s ago
+exit=0
+
+### $ sudo vtysh -c 'show logging' 
+Logging configuration for zebra:
+Syslog logging: disabled
+Stdout logging: disabled
+File logging: disabled
+Protocol name: ZEBRA
+Record priority: disabled
+Timestamp precision: 0
+
+Logging configuration for ospfd:
+Syslog logging: disabled
+Stdout logging: disabled
+File logging: disabled
+Protocol name: OSPF
+Record priority: disabled
+Timestamp precision: 0
+
+Logging configuration for watchfrr:
+Syslog logging: level informational, facility daemon, ident watchfrr
+
+Logging configuration for staticd:
+Syslog logging: disabled
+Stdout logging: disabled
+File logging: disabled
+Protocol name: STATIC
+Record priority: disabled
+Timestamp precision: 0
+
+exit=0
+
+### $ sudo journalctl -t ospfd -t zebra --no-pager -n 40
+-- No entries --
+exit=0
+

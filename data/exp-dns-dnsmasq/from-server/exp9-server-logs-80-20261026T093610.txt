@@ -1,0 +1,84 @@
+# exp9 server logs 80   2026-10-26T09:36:10+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo journalctl -u dnsmasq -n 80 --no-pager
+Oct 26 05:46:52 server dnsmasq[8272]: Oct 26 05:46:52 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 05:46:52 server dnsmasq[8272]: Oct 26 05:46:52 dnsmasq[8272]: config www.lab.example is NODATA-IPv6
+Oct 26 06:06:26 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 06:06:26 server dnsmasq[8272]: Oct 26 06:06:26 dnsmasq[8272]: read /etc/lab-hosts - 1 addresses
+Oct 26 06:07:10 server dnsmasq[8272]: Oct 26 06:07:10 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 06:07:10 server dnsmasq[8272]: Oct 26 06:07:10 dnsmasq[8272]: config www.lab.example is NXDOMAIN
+Oct 26 06:10:32 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 06:10:32 server dnsmasq[8272]: Oct 26 06:10:32 dnsmasq[8272]: read /etc/lab-hosts - 2 addresses
+Oct 26 06:11:04 server dnsmasq[8272]: Oct 26 06:11:04 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 06:11:04 server dnsmasq[8272]: Oct 26 06:11:04 dnsmasq[8272]: config www.lab.example is NODATA-IPv6
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: query[AAAA] www.lab.example.lab.example from 192.168.31.10
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: config www.lab.example.lab.example is NXDOMAIN
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: /etc/lab-hosts www.lab.example is 192.168.32.21
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: /etc/lab-hosts www.lab.example is 192.168.32.21
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 06:11:05 server dnsmasq[8272]: Oct 26 06:11:05 dnsmasq[8272]: config www.lab.example is NODATA-IPv6
+Oct 26 06:11:35 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 06:11:35 server dnsmasq[8272]: Oct 26 06:11:35 dnsmasq[8272]: read /etc/lab-hosts - 1 addresses
+Oct 26 07:49:57 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 07:49:57 server dnsmasq[8272]: Oct 26 07:49:57 dnsmasq[8272]: read /etc/lab-hosts - 1 addresses
+Oct 26 07:51:32 server dnsmasq[8272]: Oct 26 07:51:32 dnsmasq[8272]: read /etc/lab-hosts - 1 addresses
+Oct 26 07:51:32 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 07:51:57 server dnsmasq[8272]: Oct 26 07:51:57 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 07:51:57 server dnsmasq[8272]: Oct 26 07:51:57 dnsmasq[8272]: config www.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[AAAA] www.lab.example.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[A] www.lab.example.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[A] www.lab.example.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example.lab.example is NXDOMAIN
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: query[AAAA] www.lab.example.lab.example from 192.168.31.10
+Oct 26 08:33:24 server dnsmasq[8272]: Oct 26 08:33:24 dnsmasq[8272]: config www.lab.example.lab.example is NXDOMAIN
+Oct 26 08:35:20 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 08:35:20 server dnsmasq[8272]: Oct 26 08:35:20 dnsmasq[8272]: read /etc/lab-hosts - 2 addresses
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: config www.lab.example is NODATA-IPv6
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: query[AAAA] www.lab.example.lab.example from 192.168.31.10
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: config www.lab.example.lab.example is NXDOMAIN
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: /etc/lab-hosts www.lab.example is 192.168.32.21
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: /etc/lab-hosts www.lab.example is 192.168.32.21
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 08:35:37 server dnsmasq[8272]: Oct 26 08:35:37 dnsmasq[8272]: config www.lab.example is NODATA-IPv6
+Oct 26 08:36:40 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 08:36:40 server dnsmasq[8272]: Oct 26 08:36:40 dnsmasq[8272]: read /etc/lab-hosts - 2 addresses
+Oct 26 08:48:22 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 08:48:22 server dnsmasq[8272]: Oct 26 08:48:22 dnsmasq[8272]: read /etc/lab-hosts - 2 addresses
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: config www.lab.example is NODATA-IPv6
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: query[AAAA] www.lab.example.lab.example from 192.168.31.10
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: config www.lab.example.lab.example is NXDOMAIN
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: /etc/lab-hosts www.lab.example is 192.168.32.21
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: query[A] www.lab.example from 192.168.31.10
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: /etc/lab-hosts www.lab.example is 192.168.32.21
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: query[AAAA] www.lab.example from 192.168.31.10
+Oct 26 08:49:40 server dnsmasq[8272]: Oct 26 08:49:40 dnsmasq[8272]: config www.lab.example is NODATA-IPv6
+Oct 26 08:53:55 server systemd[1]: dnsmasq.service: Sent signal SIGHUP to main process 8272 (dnsmasq) on client request.
+Oct 26 08:53:55 server dnsmasq[8272]: Oct 26 08:53:55 dnsmasq[8272]: read /etc/lab-hosts - 2 addresses
+Oct 26 09:23:53 server dnsmasq[8272]: Oct 26 09:23:53 dnsmasq[8272]: exiting on receipt of SIGTERM
+Oct 26 09:23:53 server systemd[1]: Stopping DNS caching server....
+Oct 26 09:23:53 server systemd[1]: dnsmasq.service: Deactivated successfully.
+Oct 26 09:23:53 server systemd[1]: Stopped DNS caching server..
+Oct 26 09:33:19 server systemd[1]: Starting DNS caching server....
+Oct 26 09:33:19 server dnsmasq[9140]: Oct 26 09:33:19 dnsmasq[9140]: started, version 2.85 cachesize 150
+Oct 26 09:33:19 server dnsmasq[9140]: Oct 26 09:33:19 dnsmasq[9140]: compile time options: IPv6 GNU-getopt DBus no-UBus no-i18n IDN2 DHCP DHCPv6 no-Lua TFTP no-conntrack ipset auth cryptohash DNSSEC loop-detect inotify dumpfile
+Oct 26 09:33:19 server dnsmasq[9140]: Oct 26 09:33:19 dnsmasq[9140]: using only locally-known addresses for domain lab.example
+Oct 26 09:33:19 server dnsmasq[9140]: Oct 26 09:33:19 dnsmasq[9140]: read /etc/lab-hosts - 2 addresses
+Oct 26 09:33:19 server systemd[1]: Started DNS caching server..
+

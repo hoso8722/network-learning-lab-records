@@ -1,0 +1,13 @@
+# exp5 client ping 192.168.32.20  2026-10-23T03:19:50+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ping -c 3 -W 2 192.168.32.20
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+From 192.168.31.10 icmp_seq=1 Destination Host Unreachable
+From 192.168.31.10 icmp_seq=2 Destination Host Unreachable
+From 192.168.31.10 icmp_seq=3 Destination Host Unreachable
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2084ms
+pipe 3
+exit=1
+

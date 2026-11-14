@@ -1,0 +1,40 @@
+# exp5 server base   2026-10-23T02:50:54+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo nmcli device set enp0s9 managed no
+exit=0
+
+### $ sudo ip link set enp0s9 up
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo ip addr add 192.168.32.20/24 dev enp0s9
+exit=0
+
+### $ sudo ip route add 192.168.31.0/24 via 192.168.32.1 dev enp0s9
+exit=0
+
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fea1:ef2d/64 fe80::a00:27ff:fea1:ef2d/64 
+enp0s8           UP             192.168.10.20/24 
+enp0s9           UP             192.168.32.20/24 
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.20 metric 101 
+192.168.31.0/24 via 192.168.32.1 dev enp0s9 
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20 
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1001 
+    cache 
+exit=0
+
+### $ ip neigh show dev enp0s9
+exit=0
+

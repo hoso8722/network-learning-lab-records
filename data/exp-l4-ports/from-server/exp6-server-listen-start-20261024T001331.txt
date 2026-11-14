@@ -1,0 +1,10 @@
+# exp6 server listen start    2026-10-24T00:13:31+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+起動: pid 1521
+### $ ss -tlnp
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                           
+LISTEN 0      5      192.168.32.20:8080      0.0.0.0:*    users:(("python3",pid=1521,fd=3))
+LISTEN 0      128          0.0.0.0:22        0.0.0.0:*                                     
+LISTEN 0      128             [::]:22           [::]:*                                     
+exit=0
+

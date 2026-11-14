@@ -1,0 +1,251 @@
+# 実験6 T1（成功のケース）の生データ（転記）
+# 出所: ユーザーが各VMの端末から貼り付けた転記（チャット経由）。整形・補完なし。
+# 注記: T0（fw show）の出力は未提出。ベースラインの再構築（ホスト再起動後）の出力も割愛（VM内に時刻付きファイルが残っている）。
+
+## server: listen start（2026-10-23T10:59:14, host=server）
+起動: pid 1034
+### $ ss -tlnp
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+LISTEN 0      5      192.168.32.20:8080      0.0.0.0:*    users:(("python3",pid=1034,fd=3))
+LISTEN 0      128          0.0.0.0:22        0.0.0.0:*
+LISTEN 0      128             [::]:22           [::]:*
+exit=0
+
+## server: fw open 8080 tcp（10:59:50）  ← 既定ゾーンが空になった不具合（--zone= が空）。結果は既定ゾーン(public)に追加された
+# 既定ゾーン:
+### $ sudo firewall-cmd --zone= --add-port=8080/tcp
+success
+exit=0
+### $ sudo firewall-cmd --zone= --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports: 8080/tcp
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+exit=0
+
+## server: capture（11:00:36 開始、-i enp0s9、-n（ポート名が webcache に変換された））: 10 packets captured / 10 received by filter / 0 dropped
+11:00:46.456362 IP 192.168.31.10.56288 > 192.168.32.20.webcache: Flags [S], seq 1758552873, win 64240, options [mss 1460,sackOK,TS val 344545384 ecr 0,nop,wscale 6], length 0
+11:00:46.456500 IP 192.168.32.20.webcache > 192.168.31.10.56288: Flags [S.], seq 2946436798, ack 1758552874, win 65160, options [mss 1460,sackOK,TS val 1450034925 ecr 344545384,nop,wscale 6], length 0
+11:00:46.460947 IP 192.168.31.10.56288 > 192.168.32.20.webcache: Flags [.], ack 1, win 1004, options [nop,nop,TS val 344545388 ecr 1450034925], length 0
+11:00:46.463128 IP 192.168.31.10.56288 > 192.168.32.20.webcache: Flags [P.], seq 1:83, ack 1, win 1004, options [nop,nop,TS val 344545391 ecr 1450034925], length 82: HTTP: GET / HTTP/1.1
+11:00:46.463172 IP 192.168.32.20.webcache > 192.168.31.10.56288: Flags [.], ack 83, win 1017, options [nop,nop,TS val 1450034932 ecr 344545391], length 0
+11:00:46.465955 IP 192.168.32.20.webcache > 192.168.31.10.56288: Flags [P.], seq 1:186, ack 83, win 1017, options [nop,nop,TS val 1450034935 ecr 344545391], length 185: HTTP: HTTP/1.0 200 OK
+11:00:46.466282 IP 192.168.32.20.webcache > 192.168.31.10.56288: Flags [FP.], seq 186:204, ack 83, win 1017, options [nop,nop,TS val 1450034935 ecr 344545391], length 18: HTTP
+11:00:46.469231 IP 192.168.31.10.56288 > 192.168.32.20.webcache: Flags [.], ack 186, win 1002, options [nop,nop,TS val 344545397 ecr 1450034935], length 0
+11:00:46.471772 IP 192.168.31.10.56288 > 192.168.32.20.webcache: Flags [F.], seq 83, ack 205, win 1002, options [nop,nop,TS val 344545399 ecr 1450034935], length 0
+11:00:46.471820 IP 192.168.32.20.webcache > 192.168.31.10.56288: Flags [.], ack 84, win 1017, options [nop,nop,TS val 1450034940 ecr 344545399], length 0
+
+## client: curl（11:00:46）
+curl -v --max-time 5 -o /dev/null -w ... http://192.168.32.20:8080/
+*   Trying 192.168.32.20:8080...
+(進捗表示の行は省略: "% Total % Received % Xferd ..." の表と数値の行)
+* Connected to 192.168.32.20 (192.168.32.20) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: 192.168.32.20:8080
+> User-Agent: curl/7.76.1
+> Accept: */*
+* Mark bundle as not supporting multiuse
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 OK
+< Server: SimpleHTTP/0.6 Python/3.9.25
+< Date: Fri, 23 Oct 2026 02:00:46 GMT
+< Content-type: text/html
+< Content-Length: 18
+< Last-Modified: Fri, 23 Oct 2026 01:59:15 GMT
+{ [18 bytes data]
+* Closing connection 0
+http_code=200 time_total=0.024989s
+curl_exit=0   (0=成功 / 7=接続できない(拒否・到達不能) / 28=タイムアウト)
+
+# T0 と T2（2026-10-23〜24、ユーザー実行・提出。転記）
+# 注記: スクリプトの修正版（既定ゾーンの取得、-nn、--no-progress-meter）を送信後の実行。送信時に server でパスワードの入力ミスが1回あった（転送は成功）。
+
+## T0: server fw show（2026-10-23T23:48:39）  ← T1 の後の状態。--list-all が2回表示された（スクリプトの不具合、修正済み）
+# 既定ゾーン: public
+### $ sudo firewall-cmd --get-active-zones
+public
+  interfaces: enp0s3 enp0s8
+### $ sudo firewall-cmd --zone=public --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports: 8080/tcp
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+(同じ内容が2回出力された)
+
+## T2: server listen stop（23:59:11）
+### $ kill 1034   → exit=0
+### $ ss -tlnp
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+LISTEN 0      128          0.0.0.0:22        0.0.0.0:*
+LISTEN 0      128             [::]:22           [::]:*
+(直後に手で実行した ss -tlnp も同じ)
+
+## T2: client curl（2026-10-24T00:00:45）
+curl -v --no-progress-meter --max-time 5 -o /dev/null -w ... http://192.168.32.20:8080/
+*   Trying 192.168.32.20:8080...
+* connect to 192.168.32.20 port 8080 failed: Connection refused
+* Failed to connect to 192.168.32.20 port 8080: Connection refused
+* Closing connection 0
+curl: (7) Failed to connect to 192.168.32.20 port 8080: Connection refused
+http_code=000 time_total=0.011184s
+curl_exit=7   (0=成功 / 7=接続できない(拒否・到達不能) / 28=タイムアウト)
+
+## T2: server capture（00:00:40 開始、-i enp0s9、-nn）: 2 packets captured / 2 received by filter / 0 dropped
+00:00:56.075141 IP 192.168.31.10.55284 > 192.168.32.20.8080: Flags [S], seq 4136140080, win 64240, options [mss 1460,sackOK,TS val 391344140 ecr 0,nop,wscale 6], length 0
+00:00:56.075345 IP 192.168.32.20.8080 > 192.168.31.10.55284: Flags [R.], seq 0, ack 4136140081, win 0, length 0
+
+# T3: 待ち受けありだが、ファイアウォールが許可していない（2026-10-24、ユーザー実行・提出。転記）
+# 注記: server の capture の出力は未提出（取り直し予定）。client の貼り付けの1つ目の curl（00:00:45）は T2 の出力の再掲。
+
+## server: listen start（00:13:31）
+起動: pid 1521
+### $ ss -tlnp
+LISTEN 0      5      192.168.32.20:8080      0.0.0.0:*    users:(("python3",pid=1521,fd=3))
+LISTEN 0      128          0.0.0.0:22        0.0.0.0:*
+LISTEN 0      128             [::]:22           [::]:*
+
+## server: fw close 8080 tcp（00:13:45）
+# 既定ゾーン: public
+### $ sudo firewall-cmd --zone=public --remove-port=8080/tcp   → success
+### $ sudo firewall-cmd --zone=public --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports:
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+(手で実行した ss -tlnp も、8080 の LISTEN は pid 1521 のまま)
+
+## client: curl（00:15:17）
+*   Trying 192.168.32.20:8080...
+* connect to 192.168.32.20 port 8080 failed: No route to host
+* Failed to connect to 192.168.32.20 port 8080: No route to host
+* Closing connection 0
+curl: (7) Failed to connect to 192.168.32.20 port 8080: No route to host
+http_code=000 time_total=0.007275s
+curl_exit=7   (0=成功 / 7=接続できない(拒否・到達不能) / 28=タイムアウト)
+
+# T3 の capture と T4（破棄）（2026-10-24、ユーザー実行・提出。転記）
+
+## T3: server capture（00:15:14 開始、-i enp0s9、-nn）: 2 packets captured / 2 received by filter / 0 dropped
+00:15:28.627611 IP 192.168.31.10.36176 > 192.168.32.20.8080: Flags [S], seq 4223159488, win 64240, options [mss 1460,sackOK,TS val 392216693 ecr 0,nop,wscale 6], length 0
+00:15:28.627770 IP 192.168.32.20 > 192.168.31.10: ICMP host 192.168.32.20 unreachable - admin prohibited filter, length 68
+
+## T4: server fw open 8080 tcp（00:50:13）→ success。list-all: ports: 8080/tcp、rich rules: なし
+## T4: server fw rule drop（00:50:30）
+### $ sudo firewall-cmd --zone=public --add-rich-rule=rule family="ipv4" source address="192.168.31.10" port port="8080" protocol="tcp" drop   → success
+（注: 上の行は run() の表示で、引用符が表示上は外れている。実際は1つの引数として渡している。）
+### $ sudo firewall-cmd --zone=public --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports: 8080/tcp
+  protocols:
+  forward: yes
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+        rule family="ipv4" source address="192.168.31.10" port port="8080" protocol="tcp" drop
+
+## T4: client curl（00:50:34）
+*   Trying 192.168.32.20:8080...
+* Connection timed out after 5008 milliseconds
+* Closing connection 0
+curl: (28) Connection timed out after 5008 milliseconds
+http_code=000 time_total=5.008319s
+curl_exit=28   (0=成功 / 7=接続できない(拒否・到達不能) / 28=タイムアウト)
+
+## T4: server capture（00:50:40 開始、-i enp0s9、-nn）: 3 packets captured / 3 received by filter / 0 dropped
+00:50:44.966312 IP 192.168.31.10.34230 > 192.168.32.20.8080: Flags [S], seq 2881402407, win 64240, options [mss 1460,sackOK,TS val 394333032 ecr 0,nop,wscale 6], length 0
+00:50:45.986342 IP 192.168.31.10.34230 > 192.168.32.20.8080: Flags [S], seq 2881402407, win 64240, options [mss 1460,sackOK,TS val 394334052 ecr 0,nop,wscale 6], length 0
+00:50:48.032526 IP 192.168.31.10.34230 > 192.168.32.20.8080: Flags [S], seq 2881402407, win 64240, options [mss 1460,sackOK,TS val 394336098 ecr 0,nop,wscale 6], length 0
+
+# T5: firewalld が TCP RST で拒否（2026-10-24、ユーザー実行・提出。転記）
+# 注記: T5 の時点で server が 8080 を待ち受けていたことは、T3 で起動して停止していないことからの推定（ss の出力は未提出）。
+
+## server: fw reset（01:00:58）→ success ／ fw open 8080 tcp（01:01:03）→ success、ports: 8080/tcp、rich rules なし
+## server: fw rule reset（01:01:04）
+### $ sudo firewall-cmd --zone=public --add-rich-rule=rule family="ipv4" source address="192.168.31.10" port port="8080" protocol="tcp" reject type="tcp-reset"   → success
+### list-all の rich rules:
+        rule family="ipv4" source address="192.168.31.10" port port="8080" protocol="tcp" reject type="tcp-reset"
+
+## server: capture（01:01:15 開始、-i enp0s9、-nn）: 2 packets captured / 2 received by filter / 0 dropped
+01:01:26.426480 IP 192.168.31.10.54236 > 192.168.32.20.8080: Flags [S], seq 2173635290, win 64240, options [mss 1460,sackOK,TS val 394974492 ecr 0,nop,wscale 6], length 0
+01:01:26.426638 IP 192.168.32.20.8080 > 192.168.31.10.54236: Flags [R.], seq 0, ack 2173635291, win 0, length 0
+
+## client: curl（01:01:15）
+*   Trying 192.168.32.20:8080...
+* connect to 192.168.32.20 port 8080 failed: Connection refused
+* Failed to connect to 192.168.32.20 port 8080: Connection refused
+* Closing connection 0
+curl: (7) Failed to connect to 192.168.32.20 port 8080: Connection refused
+http_code=000 time_total=0.005023s
+curl_exit=7   (0=成功 / 7=接続できない(拒否・到達不能) / 28=タイムアウト)
+
+# T5 の待ち受けの確認と T6〜T8（UDP）（2026-10-24、ユーザー実行・提出。転記）
+
+## T5 の時点での待ち受け（server、ss -tlnp）
+LISTEN 0      5      192.168.32.20:8080   0.0.0.0:*   users:(("python3",pid=1521,fd=3))
+LISTEN 0      128    0.0.0.0:22 / [::]:22
+
+## スクリプトの送信（server、l4-test.sh 8529 バイト、scp_exit: 0、remote_host=server）。server fw reset（01:11:42）→ success
+
+## T6: UDP 正常
+server udp-listen start（01:12:21）: 起動 pid 1824
+### $ ss -ulnp
+UNCONN 0      0      192.168.32.20:9999      0.0.0.0:*    users:(("python3",pid=1824,fd=3))
+UNCONN 0      0          127.0.0.1:323       0.0.0.0:*
+UNCONN 0      0              [::1]:323          [::]:*
+server fw open 9999 udp（01:12:43）→ success。list-all: ports: 9999/udp
+client udp 192.168.32.20 9999 hello（01:13:06）: reply: echo: hello ／ py_exit=0
+server capture（01:13:13 開始）: 2 packets captured
+01:13:17.902182 IP 192.168.31.10.35375 > 192.168.32.20.9999: UDP, length 5
+01:13:17.902866 IP 192.168.32.20.9999 > 192.168.31.10.35375: UDP, length 11
+
+## T7: UDP の待ち受けなし
+server udp-listen stop（01:17:13）: kill 1824 → exit=0。ss -ulnp: 127.0.0.1:323 と [::1]:323 のみ（9999 なし）
+client udp（01:17:22）: OSError errno=111 (ECONNREFUSED) - [Errno 111] Connection refused ／ py_exit=0
+server capture（01:17:28 開始）: 2 packets captured
+01:17:33.763997 IP 192.168.31.10.33223 > 192.168.32.20.9999: UDP, length 5
+01:17:33.764203 IP 192.168.32.20 > 192.168.31.10: ICMP 192.168.32.20 udp port 9999 unreachable, length 41
+
+## T8: UDP の破棄
+server udp-listen start（01:20:28）: 起動 pid 1900。ss -ulnp: 192.168.32.20:9999（python3, pid=1900）
+server fw rule udp-drop（01:20:43）→ success。list-all: ports: 9999/udp、rich rules:
+        rule family="ipv4" source address="192.168.31.10" port port="9999" protocol="udp" drop
+client udp（01:20:49）: timeout (3秒、応答なし) ／ py_exit=0
+server capture（01:20:50 開始）: 1 packet captured
+01:20:59.969770 IP 192.168.31.10.43389 > 192.168.32.20.9999: UDP, length 5

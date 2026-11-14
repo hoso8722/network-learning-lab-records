@@ -1,0 +1,12 @@
+# exp8 client fetch-ca    2026-10-25T13:48:08+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -s --max-time 5 -o /home/user/lab-ca.crt http://192.168.32.20/lab-ca.crt
+exit=0
+
+### $ openssl x509 -in /home/user/lab-ca.crt -noout -subject -dates -fingerprint -sha256
+subject=CN=Lab Test CA
+notBefore=Oct 25 04:36:25 2026 GMT
+notAfter=Oct 22 04:36:25 2036 GMT
+sha256 Fingerprint=A6:42:96:CC:BA:5C:5E:65:7F:0B:14:E1:AE:BB:BD:47:80:8B:D1:6F:66:52:7F:27:B2:AD:9D:12:EE:28:A8:01
+exit=0
+

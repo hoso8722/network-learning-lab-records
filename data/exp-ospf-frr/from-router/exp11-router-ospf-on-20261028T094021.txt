@@ -1,0 +1,24 @@
+# exp11 router ospf on   2026-10-28T09:40:21+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo vtysh configure terminal / router ospf / ospf router-id 1.1.1.1 / network (192.168.31.0/24, 192.168.30.0/30) area 0
+exit=0
+
+### $ sudo vtysh -c 'show running-config' 
+Building configuration...
+
+Current configuration:
+!
+frr version 8.5.3
+frr defaults traditional
+hostname router
+no ipv6 forwarding
+!
+router ospf
+ ospf router-id 1.1.1.1
+ network 192.168.30.0/30 area 0
+ network 192.168.31.0/24 area 0
+exit
+!
+end
+exit=0
+

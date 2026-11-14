@@ -1,0 +1,27 @@
+# exp12 client obs   2026-10-29T09:11:36+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ping -c 3 -W 2 192.168.32.20
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+From 192.168.30.2 icmp_seq=1 Packet filtered
+From 192.168.30.2 icmp_seq=2 Packet filtered
+From 192.168.30.2 icmp_seq=3 Packet filtered
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2046ms
+
+exit=1
+
+### $ tracepath -n -m 6 192.168.32.20
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  192.168.31.1                                          1.195ms 
+ 1:  192.168.31.1                                          0.954ms 
+ 2:  192.168.30.2                                          2.642ms 
+ 3:  192.168.30.2                                          3.104ms !H
+     Resume: pmtu 1500 
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1001 
+    cache 
+exit=0
+

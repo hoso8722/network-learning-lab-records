@@ -1,0 +1,39 @@
+# exp4 router2 capture    2026-10-26T08:52:17+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo timeout -s INT 25 tcpdump -i any -n -w exp4-router2-20261026T085217.pcap 'not tcp port 22'   (25秒以内に client から server へ ping。SSH は除外)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+26 packets captured
+30 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -r exp4-router2-20261026T085217.pcap
+reading from file exp4-router2-20261026T085217.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+08:52:23.236270 enp0s8 In  IP 192.168.31.10.44970 > 192.168.32.99.domain: 64344+ AAAA? www.lab.example. (33)
+08:52:23.236395 enp0s9 Out ARP, Request who-has 192.168.32.99 tell 192.168.32.1, length 28
+08:52:24.242077 enp0s8 In  IP 192.168.31.10.60112 > 192.168.32.99.domain: 5998+ AAAA? www.lab.example.lab.example. (45)
+08:52:24.284890 enp0s9 Out ARP, Request who-has 192.168.32.99 tell 192.168.32.1, length 28
+08:52:25.244741 enp0s8 In  IP 192.168.31.10.41417 > 192.168.32.99.domain: 47509+ A? www.lab.example. (33)
+08:52:25.309883 enp0s9 Out ARP, Request who-has 192.168.32.99 tell 192.168.32.1, length 28
+08:52:26.246934 enp0s8 In  IP 192.168.31.10.44420 > 192.168.32.99.domain: 39663+ A? www.lab.example.lab.example. (45)
+08:52:26.337638 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 69
+08:52:26.338053 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 81
+08:52:26.338192 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 69
+08:52:26.338302 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 81
+08:52:27.412166 enp0s8 In  IP 192.168.31.10.51234 > 192.168.32.99.domain: 49833+ A? www.lab.example. (33)
+08:52:27.412167 enp0s8 In  IP 192.168.31.10.51234 > 192.168.32.99.domain: 41389+ AAAA? www.lab.example. (33)
+08:52:27.412384 enp0s9 Out ARP, Request who-has 192.168.32.99 tell 192.168.32.1, length 28
+08:52:28.413970 enp0s8 In  IP 192.168.31.10.60502 > 192.168.32.99.domain: 32921+ A? www.lab.example.lab.example. (45)
+08:52:28.413971 enp0s8 In  IP 192.168.31.10.60502 > 192.168.32.99.domain: 35735+ AAAA? www.lab.example.lab.example. (45)
+08:52:28.444992 enp0s9 Out ARP, Request who-has 192.168.32.99 tell 192.168.32.1, length 28
+08:52:28.544927 enp0s8 In  ARP, Request who-has 192.168.30.2 tell 192.168.30.1, length 46
+08:52:28.544992 enp0s8 Out ARP, Reply 192.168.30.2 is-at 08:00:27:e3:dd:05, length 28
+08:52:29.475061 enp0s9 Out ARP, Request who-has 192.168.32.99 tell 192.168.32.1, length 28
+08:52:30.493369 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 69
+08:52:30.493806 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 69
+08:52:30.493927 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 81
+08:52:30.494047 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.99 unreachable, length 81
+08:52:31.712661 enp0s8 Out ARP, Request who-has 192.168.30.1 tell 192.168.30.2, length 28
+08:52:31.713721 enp0s8 In  ARP, Reply 192.168.30.1 is-at 08:00:27:1f:72:80, length 46

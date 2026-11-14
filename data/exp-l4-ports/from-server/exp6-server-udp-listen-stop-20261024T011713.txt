@@ -1,0 +1,11 @@
+# exp6 server udp-listen stop    2026-10-24T01:17:13+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ kill 1824
+exit=0
+
+### $ ss -ulnp
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+UNCONN 0      0          127.0.0.1:323       0.0.0.0:*          
+UNCONN 0      0              [::1]:323          [::]:*          
+exit=0
+

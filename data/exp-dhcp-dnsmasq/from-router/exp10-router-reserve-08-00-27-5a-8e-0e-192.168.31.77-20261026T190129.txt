@@ -1,0 +1,13 @@
+# exp10 router reserve 08:00:27:5a:8e:0e 192.168.31.77  2026-10-26T19:01:29+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ (write_conf 10m 'dhcp-host=08:00:27:5a:8e:0e,192.168.31.77') | sudo tee /etc/dnsmasq.d/lab-dhcp.conf
+exit=0
+
+### $ sudo systemctl restart dnsmasq
+exit=0
+
+### $ grep -E ^dhcp-range|^dhcp-host /etc/dnsmasq.d/lab-dhcp.conf
+dhcp-range=192.168.31.100,192.168.31.150,255.255.255.0,10m
+dhcp-host=08:00:27:5a:8e:0e,192.168.31.77
+exit=0
+

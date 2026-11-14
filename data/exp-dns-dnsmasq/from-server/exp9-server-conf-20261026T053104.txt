@@ -1,0 +1,28 @@
+# exp9 server conf    2026-10-26T05:31:04+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo sh -c printf 'listen-address=192.168.32.20\nbind-interfaces\nno-resolv\ndomain=lab.example\nlocal=/lab.example/\nno-hosts\naddn-hosts=/etc/lab-hosts\ncname=web.lab.example,www.lab.example\nlog-queries\nlog-facility=-\n' > /etc/dnsmasq.d/lab-dns.conf
+exit=0
+
+### $ sudo sh -c printf '192.168.32.20 www.lab.example\n192.168.31.10 client.lab.example\n' > /etc/lab-hosts
+exit=0
+
+### $ sudo restorecon -v /etc/dnsmasq.d/lab-dns.conf /etc/lab-hosts
+exit=0
+
+### $ cat /etc/dnsmasq.d/lab-dns.conf
+listen-address=192.168.32.20
+bind-interfaces
+no-resolv
+domain=lab.example
+local=/lab.example/
+no-hosts
+addn-hosts=/etc/lab-hosts
+cname=web.lab.example,www.lab.example
+log-queries
+log-facility=-
+exit=0
+
+### $ sudo dnsmasq --test
+dnsmasq: syntax check OK.
+exit=0
+

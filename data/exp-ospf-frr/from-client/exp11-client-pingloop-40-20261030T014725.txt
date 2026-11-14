@@ -1,0 +1,48 @@
+# exp11 client pingloop 40   2026-10-30T01:47:25+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ping -D -O -i 1 -W 1 -c 40 192.168.32.20   （40 秒。-D=時刻、-O=未応答の表示。この間に router / router2 で障害を起こす）
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+[1793292445.399425] 64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=4.79 ms
+[1793292446.401462] 64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.14 ms
+[1793292447.403436] 64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=3.72 ms
+[1793292448.406685] 64 bytes from 192.168.32.20: icmp_seq=4 ttl=62 time=4.99 ms
+[1793292449.412787] 64 bytes from 192.168.32.20: icmp_seq=5 ttl=62 time=4.06 ms
+[1793292450.417875] 64 bytes from 192.168.32.20: icmp_seq=6 ttl=62 time=5.27 ms
+[1793292451.419793] 64 bytes from 192.168.32.20: icmp_seq=7 ttl=62 time=4.60 ms
+[1793292452.422903] 64 bytes from 192.168.32.20: icmp_seq=8 ttl=62 time=4.91 ms
+[1793292453.428577] 64 bytes from 192.168.32.20: icmp_seq=9 ttl=62 time=4.50 ms
+[1793292454.430480] 64 bytes from 192.168.32.20: icmp_seq=10 ttl=62 time=3.58 ms
+[1793292455.432793] 64 bytes from 192.168.32.20: icmp_seq=11 ttl=62 time=3.85 ms
+[1793292456.436367] 64 bytes from 192.168.32.20: icmp_seq=12 ttl=62 time=3.86 ms
+[1793292457.438298] 64 bytes from 192.168.32.20: icmp_seq=13 ttl=62 time=3.64 ms
+[1793292459.486630] no answer yet for icmp_seq=14
+[1793292460.505953] no answer yet for icmp_seq=15
+[1793292461.535570] no answer yet for icmp_seq=16
+[1793292462.555390] no answer yet for icmp_seq=17
+[1793292463.587236] no answer yet for icmp_seq=18
+[1793292464.601608] no answer yet for icmp_seq=19
+[1793292465.626665] no answer yet for icmp_seq=20
+[1793292466.662392] no answer yet for icmp_seq=21
+[1793292467.676402] no answer yet for icmp_seq=22
+[1793292468.698473] no answer yet for icmp_seq=23
+[1793292469.725914] no answer yet for icmp_seq=24
+[1793292470.752322] no answer yet for icmp_seq=25
+[1793292471.771091] no answer yet for icmp_seq=26
+[1793292472.794763] no answer yet for icmp_seq=27
+[1793292473.819696] no answer yet for icmp_seq=28
+[1793292474.845402] no answer yet for icmp_seq=29
+[1793292475.869529] no answer yet for icmp_seq=30
+[1793292476.890611] no answer yet for icmp_seq=31
+[1793292477.920353] no answer yet for icmp_seq=32
+[1793292478.945585] no answer yet for icmp_seq=33
+[1793292479.964609] no answer yet for icmp_seq=34
+[1793292480.986347] no answer yet for icmp_seq=35
+[1793292482.010236] no answer yet for icmp_seq=36
+[1793292483.042021] no answer yet for icmp_seq=37
+[1793292484.057444] no answer yet for icmp_seq=38
+[1793292485.089968] no answer yet for icmp_seq=39
+
+--- 192.168.32.20 ping statistics ---
+40 packets transmitted, 13 received, 67.5% packet loss, time 39698ms
+rtt min/avg/max/mdev = 3.580/4.299/5.267/0.549 ms
+exit=0

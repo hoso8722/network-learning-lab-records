@@ -1,0 +1,10 @@
+# exp7 server fix-selinux   2026-10-25T06:28:32+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo restorecon -v /var/www/html/selinux.html
+Relabeled /var/www/html/selinux.html from unconfined_u:object_r:user_home_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+exit=0
+
+### $ ls -lZ /var/www/html/selinux.html
+-rw-r--r--. 1 user user unconfined_u:object_r:httpd_sys_content_t:s0 20 Oct 25 06:07 /var/www/html/selinux.html
+exit=0
+

@@ -1,0 +1,30 @@
+# exp10 router fw open   2026-10-26T11:38:29+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo firewall-cmd --zone=internal --add-service=dhcp
+success
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --list-all
+internal (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s8 enp0s9
+  sources: 
+  services: cockpit dhcp dhcpv6-client mdns samba-client ssh
+  ports: 
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+exit=0
+

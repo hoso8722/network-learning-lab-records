@@ -1,0 +1,171 @@
+# exp11 router watch 60   2026-10-28T09:40:27+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### 2 秒ごと、60 秒間。neighbor（vtysh）と経路（ip route の 192.168.32.0/24）。この間に障害を起こす
+--- 09:40:27
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         0.126s            39.838s 192.168.30.2    enp0s9:192.168.30.1                  1     0     0
+
+route: 
+--- 09:40:29
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         2.332s            37.632s 192.168.30.2    enp0s9:192.168.30.1                  1     0     0
+
+route: 
+--- 09:40:32
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         4.517s            35.446s 192.168.30.2    enp0s9:192.168.30.1                  1     0     0
+
+route: 
+--- 09:40:34
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         6.702s            33.262s 192.168.30.2    enp0s9:192.168.30.1                  1     0     0
+
+route: 
+--- 09:40:36
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         8.896s            31.067s 192.168.30.2    enp0s9:192.168.30.1                  1     0     0
+
+route: 
+--- 09:40:38
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         11.112s           38.854s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:40
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         13.355s           36.609s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:43
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         15.558s           34.407s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:45
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         17.746s           32.219s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:47
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         19.924s           30.041s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:49
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         22.101s           37.871s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:51
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         24.311s           35.660s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:54
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         26.499s           33.473s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:56
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         28.709s           31.263s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:40:58
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         30.881s           39.092s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:00
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         33.079s           36.894s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:02
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         35.295s           34.678s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:05
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         37.469s           32.504s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:07
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         39.657s           30.316s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:09
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         41.824s           38.156s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:11
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         43.997s           35.983s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:13
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         46.166s           33.814s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:16
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         48.373s           31.607s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:18
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         50.555s           39.426s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:20
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         52.727s           37.254s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:22
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         54.907s           35.074s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:24
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         57.084s           32.896s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 
+--- 09:41:26
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+2.2.2.2           1 Full/DR         59.298s           30.682s 192.168.30.2    enp0s9:192.168.30.1                  0     0     0
+
+route: 192.168.32.0/24 nhid 96 via 192.168.30.2 dev enp0s9 proto ospf metric 20 

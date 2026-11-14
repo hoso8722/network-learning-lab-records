@@ -1,0 +1,9 @@
+# exp10 router stop    2026-10-26T14:19:00+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo systemctl stop dnsmasq
+exit=0
+
+### $ systemctl is-active dnsmasq
+inactive
+exit=3
+

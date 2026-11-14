@@ -1,0 +1,29 @@
+# exp7 client curl /perm.html  2026-10-25T06:21:32+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -sv --max-time 5 -o /dev/null -w 'http_code=%{http_code}\n' http://192.168.32.20/perm.html
+*   Trying 192.168.32.20:80...
+* Connected to 192.168.32.20 (192.168.32.20) port 80 (#0)
+> GET /perm.html HTTP/1.1
+> Host: 192.168.32.20
+> User-Agent: curl/7.76.1
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Date: Sat, 24 Oct 2026 21:21:32 GMT
+< Server: Apache/2.4.62 (AlmaLinux)
+< Content-Length: 199
+< Content-Type: text/html; charset=iso-8859-1
+< 
+{ [199 bytes data]
+* Connection #0 to host 192.168.32.20 left intact
+http_code=403
+curl_exit=0   (7=接続できない/拒否、28=タイムアウト)
+
+### $ curl -s --max-time 5 http://192.168.32.20/perm.html   (本文)
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+

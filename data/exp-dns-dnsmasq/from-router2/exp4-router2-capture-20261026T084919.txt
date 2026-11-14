@@ -1,0 +1,51 @@
+# exp4 router2 capture    2026-10-26T08:49:19+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo timeout -s INT 25 tcpdump -i any -n -w exp4-router2-20261026T084919.pcap 'not tcp port 22'   (25秒以内に client から server へ ping。SSH は除外)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+38 packets captured
+45 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -r exp4-router2-20261026T084919.pcap
+reading from file exp4-router2-20261026T084919.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+08:49:40.636081 enp0s8 In  IP 192.168.31.10.42712 > 192.168.32.20.domain: 16135+ AAAA? www.lab.example. (33)
+08:49:40.636223 enp0s9 Out IP 192.168.31.10.42712 > 192.168.32.20.domain: 16135+ AAAA? www.lab.example. (33)
+08:49:40.637983 enp0s9 In  IP 192.168.32.20.domain > 192.168.31.10.42712: 16135 0/0/0 (33)
+08:49:40.638007 enp0s8 Out IP 192.168.32.20.domain > 192.168.31.10.42712: 16135 0/0/0 (33)
+08:49:40.640949 enp0s8 In  IP 192.168.31.10.52733 > 192.168.32.20.domain: 42192+ AAAA? www.lab.example.lab.example. (45)
+08:49:40.640982 enp0s9 Out IP 192.168.31.10.52733 > 192.168.32.20.domain: 42192+ AAAA? www.lab.example.lab.example. (45)
+08:49:40.642288 enp0s9 In  IP 192.168.32.20.domain > 192.168.31.10.52733: 42192 NXDomain 0/0/0 (45)
+08:49:40.642309 enp0s8 Out IP 192.168.32.20.domain > 192.168.31.10.52733: 42192 NXDomain 0/0/0 (45)
+08:49:40.646434 enp0s8 In  IP 192.168.31.10.43076 > 192.168.32.20.domain: 13279+ A? www.lab.example. (33)
+08:49:40.646478 enp0s9 Out IP 192.168.31.10.43076 > 192.168.32.20.domain: 13279+ A? www.lab.example. (33)
+08:49:40.648125 enp0s9 In  IP 192.168.32.20.domain > 192.168.31.10.43076: 13279* 1/0/0 A 192.168.32.21 (49)
+08:49:40.648146 enp0s8 Out IP 192.168.32.20.domain > 192.168.31.10.43076: 13279* 1/0/0 A 192.168.32.21 (49)
+08:49:40.850086 enp0s8 In  IP 192.168.31.10.34698 > 192.168.32.20.domain: 53657+ A? www.lab.example. (33)
+08:49:40.850086 enp0s8 In  IP 192.168.31.10.34698 > 192.168.32.20.domain: 30620+ AAAA? www.lab.example. (33)
+08:49:40.850191 enp0s9 Out IP 192.168.31.10.34698 > 192.168.32.20.domain: 53657+ A? www.lab.example. (33)
+08:49:40.850351 enp0s9 Out IP 192.168.31.10.34698 > 192.168.32.20.domain: 30620+ AAAA? www.lab.example. (33)
+08:49:40.852352 enp0s9 In  IP 192.168.32.20.domain > 192.168.31.10.34698: 53657* 1/0/0 A 192.168.32.21 (49)
+08:49:40.852380 enp0s8 Out IP 192.168.32.20.domain > 192.168.31.10.34698: 53657* 1/0/0 A 192.168.32.21 (49)
+08:49:40.854186 enp0s9 In  IP 192.168.32.20.domain > 192.168.31.10.34698: 30620 0/0/0 (33)
+08:49:40.854212 enp0s8 Out IP 192.168.32.20.domain > 192.168.31.10.34698: 30620 0/0/0 (33)
+08:49:40.859935 enp0s8 In  IP 192.168.31.10.33230 > 192.168.32.21.http: Flags [S], seq 3150550951, win 64240, options [mss 1460,sackOK,TS val 2673935695 ecr 0,nop,wscale 6], length 0
+08:49:40.860015 enp0s9 Out ARP, Request who-has 192.168.32.21 tell 192.168.32.1, length 28
+08:49:41.917802 enp0s9 Out ARP, Request who-has 192.168.32.21 tell 192.168.32.1, length 28
+08:49:41.924267 enp0s8 In  IP 192.168.31.10.33230 > 192.168.32.21.http: Flags [S], seq 3150550951, win 64240, options [mss 1460,sackOK,TS val 2673936760 ecr 0,nop,wscale 6], length 0
+08:49:42.942940 enp0s9 Out ARP, Request who-has 192.168.32.21 tell 192.168.32.1, length 28
+08:49:43.965406 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.21 unreachable, length 68
+08:49:43.965886 enp0s8 Out IP 192.168.30.2 > 192.168.31.10: ICMP host 192.168.32.21 unreachable, length 68
+08:49:43.972380 enp0s8 In  IP 192.168.31.10.33230 > 192.168.32.21.http: Flags [S], seq 3150550951, win 64240, options [mss 1460,sackOK,TS val 2673938808 ecr 0,nop,wscale 6], length 0
+08:49:43.972426 enp0s9 Out ARP, Request who-has 192.168.32.21 tell 192.168.32.1, length 28
+08:49:44.988335 enp0s9 Out ARP, Request who-has 192.168.32.21 tell 192.168.32.1, length 28
+08:49:45.727918 enp0s8 In  ARP, Request who-has 192.168.30.2 tell 192.168.30.1, length 46
+08:49:45.727973 enp0s8 Out ARP, Reply 192.168.30.2 is-at 08:00:27:e3:dd:05, length 28
+08:49:45.746862 enp0s9 In  ARP, Request who-has 192.168.32.1 tell 192.168.32.20, length 46
+08:49:45.746881 enp0s9 Out ARP, Reply 192.168.32.1 is-at 08:00:27:00:22:c5, length 28
+08:49:45.820551 enp0s9 Out ARP, Request who-has 192.168.32.20 tell 192.168.32.1, length 28
+08:49:45.821347 enp0s8 Out ARP, Request who-has 192.168.30.1 tell 192.168.30.2, length 28
+08:49:45.821612 enp0s9 In  ARP, Reply 192.168.32.20 is-at 08:00:27:7e:40:4e, length 46
+08:49:45.822338 enp0s8 In  ARP, Reply 192.168.30.1 is-at 08:00:27:1f:72:80, length 46

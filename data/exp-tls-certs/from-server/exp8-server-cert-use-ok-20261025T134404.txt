@@ -1,0 +1,43 @@
+# exp8 server cert use ok  2026-10-25T13:44:04+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo mkdir -p /etc/pki/tls/lab
+exit=0
+
+### $ sudo cp /home/user/tls-lab/certs/ok.crt /etc/pki/tls/lab/server.crt
+exit=0
+
+### $ sudo cp /home/user/tls-lab/certs/ok.key /etc/pki/tls/lab/server.key
+exit=0
+
+### $ sudo chown root:root /etc/pki/tls/lab/server.crt /etc/pki/tls/lab/server.key
+exit=0
+
+### $ sudo chmod 644 /etc/pki/tls/lab/server.crt
+exit=0
+
+### $ sudo chmod 600 /etc/pki/tls/lab/server.key
+exit=0
+
+### $ sudo restorecon -Rv /etc/pki/tls/lab
+exit=0
+
+### $ sudo sh -c printf '<VirtualHost *:443>\n    ServerName www.lab.example\n    DocumentRoot /var/www/html\n    SSLEngine on\n    SSLCertificateFile /etc/pki/tls/lab/server.crt\n    SSLCertificateKeyFile /etc/pki/tls/lab/server.key\n    ErrorLog logs/lab_ssl_error_log\n    CustomLog logs/lab_ssl_access_log combined\n</VirtualHost>\n' > /etc/httpd/conf.d/lab-tls.conf
+exit=0
+
+### $ sudo httpd -t
+AH00526: Syntax error on line 85 of /etc/httpd/conf.d/ssl.conf:
+SSLCertificateFile: file '/etc/pki/tls/certs/localhost.crt' does not exist or is empty
+exit=1
+
+### $ sudo systemctl restart httpd
+exit=0
+
+### $ systemctl is-active httpd
+active
+exit=0
+
+### $ sudo ss -tlnp sport = :443
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                                                                                                 
+LISTEN 0      511                *:443             *:*    users:(("httpd",pid=4592,fd=6),("httpd",pid=4591,fd=6),("httpd",pid=4590,fd=6),("httpd",pid=4587,fd=6))
+exit=0
+

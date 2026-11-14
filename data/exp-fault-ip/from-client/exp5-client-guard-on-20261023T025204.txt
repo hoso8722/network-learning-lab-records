@@ -1,0 +1,14 @@
+# exp5 client guard on  2026-10-23T02:52:04+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo ip route add unreachable 192.168.0.0/16 metric 4000
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101 
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10 
+192.168.32.0/24 via 192.168.31.1 dev enp0s9 
+exit=0
+

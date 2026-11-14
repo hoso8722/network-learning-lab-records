@@ -1,0 +1,44 @@
+# exp7 server site setup  2026-10-25T06:07:38+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo sh -c echo "index: ok" > /var/www/html/index.html
+exit=0
+
+### $ sudo sh -c echo "perm: secret" > /var/www/html/perm.html && chown root:root /var/www/html/perm.html && chmod 0600 /var/www/html/perm.html
+exit=0
+
+### $ sudo mv /home/user/selinux.html /var/www/html/selinux.html
+exit=0
+
+### $ sudo chmod 0644 /var/www/html/selinux.html
+exit=0
+
+### $ sudo sh -c printf 'Redirect 301 /old /index.html\n' > /etc/httpd/conf.d/lab-http.conf
+exit=0
+
+### $ sudo sh -c printf "#!/bin/sh\nprintf \"Content-Type: text/plain\\n\\n\"\necho cgi-ok\n" > /var/www/cgi-bin/ok.cgi && chmod 0755 /var/www/cgi-bin/ok.cgi
+exit=0
+
+### $ sudo sh -c printf "#!/bin/sh\necho no-header-here\n" > /var/www/cgi-bin/bad.cgi && chmod 0755 /var/www/cgi-bin/bad.cgi
+exit=0
+
+### $ sudo restorecon -v /var/www/cgi-bin/ok.cgi /var/www/cgi-bin/bad.cgi /var/www/html/index.html /var/www/html/perm.html
+exit=0
+
+### $ sudo httpd -t
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+Syntax OK
+exit=0
+
+### $ ls -lZ /var/www/html /var/www/cgi-bin
+/var/www/cgi-bin:
+total 8
+-rwxr-xr-x. 1 root root unconfined_u:object_r:httpd_sys_script_exec_t:s0 30 Oct 25 06:07 bad.cgi
+-rwxr-xr-x. 1 root root unconfined_u:object_r:httpd_sys_script_exec_t:s0 58 Oct 25 06:07 ok.cgi
+
+/var/www/html:
+total 12
+-rw-r--r--. 1 root root unconfined_u:object_r:httpd_sys_content_t:s0 10 Oct 25 06:07 index.html
+-rw-------. 1 root root unconfined_u:object_r:httpd_sys_content_t:s0 13 Oct 25 06:07 perm.html
+-rw-r--r--. 1 user user unconfined_u:object_r:user_home_t:s0         20 Oct 25 06:07 selinux.html
+exit=0
+

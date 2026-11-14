@@ -1,0 +1,104 @@
+# exp8 server logs 80   2026-10-25T16:10:11+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo tail -n 80 /var/log/httpd/error_log
+[Sun Oct 25 13:53:16.809596 2026] [core:notice] [pid 4977:tid 4977] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 13:53:16.812793 2026] [suexec:notice] [pid 4977:tid 4977] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 13:53:16.812819 2026] [ssl:warn] [pid 4977:tid 4977] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 13:53:16.893197 2026] [ssl:warn] [pid 4977:tid 4977] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 13:53:16.899691 2026] [lbmethod_heartbeat:notice] [pid 4977:tid 4977] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 13:53:16.913496 2026] [mpm_event:notice] [pid 4977:tid 4977] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 13:53:16.913547 2026] [core:notice] [pid 4977:tid 4977] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 14:09:19.740851 2026] [mpm_event:notice] [pid 4977:tid 4977] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 14:09:20.985450 2026] [core:notice] [pid 5251:tid 5251] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 14:09:20.987974 2026] [suexec:notice] [pid 5251:tid 5251] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 14:09:20.988009 2026] [ssl:warn] [pid 5251:tid 5251] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 14:09:21.062522 2026] [ssl:warn] [pid 5251:tid 5251] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 14:09:21.066918 2026] [lbmethod_heartbeat:notice] [pid 5251:tid 5251] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 14:09:21.083280 2026] [mpm_event:notice] [pid 5251:tid 5251] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 14:09:21.083334 2026] [core:notice] [pid 5251:tid 5251] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 14:22:42.264493 2026] [mpm_event:notice] [pid 5251:tid 5251] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 14:22:43.453001 2026] [core:notice] [pid 5563:tid 5563] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 14:22:43.456444 2026] [suexec:notice] [pid 5563:tid 5563] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 14:22:43.456474 2026] [ssl:warn] [pid 5563:tid 5563] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 14:22:43.532631 2026] [ssl:warn] [pid 5563:tid 5563] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 14:22:43.538696 2026] [lbmethod_heartbeat:notice] [pid 5563:tid 5563] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 14:22:43.550667 2026] [mpm_event:notice] [pid 5563:tid 5563] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 14:22:43.550722 2026] [core:notice] [pid 5563:tid 5563] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 14:25:09.057951 2026] [mpm_event:notice] [pid 5563:tid 5563] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 14:25:10.249504 2026] [core:notice] [pid 5799:tid 5799] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 14:25:10.251913 2026] [suexec:notice] [pid 5799:tid 5799] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 14:25:10.251945 2026] [ssl:warn] [pid 5799:tid 5799] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 14:25:10.322907 2026] [ssl:warn] [pid 5799:tid 5799] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 14:25:10.328735 2026] [lbmethod_heartbeat:notice] [pid 5799:tid 5799] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 14:25:10.339145 2026] [mpm_event:notice] [pid 5799:tid 5799] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 14:25:10.339180 2026] [core:notice] [pid 5799:tid 5799] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 14:27:02.239583 2026] [mpm_event:notice] [pid 5799:tid 5799] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 14:27:03.459939 2026] [core:notice] [pid 6038:tid 6038] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 14:27:03.462615 2026] [suexec:notice] [pid 6038:tid 6038] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 14:27:03.462645 2026] [ssl:warn] [pid 6038:tid 6038] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 14:27:03.529100 2026] [ssl:warn] [pid 6038:tid 6038] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 14:27:03.535831 2026] [lbmethod_heartbeat:notice] [pid 6038:tid 6038] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 14:27:03.547281 2026] [mpm_event:notice] [pid 6038:tid 6038] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 14:27:03.547338 2026] [core:notice] [pid 6038:tid 6038] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 14:27:14.151378 2026] [mpm_event:notice] [pid 6038:tid 6038] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 14:27:15.345601 2026] [core:notice] [pid 6275:tid 6275] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 14:27:15.348029 2026] [suexec:notice] [pid 6275:tid 6275] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 14:27:15.348062 2026] [ssl:warn] [pid 6275:tid 6275] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 14:27:15.424905 2026] [ssl:warn] [pid 6275:tid 6275] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 14:27:15.429575 2026] [lbmethod_heartbeat:notice] [pid 6275:tid 6275] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 14:27:15.441361 2026] [mpm_event:notice] [pid 6275:tid 6275] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 14:27:15.441410 2026] [core:notice] [pid 6275:tid 6275] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 15:36:02.617754 2026] [mpm_event:notice] [pid 6275:tid 6275] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 15:36:03.924386 2026] [core:notice] [pid 6536:tid 6536] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 15:36:03.928970 2026] [suexec:notice] [pid 6536:tid 6536] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 15:36:03.929010 2026] [ssl:warn] [pid 6536:tid 6536] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 15:36:04.041832 2026] [ssl:warn] [pid 6536:tid 6536] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 15:36:04.052759 2026] [lbmethod_heartbeat:notice] [pid 6536:tid 6536] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 15:36:04.071910 2026] [mpm_event:notice] [pid 6536:tid 6536] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 15:36:04.071965 2026] [core:notice] [pid 6536:tid 6536] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 15:59:37.777229 2026] [mpm_event:notice] [pid 6536:tid 6536] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 15:59:39.090140 2026] [core:notice] [pid 6946:tid 6946] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 15:59:39.091977 2026] [suexec:notice] [pid 6946:tid 6946] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 15:59:39.091999 2026] [ssl:warn] [pid 6946:tid 6946] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 15:59:39.190679 2026] [ssl:warn] [pid 6946:tid 6946] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 15:59:39.197740 2026] [lbmethod_heartbeat:notice] [pid 6946:tid 6946] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 15:59:39.216353 2026] [mpm_event:notice] [pid 6946:tid 6946] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 15:59:39.216414 2026] [core:notice] [pid 6946:tid 6946] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 16:01:15.251945 2026] [mpm_event:notice] [pid 6946:tid 6946] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Oct 25 16:01:16.537106 2026] [core:notice] [pid 7194:tid 7194] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 16:01:16.541707 2026] [suexec:notice] [pid 7194:tid 7194] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sun Oct 25 16:01:16.541754 2026] [ssl:warn] [pid 7194:tid 7194] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 16:01:16.639010 2026] [ssl:warn] [pid 7194:tid 7194] AH01882: Init: this version of mod_ssl was compiled against a newer library (OpenSSL 3.5.8 25 Aug 2026 (OpenSSL 3.5.5 27 Jan 2026), version currently loaded is 0x30500050) - may result in undefined or erroneous behavior
+[Sun Oct 25 16:01:16.648813 2026] [lbmethod_heartbeat:notice] [pid 7194:tid 7194] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 16:01:16.662467 2026] [mpm_event:notice] [pid 7194:tid 7194] AH00489: Apache/2.4.62 (AlmaLinux) OpenSSL/3.5.5 configured -- resuming normal operations
+[Sun Oct 25 16:01:16.662506 2026] [core:notice] [pid 7194:tid 7194] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+
+### $ sudo tail -n 80 /var/log/httpd/lab_ssl_error_log
+[Sun Oct 25 13:48:08.880503 2026] [autoindex:error] [pid 4591:tid 4755] [client 192.168.31.10:33576] AH01276: Cannot serve directory /var/www/html/: No matching DirectoryIndex (index.html) found, and server-generated directory index forbidden by Options directive
+[Sun Oct 25 14:22:43.475803 2026] [ssl:warn] [pid 5563:tid 5563] AH01909: www.lab.example:443:0 server certificate does NOT include an ID which matches the server name
+[Sun Oct 25 14:22:43.537980 2026] [ssl:warn] [pid 5563:tid 5563] AH01909: www.lab.example:443:0 server certificate does NOT include an ID which matches the server name
+[Sun Oct 25 14:25:10.267650 2026] [ssl:warn] [pid 5799:tid 5799] AH01906: www.lab.example:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Sun Oct 25 14:25:10.328044 2026] [ssl:warn] [pid 5799:tid 5799] AH01906: www.lab.example:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Sun Oct 25 14:27:03.478587 2026] [ssl:warn] [pid 6038:tid 6038] AH01906: www.lab.example:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Sun Oct 25 14:27:03.535454 2026] [ssl:warn] [pid 6038:tid 6038] AH01906: www.lab.example:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Sun Oct 25 15:35:04.832832 2026] [autoindex:error] [pid 6279:tid 6423] [client 192.168.31.10:60606] AH01276: Cannot serve directory /var/www/html/: No matching DirectoryIndex (index.html) found, and server-generated directory index forbidden by Options directive
+[Sun Oct 25 15:38:51.612402 2026] [autoindex:error] [pid 6540:tid 6673] [client 192.168.31.10:43934] AH01276: Cannot serve directory /var/www/html/: No matching DirectoryIndex (index.html) found, and server-generated directory index forbidden by Options directive
+[Sun Oct 25 15:59:39.107919 2026] [ssl:warn] [pid 6946:tid 6946] AH01906: www.lab.example:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Sun Oct 25 15:59:39.196889 2026] [ssl:warn] [pid 6946:tid 6946] AH01906: www.lab.example:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+
+### $ sudo tail -n 80 /var/log/httpd/lab_ssl_access_log
+192.168.31.10 - - [25/Oct/2026:13:48:08 +0900] "GET / HTTP/1.1" 403 5760 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:15:35:04 +0900] "GET / HTTP/1.1" 403 5760 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:15:38:51 +0900] "GET / HTTP/1.1" 403 5760 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:15:49:06 +0900] "GET / HTTP/1.1" 200 10 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:16:00:21 +0900] "GET / HTTP/1.1" 200 10 "-" "curl/7.76.1"
+

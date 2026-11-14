@@ -1,0 +1,91 @@
+# exp4 router capture    2026-10-30T01:47:22+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo timeout -s INT 25 tcpdump -i any -n -w exp4-router-20261030T014722.pcap 'not tcp port 22'   (25秒以内に client から server へ ping。SSH は除外)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+78 packets captured
+86 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -r exp4-router-20261030T014722.pcap
+reading from file exp4-router-20261030T014722.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+01:47:25.393248 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 1, length 64
+01:47:25.393333 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 1, length 64
+01:47:25.396139 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 1, length 64
+01:47:25.396169 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 1, length 64
+01:47:26.396040 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 2, length 64
+01:47:26.396160 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 2, length 64
+01:47:26.398519 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 2, length 64
+01:47:26.398542 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 2, length 64
+01:47:27.398265 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 3, length 64
+01:47:27.398359 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 3, length 64
+01:47:27.400858 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 3, length 64
+01:47:27.400881 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 3, length 64
+01:47:28.400422 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 4, length 64
+01:47:28.400476 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 4, length 64
+01:47:28.404041 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 4, length 64
+01:47:28.404070 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 4, length 64
+01:47:29.407251 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 5, length 64
+01:47:29.407333 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 5, length 64
+01:47:29.409618 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 5, length 64
+01:47:29.409642 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 5, length 64
+01:47:30.410194 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 6, length 64
+01:47:30.410247 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 6, length 64
+01:47:30.413585 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 6, length 64
+01:47:30.413612 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 6, length 64
+01:47:30.518917 enp0s8 Out ARP, Request who-has 192.168.31.10 tell 192.168.31.1, length 28
+01:47:30.519870 enp0s8 In  ARP, Reply 192.168.31.10 is-at 08:00:27:5a:8e:0e, length 46
+01:47:30.521279 enp0s9 Out ARP, Request who-has 192.168.30.2 tell 192.168.30.1, length 28
+01:47:30.522175 enp0s9 In  ARP, Reply 192.168.30.2 is-at 08:00:27:e3:dd:05, length 46
+01:47:30.586343 enp0s8 In  ARP, Request who-has 192.168.31.1 tell 192.168.31.10, length 46
+01:47:30.586369 enp0s8 Out ARP, Reply 192.168.31.1 is-at 08:00:27:88:5c:75, length 28
+01:47:30.774235 enp0s9 In  ARP, Request who-has 192.168.30.1 tell 192.168.30.2, length 46
+01:47:30.774296 enp0s9 Out ARP, Reply 192.168.30.1 is-at 08:00:27:1f:72:80, length 28
+01:47:31.413696 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 7, length 64
+01:47:31.413794 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 7, length 64
+01:47:31.416960 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 7, length 64
+01:47:31.416998 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 7, length 64
+01:47:32.416591 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 8, length 64
+01:47:32.416682 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 8, length 64
+01:47:32.420319 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 8, length 64
+01:47:32.420348 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 8, length 64
+01:47:33.422667 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 9, length 64
+01:47:33.422746 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 9, length 64
+01:47:33.425939 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 9, length 64
+01:47:33.425966 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 9, length 64
+01:47:34.425315 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 10, length 64
+01:47:34.425358 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 10, length 64
+01:47:34.427868 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 10, length 64
+01:47:34.427886 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 10, length 64
+01:47:35.427400 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 11, length 64
+01:47:35.427472 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 11, length 64
+01:47:35.430179 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 11, length 64
+01:47:35.430196 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 11, length 64
+01:47:36.430927 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 12, length 64
+01:47:36.430985 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 12, length 64
+01:47:36.433433 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 12, length 64
+01:47:36.433467 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 12, length 64
+01:47:37.433068 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 13, length 64
+01:47:37.433115 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 13, length 64
+01:47:37.435524 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 13, length 64
+01:47:37.435549 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 35, seq 13, length 64
+01:47:38.441142 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 14, length 64
+01:47:38.441195 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 14, length 64
+01:47:39.487557 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 15, length 64
+01:47:39.487611 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 15, length 64
+01:47:40.505394 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 16, length 64
+01:47:40.505451 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 16, length 64
+01:47:41.535045 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 17, length 64
+01:47:41.535120 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 17, length 64
+01:47:42.554801 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 18, length 64
+01:47:42.554935 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 18, length 64
+01:47:43.586325 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 19, length 64
+01:47:43.586381 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 19, length 64
+01:47:44.601401 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 20, length 64
+01:47:44.601467 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 20, length 64
+01:47:45.625829 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 21, length 64
+01:47:45.625882 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 21, length 64
+01:47:46.661516 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 22, length 64
+01:47:46.661569 enp0s3 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 35, seq 22, length 64

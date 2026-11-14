@@ -1,0 +1,22 @@
+# exp9 client dig ptr 192.168.32.20  2026-10-26T05:41:43+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ dig @192.168.32.20 +time=2 +tries=1 +nocmd -x 192.168.32.20
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 55866
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;20.32.168.192.in-addr.arpa.	IN	PTR
+
+;; ANSWER SECTION:
+20.32.168.192.in-addr.arpa. 0	IN	PTR	www.lab.example.
+
+;; Query time: 6 msec
+;; SERVER: 192.168.32.20#53(192.168.32.20)
+;; WHEN: Mon Oct 26 05:41:43 JST 2026
+;; MSG SIZE  rcvd: 84
+
+exit=0  elapsed=0.08s
+

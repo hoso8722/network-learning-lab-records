@@ -1,0 +1,4 @@
+# exp6 client udp 192.168.32.20 9999 hello  2026-10-24T01:17:22+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+OSError errno=111 (ECONNREFUSED) - [Errno 111] Connection refused
+py_exit=0

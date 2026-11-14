@@ -1,0 +1,135 @@
+# exp10 router capture 45   2026-10-26T18:53:08+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo timeout -s INT 45 tcpdump -i enp0s8 -e -nn -v -w exp10-router-20261026T185308.pcap 'udp port 67 or udp port 68'   (45 秒以内に client で lease-start)
+dropped privs to tcpdump
+tcpdump: listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+8 packets captured
+8 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -e -nn -v -r exp10-router-20261026T185308.pcap
+reading from file exp10-router-20261026T185308.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+18:53:23.414854 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 332: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 318)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 290, xid 0x603687ed, secs 1, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Request
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Requested-IP (50), length 4: 192.168.31.101
+	    Hostname (12), length 6: "client"
+18:53:23.705368 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 326: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 312)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 284, xid 0xcb516358, secs 1, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Discover
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Hostname (12), length 6: "client"
+18:53:26.471935 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 326: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 312)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 284, xid 0xb7a95704, secs 2, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Discover
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Hostname (12), length 6: "client"
+18:53:31.190002 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 326: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 312)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 284, xid 0x2c58f499, secs 7, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Discover
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Hostname (12), length 6: "client"
+18:53:39.225049 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 326: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 312)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 284, xid 0x1904fc8a, secs 15, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Discover
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Hostname (12), length 6: "client"
+18:53:44.507533 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 332: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 318)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 290, xid 0x46d0637d, secs 1, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Request
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Requested-IP (50), length 4: 192.168.31.101
+	    Hostname (12), length 6: "client"
+18:53:46.508896 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 332: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 318)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 290, xid 0x9ed6ed1c, secs 1, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Discover
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Requested-IP (50), length 4: 192.168.31.101
+	    Hostname (12), length 6: "client"
+18:53:49.072131 08:00:27:5a:8e:0e > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 332: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto UDP (17), length 318)
+    0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 08:00:27:5a:8e:0e, length 290, xid 0xb1880719, secs 2, Flags [none]
+	  Client-Ethernet-Address 08:00:27:5a:8e:0e
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message (53), length 1: Discover
+	    Client-ID (61), length 7: ether 08:00:27:5a:8e:0e
+	    Parameter-Request (55), length 17: 
+	      Subnet-Mask (1), Time-Zone (2), Domain-Name-Server (6), Hostname (12)
+	      Domain-Name (15), MTU (26), BR (28), Classless-Static-Route (121)
+	      Default-Gateway (3), Static-Route (33), YD (40), YS (41)
+	      NTP (42), Unknown (119), Classless-Static-Route-Microsoft (249), Unknown (252)
+	      RP (17)
+	    MSZ (57), length 2: 576
+	    Requested-IP (50), length 4: 192.168.31.101
+	    Hostname (12), length 6: "client"

@@ -1,0 +1,13 @@
+# exp5 client ping 192.168.32.20  2026-10-23T02:53:03+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ping -c 3 -W 2 192.168.32.20
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=6.92 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.88 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=3.78 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2006ms
+rtt min/avg/max/mdev = 3.777/5.192/6.924/1.304 ms
+exit=0
+

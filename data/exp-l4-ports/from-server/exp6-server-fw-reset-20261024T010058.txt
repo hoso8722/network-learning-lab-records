@@ -1,0 +1,7 @@
+# exp6 server fw reset    2026-10-24T01:00:58+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+# 既定ゾーン: public
+### $ sudo firewall-cmd --reload
+success
+exit=0
+

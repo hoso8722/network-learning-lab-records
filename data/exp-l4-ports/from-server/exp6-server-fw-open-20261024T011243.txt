@@ -1,0 +1,24 @@
+# exp6 server fw open 9999 udp  2026-10-24T01:12:43+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+# 既定ゾーン: public
+### $ sudo firewall-cmd --zone=public --add-port=9999/udp
+success
+exit=0
+
+### $ sudo firewall-cmd --zone=public --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 9999/udp
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+exit=0
+

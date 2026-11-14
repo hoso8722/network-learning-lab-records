@@ -1,0 +1,12 @@
+# exp7 client curl /  2026-10-25T06:33:03+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -sv --max-time 5 -o /dev/null -w 'http_code=%{http_code}\n' http://192.168.32.20/
+*   Trying 192.168.32.20:80...
+* connect to 192.168.32.20 port 80 failed: No route to host
+* Failed to connect to 192.168.32.20 port 80: No route to host
+* Closing connection 0
+http_code=000
+curl_exit=7   (7=接続できない/拒否、28=タイムアウト)
+
+### $ curl -s --max-time 5 http://192.168.32.20/   (本文)
+

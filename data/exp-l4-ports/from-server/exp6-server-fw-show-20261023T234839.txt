@@ -1,0 +1,42 @@
+# exp6 server fw show    2026-10-23T23:48:39+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+# 既定ゾーン: public
+### $ sudo firewall-cmd --get-active-zones
+public
+  interfaces: enp0s3 enp0s8
+exit=0
+
+### $ sudo firewall-cmd --zone=public --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 8080/tcp
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+exit=0
+
+### $ sudo firewall-cmd --zone=public --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 8080/tcp
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+exit=0
+

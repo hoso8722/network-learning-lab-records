@@ -1,0 +1,23 @@
+# exp9 server start    2026-10-26T05:31:08+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo systemctl start dnsmasq
+exit=0
+
+### $ systemctl is-active dnsmasq
+active
+exit=0
+
+### $ sudo ss -lunp sport = :53
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                           
+UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:(("dnsmasq",pid=8272,fd=6))
+UNCONN 0      0      192.168.32.20:53        0.0.0.0:*    users:(("dnsmasq",pid=8272,fd=4))
+UNCONN 0      0              [::1]:53           [::]:*    users:(("dnsmasq",pid=8272,fd=8))
+exit=0
+
+### $ sudo ss -ltnp sport = :53
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                           
+LISTEN 0      32     192.168.32.20:53        0.0.0.0:*    users:(("dnsmasq",pid=8272,fd=5))
+LISTEN 0      32         127.0.0.1:53        0.0.0.0:*    users:(("dnsmasq",pid=8272,fd=7))
+LISTEN 0      32             [::1]:53           [::]:*    users:(("dnsmasq",pid=8272,fd=9))
+exit=0
+

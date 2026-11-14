@@ -1,0 +1,10 @@
+# exp10 router leases    2026-10-26T12:36:01+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo cat /var/lib/dnsmasq/dnsmasq.leases
+1792986252 08:00:27:5a:8e:0e 192.168.31.101 client 01:08:00:27:5a:8e:0e
+exit=0
+
+### $ sudo ls -l /var/lib/dnsmasq/dnsmasq.leases
+-rw-r--r--. 1 root root 72 Oct 26 12:34 /var/lib/dnsmasq/dnsmasq.leases
+exit=0
+

@@ -1,0 +1,145 @@
+# exp11 router capture 60   2026-10-28T03:51:13+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo timeout -s INT 60 tcpdump -i enp0s9 -nn -w exp11-router-20261028T035113.pcap 'ip proto 89'   （60 秒）
+dropped privs to tcpdump
+tcpdump: listening on enp0s9, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+18 packets captured
+18 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -nn -v -r exp11-router-20261028T035113.pcap
+reading from file exp11-router-20261028T035113.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+03:51:14.239468 IP (tos 0xc0, ttl 1, id 34343, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:19.196231 IP (tos 0xc0, ttl 1, id 34335, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.2 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 2.2.2.2, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    1.1.1.1
+03:51:22.579931 IP (tos 0xc0, ttl 1, id 34344, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:27.580554 IP (tos 0xc0, ttl 1, id 34346, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:29.227161 IP (tos 0xc0, ttl 1, id 34337, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.2 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 2.2.2.2, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    1.1.1.1
+03:51:32.582055 IP (tos 0xc0, ttl 1, id 34347, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:37.583300 IP (tos 0xc0, ttl 1, id 34349, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:39.227144 IP (tos 0xc0, ttl 1, id 34339, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.2 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 2.2.2.2, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    1.1.1.1
+03:51:42.583322 IP (tos 0xc0, ttl 1, id 34350, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:47.585092 IP (tos 0xc0, ttl 1, id 34352, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:49.227673 IP (tos 0xc0, ttl 1, id 34341, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.2 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 2.2.2.2, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    1.1.1.1
+03:51:52.593655 IP (tos 0xc0, ttl 1, id 34353, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:57.594460 IP (tos 0xc0, ttl 1, id 34355, offset 0, flags [none], proto OSPF (89), length 68)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 48
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1, Backup Designated Router 192.168.30.2
+	  Neighbor List:
+	    2.2.2.2
+03:51:59.228869 IP (tos 0xc0, ttl 1, id 34343, offset 0, flags [none], proto OSPF (89), length 64)
+    192.168.30.2 > 224.0.0.5: OSPFv2, Hello, length 44
+	Router-ID 2.2.2.2, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.2
+03:52:02.594462 IP (tos 0xc0, ttl 1, id 34356, offset 0, flags [none], proto OSPF (89), length 64)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 44
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1
+03:52:07.595128 IP (tos 0xc0, ttl 1, id 34358, offset 0, flags [none], proto OSPF (89), length 64)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 44
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1
+03:52:09.230761 IP (tos 0xc0, ttl 1, id 34345, offset 0, flags [none], proto OSPF (89), length 64)
+    192.168.30.2 > 224.0.0.5: OSPFv2, Hello, length 44
+	Router-ID 2.2.2.2, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 10s, Dead Timer 40s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.2
+03:52:12.597234 IP (tos 0xc0, ttl 1, id 34359, offset 0, flags [none], proto OSPF (89), length 64)
+    192.168.30.1 > 224.0.0.5: OSPFv2, Hello, length 44
+	Router-ID 1.1.1.1, Backbone Area, Authentication Type: none (0)
+	Options [External]
+	  Hello Timer 5s, Dead Timer 20s, Mask 255.255.255.252, Priority 1
+	  Designated Router 192.168.30.1

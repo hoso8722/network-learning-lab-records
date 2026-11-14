@@ -1,0 +1,57 @@
+# exp10 client lease-show    2026-10-26T11:57:53+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ip -br addr show enp0s9
+enp0s9           UP             192.168.31.101/24 
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101 
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.101 metric 102 
+exit=0
+
+### $ nmcli -f IP4,DHCP4 device show enp0s9
+IP4.ADDRESS[1]:                         192.168.31.101/24
+IP4.GATEWAY:                            --
+IP4.ROUTE[1]:                           dst = 192.168.31.0/24, nh = 0.0.0.0, mt = 102
+DHCP4.OPTION[1]:                        broadcast_address = 192.168.31.255
+DHCP4.OPTION[2]:                        dhcp_client_identifier = 01:08:00:27:5a:8e:0e
+DHCP4.OPTION[3]:                        dhcp_lease_time = 600
+DHCP4.OPTION[4]:                        dhcp_server_identifier = 192.168.31.1
+DHCP4.OPTION[5]:                        domain_name_servers = 192.168.32.20
+DHCP4.OPTION[6]:                        domain_search = lab.example
+DHCP4.OPTION[7]:                        expiry = 1792983816
+DHCP4.OPTION[8]:                        host_name = client
+DHCP4.OPTION[9]:                        ip_address = 192.168.31.101
+DHCP4.OPTION[10]:                       next_server = 192.168.31.1
+DHCP4.OPTION[11]:                       requested_broadcast_address = 1
+DHCP4.OPTION[12]:                       requested_domain_name = 1
+DHCP4.OPTION[13]:                       requested_domain_name_servers = 1
+DHCP4.OPTION[14]:                       requested_domain_search = 1
+DHCP4.OPTION[15]:                       requested_host_name = 1
+DHCP4.OPTION[16]:                       requested_interface_mtu = 1
+DHCP4.OPTION[17]:                       requested_ms_classless_static_routes = 1
+DHCP4.OPTION[18]:                       requested_nis_domain = 1
+DHCP4.OPTION[19]:                       requested_nis_servers = 1
+DHCP4.OPTION[20]:                       requested_ntp_servers = 1
+DHCP4.OPTION[21]:                       requested_rfc3442_classless_static_routes = 1
+DHCP4.OPTION[22]:                       requested_root_path = 1
+DHCP4.OPTION[23]:                       requested_routers = 1
+DHCP4.OPTION[24]:                       requested_static_routes = 1
+DHCP4.OPTION[25]:                       requested_subnet_mask = 1
+DHCP4.OPTION[26]:                       requested_time_offset = 1
+DHCP4.OPTION[27]:                       requested_wpad = 1
+DHCP4.OPTION[28]:                       routers = 192.168.31.1
+DHCP4.OPTION[29]:                       subnet_mask = 255.255.255.0
+exit=0
+
+### $ nmcli -f NAME,DEVICE,STATE connection show --active
+NAME      DEVICE  STATE     
+enp0s3    enp0s3  activated 
+enp0s8    enp0s8  activated 
+lab-dhcp  enp0s9  activated 
+lo        lo      activated 
+exit=0
+

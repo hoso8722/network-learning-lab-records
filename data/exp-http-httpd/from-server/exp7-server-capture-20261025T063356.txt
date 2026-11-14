@@ -1,0 +1,33 @@
+# exp7 server capture   2026-10-25T06:33:56+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo timeout -s INT 25 tcpdump -i any -nn -w exp7-server-20261025T063356.pcap 'tcp port 80'   (25秒以内に client から curl)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+20 packets captured
+20 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -nn -r exp7-server-20261025T063356.pcap
+reading from file exp7-server-20261025T063356.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+06:34:02.078597 enp0s9 In  IP 192.168.31.10.43062 > 192.168.32.20.80: Flags [S], seq 3885204889, win 64240, options [mss 1460,sackOK,TS val 4131101481 ecr 0,nop,wscale 6], length 0
+06:34:02.078758 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43062: Flags [S.], seq 46892167, ack 3885204890, win 65160, options [mss 1460,sackOK,TS val 2936614467 ecr 4131101481,nop,wscale 6], length 0
+06:34:02.082459 enp0s9 In  IP 192.168.31.10.43062 > 192.168.32.20.80: Flags [.], ack 1, win 1004, options [nop,nop,TS val 4131101485 ecr 2936614467], length 0
+06:34:02.083871 enp0s9 In  IP 192.168.31.10.43062 > 192.168.32.20.80: Flags [P.], seq 1:78, ack 1, win 1004, options [nop,nop,TS val 4131101486 ecr 2936614467], length 77: HTTP: GET / HTTP/1.1
+06:34:02.083981 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43062: Flags [.], ack 78, win 1017, options [nop,nop,TS val 2936614473 ecr 4131101486], length 0
+06:34:02.085833 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43062: Flags [P.], seq 1:255, ack 78, win 1017, options [nop,nop,TS val 2936614474 ecr 4131101486], length 254: HTTP: HTTP/1.1 200 OK
+06:34:02.088686 enp0s9 In  IP 192.168.31.10.43062 > 192.168.32.20.80: Flags [.], ack 255, win 1002, options [nop,nop,TS val 4131101492 ecr 2936614474], length 0
+06:34:02.090096 enp0s9 In  IP 192.168.31.10.43062 > 192.168.32.20.80: Flags [F.], seq 78, ack 255, win 1002, options [nop,nop,TS val 4131101493 ecr 2936614474], length 0
+06:34:02.091402 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43062: Flags [F.], seq 255, ack 79, win 1017, options [nop,nop,TS val 2936614480 ecr 4131101493], length 0
+06:34:02.095693 enp0s9 In  IP 192.168.31.10.43062 > 192.168.32.20.80: Flags [.], ack 256, win 1002, options [nop,nop,TS val 4131101499 ecr 2936614480], length 0
+06:34:02.111575 enp0s9 In  IP 192.168.31.10.43078 > 192.168.32.20.80: Flags [S], seq 3061895950, win 64240, options [mss 1460,sackOK,TS val 4131101513 ecr 0,nop,wscale 6], length 0
+06:34:02.111676 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43078: Flags [S.], seq 2980594330, ack 3061895951, win 65160, options [mss 1460,sackOK,TS val 2936614500 ecr 4131101513,nop,wscale 6], length 0
+06:34:02.114856 enp0s9 In  IP 192.168.31.10.43078 > 192.168.32.20.80: Flags [.], ack 1, win 1004, options [nop,nop,TS val 4131101518 ecr 2936614500], length 0
+06:34:02.115868 enp0s9 In  IP 192.168.31.10.43078 > 192.168.32.20.80: Flags [P.], seq 1:78, ack 1, win 1004, options [nop,nop,TS val 4131101518 ecr 2936614500], length 77: HTTP: GET / HTTP/1.1
+06:34:02.115922 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43078: Flags [.], ack 78, win 1017, options [nop,nop,TS val 2936614504 ecr 4131101518], length 0
+06:34:02.118718 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43078: Flags [P.], seq 1:255, ack 78, win 1017, options [nop,nop,TS val 2936614507 ecr 4131101518], length 254: HTTP: HTTP/1.1 200 OK
+06:34:02.122329 enp0s9 In  IP 192.168.31.10.43078 > 192.168.32.20.80: Flags [.], ack 255, win 1002, options [nop,nop,TS val 4131101525 ecr 2936614507], length 0
+06:34:02.146320 enp0s9 In  IP 192.168.31.10.43078 > 192.168.32.20.80: Flags [F.], seq 78, ack 255, win 1002, options [nop,nop,TS val 4131101526 ecr 2936614507], length 0
+06:34:02.147326 enp0s9 Out IP 192.168.32.20.80 > 192.168.31.10.43078: Flags [F.], seq 255, ack 79, win 1017, options [nop,nop,TS val 2936614536 ecr 4131101526], length 0
+06:34:02.153504 enp0s9 In  IP 192.168.31.10.43078 > 192.168.32.20.80: Flags [.], ack 256, win 1002, options [nop,nop,TS val 4131101555 ecr 2936614536], length 0

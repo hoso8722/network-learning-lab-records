@@ -1,0 +1,18 @@
+# exp4 router capture    2026-10-23T03:19:42+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo timeout -s INT 25 tcpdump -i any -n -w exp4-router-20261023T031942.pcap 'not tcp port 22'   (25秒以内に client から server へ ping。SSH は除外)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+5 packets captured
+7 packets received by filter
+0 packets dropped by kernel
+
+### $ tcpdump -n -r exp4-router-20261023T031942.pcap
+reading from file exp4-router-20261023T031942.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+03:20:23.545485 enp0s8 B   ARP, Request who-has 192.168.31.254 tell 192.168.31.10, length 46
+03:20:24.596734 enp0s8 B   ARP, Request who-has 192.168.31.254 tell 192.168.31.10, length 46
+03:20:25.626835 enp0s8 B   ARP, Request who-has 192.168.31.254 tell 192.168.31.10, length 46
+03:20:38.992370 enp0s3 Out IP 10.0.2.15.40041 > 43.229.16.158.ntp: NTPv4, Client, length 48
+03:20:39.010535 enp0s3 In  IP 43.229.16.158.ntp > 10.0.2.15.40041: NTPv4, Server, length 48

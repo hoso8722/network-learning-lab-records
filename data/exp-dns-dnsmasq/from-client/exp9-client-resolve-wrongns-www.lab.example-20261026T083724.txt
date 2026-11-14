@@ -1,0 +1,15 @@
+# exp9 client resolve wrongns www.lab.example  2026-10-26T08:37:24+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### lab 用の resolv.conf（wrongns）:
+search lab.example
+nameserver 192.168.32.99
+options timeout:1 attempts:1
+
+### $ lab_ns /home/user/dns-lab/resolv-wrongns.conf getent hosts www.lab.example
+exit=2  elapsed=4.14s
+
+### $ curl -sv --max-time 8 -o /dev/null -w 'http_code=%{http_code}\n' http://www.lab.example/   （resolv.conf = wrongns）
+* Could not resolve host: www.lab.example
+http_code=000
+curl_exit=6  elapsed=2.16s   (0=成功、6=名前が解決できない、7=接続できない、28=タイムアウト)
+

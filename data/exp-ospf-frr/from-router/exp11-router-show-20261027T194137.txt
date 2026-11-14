@@ -1,0 +1,94 @@
+# exp11 router show    2026-10-27T19:41:37+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe35:b67e/64 fe80::a00:27ff:fe35:b67e/64 
+enp0s8           UP             192.168.31.1/24 
+enp0s9           UP             192.168.30.1/30 
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ sudo vtysh -c 'show interface brief' -c 'show ip ospf interface' -c 'show ip ospf neighbor' -c 'show ip ospf database' -c 'show ip route ospf' -c 'show ip route' 
+Interface       Status  VRF             Addresses
+---------       ------  ---             ---------
+enp0s3          up      default         10.0.2.15/24
+                                        + fd17:625c:f037:2:a00:27ff:fe35:b67e/64
+enp0s8          up      default         192.168.31.1/24
+enp0s9          up      default         192.168.30.1/30
+lo              up      default         
+
+enp0s8 is up
+  ifindex 3, MTU 1500 bytes, BW 1000 Mbit <UP,BROADCAST,RUNNING,MULTICAST>
+  Internet Address 192.168.31.1/24, Broadcast 192.168.31.255, Area 0.0.0.0
+  MTU mismatch detection: enabled
+  Router ID 1.1.1.1, Network Type BROADCAST, Cost: 100
+  Transmit Delay is 1 sec, State Waiting, Priority 1
+  No backup designated router on this network
+  Multicast group memberships: OSPFAllRouters
+  Timer intervals configured, Hello 10s, Dead 40s, Wait 40s, Retransmit 5
+    Hello due in 4.265s
+  Neighbor Count is 0, Adjacent neighbor count is 0
+enp0s9 is up
+  ifindex 4, MTU 1500 bytes, BW 1000 Mbit <UP,BROADCAST,RUNNING,MULTICAST>
+  Internet Address 192.168.30.1/30, Broadcast 192.168.30.3, Area 0.0.0.0
+  MTU mismatch detection: enabled
+  Router ID 1.1.1.1, Network Type BROADCAST, Cost: 100
+  Transmit Delay is 1 sec, State Waiting, Priority 1
+  No backup designated router on this network
+  Multicast group memberships: OSPFAllRouters
+  Timer intervals configured, Hello 10s, Dead 40s, Wait 40s, Retransmit 5
+    Hello due in 4.354s
+  Neighbor Count is 0, Adjacent neighbor count is 0
+
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+
+
+       OSPF Router with ID (1.1.1.1)
+
+                Router Link States (Area 0.0.0.0)
+
+Link ID         ADV Router      Age  Seq#       CkSum  Link count
+1.1.1.1        1.1.1.1           35 0x80000002 0x075d 2
+
+
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, F - PBR,
+       f - OpenFabric,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+O   192.168.30.0/30 [110/100] is directly connected, enp0s9, weight 1, 00:00:35
+O   192.168.31.0/24 [110/100] is directly connected, enp0s8, weight 1, 00:00:35
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, F - PBR,
+       f - OpenFabric,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/100] via 10.0.2.2, enp0s3, src 10.0.2.15, 00:43:35
+C>* 10.0.2.0/24 [0/100] is directly connected, enp0s3, 00:43:35
+O   192.168.30.0/30 [110/100] is directly connected, enp0s9, weight 1, 00:00:35
+C>* 192.168.30.0/30 is directly connected, enp0s9, 00:00:35
+O   192.168.31.0/24 [110/100] is directly connected, enp0s8, weight 1, 00:00:35
+C>* 192.168.31.0/24 is directly connected, enp0s8, 00:00:36
+K>* 192.168.32.0/24 [0/0] via 192.168.30.2, enp0s9, 00:00:33
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1 
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1 
+192.168.32.0/24 via 192.168.30.2 dev enp0s9 
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --list-protocols
+
+exit=0
+

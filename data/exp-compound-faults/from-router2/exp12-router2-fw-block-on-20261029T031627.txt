@@ -1,0 +1,10 @@
+# exp12 router2 fw-block on  2026-10-29T03:16:27+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ sudo firewall-cmd --zone=internal --remove-forward
+success
+exit=0
+
+### $ sudo firewall-cmd --zone=internal --query-forward
+no
+exit=1
+

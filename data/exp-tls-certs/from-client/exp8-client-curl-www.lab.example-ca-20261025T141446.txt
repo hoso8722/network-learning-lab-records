@@ -1,0 +1,27 @@
+# exp8 client curl www.lab.example ca  2026-10-25T14:14:46+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -sv --max-time 5 --cacert /home/user/lab-ca.crt --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/
+* Added www.lab.example:443:192.168.32.20 to DNS cache
+* Hostname www.lab.example was found in DNS cache
+*   Trying 192.168.32.20:443...
+* Connected to www.lab.example (192.168.32.20) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+*  CAfile: /home/user/lab-ca.crt
+* TLSv1.0 (OUT), TLS header, Certificate Status (22):
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.2 (IN), TLS header, Certificate Status (22):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS header, Finished (20):
+* TLSv1.3 (IN), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.2 (IN), TLS header, Unknown (23):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (OUT), TLS header, Unknown (21):
+* TLSv1.3 (OUT), TLS alert, bad certificate (554):
+* SSL certificate problem: certificate is not yet valid
+* Closing connection 0
+http_code=000
+curl_exit=60   (0=成功、35=TLS ハンドシェイク失敗、60=証明書の検証失敗、7=接続できない、28=タイムアウト)
+

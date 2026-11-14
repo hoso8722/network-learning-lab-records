@@ -1,0 +1,26 @@
+# exp6 client curl     2026-10-23T11:00:46+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ curl -v --max-time 5 -o /dev/null -w 'http_code=%{http_code} time_total=%{time_total}s\n' http://192.168.32.20:8080/
+*   Trying 192.168.32.20:8080...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to 192.168.32.20 (192.168.32.20) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: 192.168.32.20:8080
+> User-Agent: curl/7.76.1
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 OK
+< Server: SimpleHTTP/0.6 Python/3.9.25
+< Date: Fri, 23 Oct 2026 02:00:46 GMT
+< Content-type: text/html
+< Content-Length: 18
+< Last-Modified: Fri, 23 Oct 2026 01:59:15 GMT
+< 
+{ [18 bytes data]
+100    18  100    18    0     0    750      0 --:--:-- --:--:-- --:--:--  1285
+* Closing connection 0
+http_code=200 time_total=0.024989s
+curl_exit=0   (0=成功 / 7=接続できない(拒否・到達不能) / 28=タイムアウト)

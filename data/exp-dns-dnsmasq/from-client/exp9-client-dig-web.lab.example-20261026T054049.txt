@@ -1,0 +1,23 @@
+# exp9 client dig web.lab.example   2026-10-26T05:40:49+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ dig @192.168.32.20 +time=2 +tries=1 +nocmd web.lab.example A
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 24636
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;web.lab.example.		IN	A
+
+;; ANSWER SECTION:
+web.lab.example.	0	IN	CNAME	www.lab.example.
+www.lab.example.	0	IN	A	192.168.32.20
+
+;; Query time: 6 msec
+;; SERVER: 192.168.32.20#53(192.168.32.20)
+;; WHEN: Mon Oct 26 05:40:49 JST 2026
+;; MSG SIZE  rcvd: 89
+
+exit=0  elapsed=0.08s
+

@@ -1,0 +1,177 @@
+# 実験5 準備と基準（S0）の生データ（転記）
+# 出所: ユーザーが各VMの端末から貼り付けた転記（チャット経由）。整形・補完なし。ここでは各コマンドの exit=0 は要約し、最後の出力のみ転記。
+# 日時: 2026-10-23 02:44〜02:53（VM上の時刻）。ホスト名の確認は全VMで OK。
+
+## スクリプトの送信
+fault-test.sh 4728 バイト → client、server（scp_exit: 0、remote_host=client / server）
+route-test.sh 7801 バイト → router、router2（scp_exit: 0、remote_host=router / router2）
+
+## router（02:44:15 prepare、02:44:26 fwd on、02:44:35 fw-zone on、02:45:41 route add 192.168.32.0/24 via 192.168.30.2）
+すべて exit=0。fw-zone on は --change-interface で success。
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1
+192.168.32.0/24 via 192.168.30.2 dev enp0s9
+
+## router2（02:46:24 prepare、02:46:34 fwd on、02:46:39 fw-zone on、02:47:13 route add 192.168.31.0/24 via 192.168.30.1）
+すべて exit=0。fw-zone on は --change-interface で success。active zones は router と同じ。
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s8 proto kernel scope link src 192.168.30.2
+192.168.31.0/24 via 192.168.30.1 dev enp0s8
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.1
+
+## client base（02:49:37）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe1f:fa7c/64 fe80::a00:27ff:fe1f:fa7c/64
+enp0s8           UP             192.168.10.10/24
+enp0s9           UP             192.168.31.10/24
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1001
+    cache
+### $ ip neigh show dev enp0s9
+(空)
+
+## server base（02:50:54）
+### $ ip route get 192.168.31.10
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1001
+    cache
+### $ ip neigh show dev enp0s9
+(空)
+(ip -br addr: enp0s9 192.168.32.20/24。ip route: 192.168.31.0/24 via 192.168.32.1 dev enp0s9、192.168.32.0/24 dev enp0s9)
+
+## client guard on（02:52:04）
+### $ sudo ip route add unreachable 192.168.0.0/16 metric 4000   → exit=0
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+
+## 基準（S0）: client ping 192.168.32.20（02:53:03）
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=6.92 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.88 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=3.78 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2006ms
+rtt min/avg/max/mdev = 3.777/5.192/6.924/1.304 ms
+
+# S1: マスクが広い誤り（2026-10-23、ユーザー実行・提出。転記）
+
+## client fault mask（03:05:45）: nmcli managed no / ip link set up / ip addr flush / ip addr add 192.168.31.10/16 dev enp0s9 → すべて exit=0
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe1f:fa7c/64 fe80::a00:27ff:fe1f:fa7c/64
+enp0s8           UP             192.168.10.10/24
+enp0s9           UP             192.168.31.10/16
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.0.0/16 dev enp0s9 proto kernel scope link src 192.168.31.10
+unreachable 192.168.0.0/16 metric 4000
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101
+### $ ip route get 192.168.32.20
+192.168.32.20 dev enp0s9 src 192.168.31.10 uid 1001
+    cache
+### $ ip neigh show dev enp0s9
+(空)
+
+## client ping 192.168.32.20（03:08:31 と 03:09:03 の2回。同じ結果）
+From 192.168.31.10 icmp_seq=1 Destination Host Unreachable
+From 192.168.31.10 icmp_seq=2 Destination Host Unreachable
+From 192.168.31.10 icmp_seq=3 Destination Host Unreachable
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2075ms（2回目: time 2026ms）  exit=1（pipe 3）
+
+## client show（03:09:27）
+ip -br addr: enp0s9 192.168.31.10/16 ／ ip route: 上と同じ ／ ip route get 192.168.32.20: 192.168.32.20 dev enp0s9 src 192.168.31.10 uid 1001
+### $ ip neigh show dev enp0s9
+192.168.32.20 FAILED
+
+## router(R1) capture（03:08:15 開始、-i any、'not tcp port 22'）: 3 packets captured / 5 received by filter / 0 dropped
+03:09:03.339111 enp0s8 B   ARP, Request who-has 192.168.32.20 tell 192.168.31.10, length 46
+03:09:04.340261 enp0s8 B   ARP, Request who-has 192.168.32.20 tell 192.168.31.10, length 46
+03:09:05.364349 enp0s8 B   ARP, Request who-has 192.168.32.20 tell 192.168.31.10, length 46
+(注: capture は 03:08:15 開始。最初の ping（03:08:31）の ARP は、capture の対象外の時刻ではなく記録に無い。記録されたのは 03:09:03 の ping の分。)
+
+## router の近隣テーブル（読み取り。ユーザー提出）
+[user@router ~]$ ip neigh show dev enp0s9
+192.168.30.2 lladdr 08:00:27:e3:dd:05 STALE
+(誤入力 `ip neigh show dev enp0s9:192.168.32.20` は "Cannot find device" となった。)
+
+# S2: ゲートウェイ違い（2026-10-23、ユーザー実行・提出。転記）
+
+## client fault gw（03:18:59）: nmcli managed no / ip link set up / ip addr flush / ip addr add 192.168.31.10/24 / ip route add 192.168.32.0/24 via 192.168.31.254 dev enp0s9 → すべて exit=0
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.254 dev enp0s9
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.254 dev enp0s9 src 192.168.31.10 uid 1001
+    cache
+### $ ip neigh show dev enp0s9
+(空)
+
+## client ping 192.168.32.20（03:19:50）
+From 192.168.31.10 icmp_seq=1 Destination Host Unreachable
+From 192.168.31.10 icmp_seq=2 Destination Host Unreachable
+From 192.168.31.10 icmp_seq=3 Destination Host Unreachable
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2084ms  exit=1（pipe 3）
+
+## client show（03:19:53）
+ip -br addr: enp0s9 192.168.31.10/24 ／ ip route get 192.168.32.20: via 192.168.31.254 dev enp0s9 src 192.168.31.10
+### $ ip neigh show dev enp0s9
+192.168.31.254 FAILED
+
+## router(R1) capture（03:19:42 開始、-i any、'not tcp port 22'）: 5 packets captured / 7 received by filter / 0 dropped
+03:20:23.545485 enp0s8 B   ARP, Request who-has 192.168.31.254 tell 192.168.31.10, length 46
+03:20:24.596734 enp0s8 B   ARP, Request who-has 192.168.31.254 tell 192.168.31.10, length 46
+03:20:25.626835 enp0s8 B   ARP, Request who-has 192.168.31.254 tell 192.168.31.10, length 46
+03:20:38.992370 enp0s3 Out IP 10.0.2.15.40041 > 43.229.16.158.ntp: NTPv4, Client, length 48
+03:20:39.010535 enp0s3 In  IP 43.229.16.158.ntp > 10.0.2.15.40041: NTPv4, Server, length 48
+(注: 下2行は router 自身の時刻同期（chrony の NTP）の通信で、今回の実験とは無関係。capture のフィルターは SSH だけを除外している。)
+
+# S3: サブネット違いの IP（2026-10-23、ユーザー実行・提出。転記）
+
+## client fault ip（03:24:34）: nmcli managed no / ip link set up / ip addr flush / ip addr add 192.168.131.10/24 dev enp0s9 → exit=0
+### $ sudo ip route add 192.168.32.0/24 via 192.168.31.1 dev enp0s9
+Error: Nexthop has invalid gateway.
+exit=2
+### $ ip -br addr
+enp0s9           UP             192.168.131.10/24
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101
+192.168.131.0/24 dev enp0s9 proto kernel scope link src 192.168.131.10
+### $ ip route get 192.168.32.20
+RTNETLINK answers: No route to host
+exit=2
+### $ ip neigh show dev enp0s9
+(空)
+
+## client ping 192.168.31.1（03:26:21）
+ping: connect: No route to host
+exit=2
+
+## client ping 192.168.32.20（03:26:32）
+ping: connect: No route to host
+exit=2
+(同時に実行した client show の出力は、上の ip -br addr / ip route / ip route get / ip neigh と同じ内容。)
+
+## router(R1) capture（03:26:07 開始、-i any、'not tcp port 22'）
+0 packets captured / 5 received by filter / 0 packets dropped
+(パケットの出力行なし)

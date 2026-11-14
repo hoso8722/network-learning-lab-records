@@ -1,0 +1,27 @@
+# exp5 client show   2026-10-23T03:19:53+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe1f:fa7c/64 fe80::a00:27ff:fe1f:fa7c/64 
+enp0s8           UP             192.168.10.10/24 
+enp0s9           UP             192.168.31.10/24 
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101 
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10 
+192.168.32.0/24 via 192.168.31.254 dev enp0s9 
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.254 dev enp0s9 src 192.168.31.10 uid 1001 
+    cache 
+exit=0
+
+### $ ip neigh show dev enp0s9
+192.168.31.254 FAILED 
+exit=0
+

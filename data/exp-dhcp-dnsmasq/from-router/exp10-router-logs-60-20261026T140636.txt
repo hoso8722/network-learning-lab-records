@@ -1,0 +1,64 @@
+# exp10 router logs 60   2026-10-26T14:06:36+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo journalctl -u dnsmasq -n 60 --no-pager
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 requested options: 15:domain-name, 26:mtu, 28:broadcast, 121:classless-static-route,
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 requested options: 3:router, 33:static-route, 40:nis-domain,
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 requested options: 41:nis-server, 42:ntp-server, 119:domain-search,
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 requested options: 249, 252, 17:root-path
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 next server: 192.168.31.1
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  1 option: 53 message-type  5
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option: 54 server-identifier  192.168.31.1
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option: 51 lease-time  10m
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option: 58 T1  5m
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option: 59 T2  8m45s
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option:  1 netmask  255.255.255.0
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option: 28 broadcast  192.168.31.255
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  6 option: 12 hostname  client
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size: 13 option:119 domain-search  03:6c:61:62:07:65:78:61:6d:70:6c:65:00
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option:  6 dns-server  192.168.32.20
+Oct 26 12:38:39 router dnsmasq[9108]: Oct 26 12:38:39 dnsmasq-dhcp[9108]: 3272573818 sent size:  4 option:  3 router  192.168.31.1
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 available DHCP range: 192.168.31.100 -- 192.168.31.150
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 client provides name: client
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 DHCPREQUEST(enp0s8) 192.168.31.101 08:00:27:5a:8e:0e
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 tags: enp0s8
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 DHCPACK(enp0s8) 192.168.31.101 08:00:27:5a:8e:0e client
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 requested options: 1:netmask, 2:time-offset, 6:dns-server, 12:hostname,
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 requested options: 15:domain-name, 26:mtu, 28:broadcast, 121:classless-static-route,
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 requested options: 3:router, 33:static-route, 40:nis-domain,
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 requested options: 41:nis-server, 42:ntp-server, 119:domain-search,
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 requested options: 249, 252, 17:root-path
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 next server: 192.168.31.1
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  1 option: 53 message-type  5
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option: 54 server-identifier  192.168.31.1
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option: 51 lease-time  10m
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option: 58 T1  4m34s
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option: 59 T2  8m19s
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option:  1 netmask  255.255.255.0
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option: 28 broadcast  192.168.31.255
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  6 option: 12 hostname  client
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size: 13 option:119 domain-search  03:6c:61:62:07:65:78:61:6d:70:6c:65:00
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option:  6 dns-server  192.168.32.20
+Oct 26 12:43:40 router dnsmasq[9108]: Oct 26 12:43:40 dnsmasq-dhcp[9108]: 933027354 sent size:  4 option:  3 router  192.168.31.1
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 available DHCP range: 192.168.31.100 -- 192.168.31.150
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 client provides name: client
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 DHCPREQUEST(enp0s8) 192.168.31.101 08:00:27:5a:8e:0e
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 tags: enp0s8
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 DHCPACK(enp0s8) 192.168.31.101 08:00:27:5a:8e:0e client
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 requested options: 1:netmask, 2:time-offset, 6:dns-server, 12:hostname,
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 requested options: 15:domain-name, 26:mtu, 28:broadcast, 121:classless-static-route,
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 requested options: 3:router, 33:static-route, 40:nis-domain,
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 requested options: 41:nis-server, 42:ntp-server, 119:domain-search,
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 requested options: 249, 252, 17:root-path
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 next server: 192.168.31.1
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  1 option: 53 message-type  5
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option: 54 server-identifier  192.168.31.1
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option: 51 lease-time  10m
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option: 58 T1  4m24s
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option: 59 T2  8m9s
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option:  1 netmask  255.255.255.0
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option: 28 broadcast  192.168.31.255
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  6 option: 12 hostname  client
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size: 13 option:119 domain-search  03:6c:61:62:07:65:78:61:6d:70:6c:65:00
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option:  6 dns-server  192.168.32.20
+Oct 26 12:48:14 router dnsmasq[9108]: Oct 26 12:48:14 dnsmasq-dhcp[9108]: 3926971067 sent size:  4 option:  3 router  192.168.31.1
+

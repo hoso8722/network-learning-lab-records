@@ -1,0 +1,13 @@
+# exp9 server record wrongip   2026-10-26T08:35:18+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ (write_hosts wrongip) | sudo tee /etc/lab-hosts
+exit=0
+
+### $ sudo systemctl kill -s HUP dnsmasq
+exit=0
+
+### $ cat /etc/lab-hosts
+192.168.32.21 www.lab.example
+192.168.31.10 client.lab.example
+exit=0
+

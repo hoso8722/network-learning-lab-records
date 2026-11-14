@@ -1,0 +1,32 @@
+# exp10 client lease-start    2026-10-26T18:53:23+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ sudo nmcli device set enp0s9 managed yes
+exit=0
+
+### $ sudo nmcli connection delete lab-dhcp
+Connection 'lab-dhcp' (9fcc7d8d-3aea-47f2-a6d7-67e074ea4392) successfully deleted.
+exit=0
+
+### $ sudo nmcli connection add type ethernet ifname enp0s9 con-name lab-dhcp ipv4.method auto ipv4.never-default yes ipv4.ignore-auto-dns yes ipv4.dhcp-timeout 20 ipv6.method disabled connection.autoconnect no
+Connection 'lab-dhcp' (a86e3848-f53e-4c10-9551-7fd603296a4d) successfully added.
+exit=0
+
+### $ sudo ip addr flush dev enp0s9
+exit=0
+
+### $ sudo nmcli connection up lab-dhcp   （最大 約20秒）
+Error: Connection activation failed: IP configuration could not be reserved (no available address, timeout, etc.)
+Hint: use 'journalctl -xe NM_CONNECTION=a86e3848-f53e-4c10-9551-7fd603296a4d + NM_DEVICE=enp0s9' to get more details.
+exit=4  elapsed=20.93s
+
+### $ ip -br addr show enp0s9
+enp0s9           UP             
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+192.168.10.0/24 dev enp0s8 proto kernel scope link src 192.168.10.10 metric 101 
+exit=0
+

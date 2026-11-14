@@ -1,0 +1,32 @@
+# exp7 server logs 30  2026-10-25T06:21:52+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ sudo tail -n 30 /var/log/httpd/access_log
+192.168.31.10 - - [25/Oct/2026:06:21:32 +0900] "GET / HTTP/1.1" 200 10 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:32 +0900] "GET / HTTP/1.1" 200 10 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:32 +0900] "GET /nofile HTTP/1.1" 404 196 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:32 +0900] "GET /nofile HTTP/1.1" 404 196 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:32 +0900] "GET /perm.html HTTP/1.1" 403 199 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:32 +0900] "GET /perm.html HTTP/1.1" 403 199 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /selinux.html HTTP/1.1" 403 199 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /selinux.html HTTP/1.1" 403 199 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /old HTTP/1.1" 301 239 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /old HTTP/1.1" 301 239 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /cgi-bin/ok.cgi HTTP/1.1" 200 7 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /cgi-bin/ok.cgi HTTP/1.1" 200 7 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /cgi-bin/bad.cgi HTTP/1.1" 500 527 "-" "curl/7.76.1"
+192.168.31.10 - - [25/Oct/2026:06:21:33 +0900] "GET /cgi-bin/bad.cgi HTTP/1.1" 500 527 "-" "curl/7.76.1"
+
+### $ sudo tail -n 30 /var/log/httpd/error_log
+[Sun Oct 25 06:15:53.509569 2026] [core:notice] [pid 3370:tid 3370] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sun Oct 25 06:15:53.510461 2026] [suexec:notice] [pid 3370:tid 3370] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fea1:ef2d%enp0s3. Set the 'ServerName' directive globally to suppress this message
+[Sun Oct 25 06:15:53.553180 2026] [lbmethod_heartbeat:notice] [pid 3370:tid 3370] AH02282: No slotmem from mod_heartmonitor
+[Sun Oct 25 06:15:53.573598 2026] [mpm_event:notice] [pid 3370:tid 3370] AH00489: Apache/2.4.62 (AlmaLinux) configured -- resuming normal operations
+[Sun Oct 25 06:15:53.573649 2026] [core:notice] [pid 3370:tid 3370] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Sun Oct 25 06:21:32.943769 2026] [core:error] [pid 3373:tid 3430] (13)Permission denied: [client 192.168.31.10:51044] AH00132: file permissions deny server access: /var/www/html/perm.html
+[Sun Oct 25 06:21:32.980949 2026] [core:error] [pid 3373:tid 3454] (13)Permission denied: [client 192.168.31.10:51050] AH00132: file permissions deny server access: /var/www/html/perm.html
+[Sun Oct 25 06:21:33.085610 2026] [core:error] [pid 3372:tid 3501] (13)Permission denied: [client 192.168.31.10:51056] AH00132: file permissions deny server access: /var/www/html/selinux.html
+[Sun Oct 25 06:21:33.118352 2026] [core:error] [pid 3372:tid 3519] (13)Permission denied: [client 192.168.31.10:51060] AH00132: file permissions deny server access: /var/www/html/selinux.html
+[Sun Oct 25 06:21:33.566410 2026] [cgid:error] [pid 3373:tid 3462] [client 192.168.31.10:51128] malformed header from script 'bad.cgi': Bad header: no-header-here
+[Sun Oct 25 06:21:33.620424 2026] [cgid:error] [pid 3372:tid 3535] [client 192.168.31.10:51130] malformed header from script 'bad.cgi': Bad header: no-header-here
+

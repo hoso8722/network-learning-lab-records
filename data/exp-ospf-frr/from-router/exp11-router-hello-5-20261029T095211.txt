@@ -1,0 +1,21 @@
+# exp11 router hello 5   2026-10-29T09:52:11+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ sudo vtysh -c 'configure terminal' -c 'interface enp0s9' -c 'ip ospf hello-interval 5' 
+exit=0
+
+### $ sudo vtysh -c 'show ip ospf interface enp0s9' 
+enp0s9 is up
+  ifindex 4, MTU 1500 bytes, BW 1000 Mbit <UP,BROADCAST,RUNNING,MULTICAST>
+  Internet Address 192.168.30.1/30, Broadcast 192.168.30.3, Area 0.0.0.0
+  MTU mismatch detection: enabled
+  Router ID 1.1.1.1, Network Type BROADCAST, Cost: 100
+  Transmit Delay is 1 sec, State DR, Priority 1
+  Designated Router (ID) 1.1.1.1 Interface Address 192.168.30.1/30
+  Backup Designated Router (ID) 2.2.2.2, Interface Address 192.168.30.2
+  Multicast group memberships: OSPFAllRouters OSPFDesignatedRouters
+  Timer intervals configured, Hello 5s, Dead 20s, Wait 20s, Retransmit 5
+    Hello due in 4.879s
+  Neighbor Count is 1, Adjacent neighbor count is 1
+
+exit=0
+

@@ -1,0 +1,29 @@
+# exp8 client sclient www.lab.example   2026-10-25T14:26:10+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ openssl s_client -connect 192.168.32.20:443 -servername www.lab.example -CAfile ~/lab-ca.crt -verify_hostname www.lab.example </dev/null
+depth=0 CN=www.lab.example
+verify error:num=18:self-signed certificate
+verify return:1
+depth=0 CN=www.lab.example
+verify return:1
+Certificate chain
+ 0 s:CN=www.lab.example
+   i:CN=www.lab.example
+   a:PKEY: RSA, 2048 (bit); sigalg: sha256WithRSAEncryption
+   v:NotBefore: Oct 25 04:40:09 2026 GMT; NotAfter: Nov 24 04:40:09 2026 GMT
+subject=CN=www.lab.example
+issuer=CN=www.lab.example
+Verification error: self-signed certificate
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Protocol: TLSv1.3
+Verify return code: 18 (self-signed certificate)
+s_client_exit=0
+
+### $ openssl s_client ... | openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+subject=CN=www.lab.example
+issuer=CN=www.lab.example
+notBefore=Oct 25 04:40:09 2026 GMT
+notAfter=Nov 24 04:40:09 2026 GMT
+X509v3 Subject Alternative Name: 
+    DNS:www.lab.example
+

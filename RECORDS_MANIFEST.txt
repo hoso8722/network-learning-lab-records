@@ -279,6 +279,7 @@ data/official-docs-check/official-docs-check-20261103.md
 data/poc-1-almalinux-lan/isolation-client.txt
 data/poc-1-almalinux-lan/isolation-host-config.txt
 data/poc-1-almalinux-lan/snapshot-and-reboot-raw.txt
+labs/common/ai-exec.sh
 labs/common/baseline.ps1
 labs/common/baseline.sh
 labs/common/create-nodes.sh

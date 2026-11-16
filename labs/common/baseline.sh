@@ -60,7 +60,8 @@ declare -n CHAIN=$(echo "$action" | tr a-z A-Z)
 for n in "${ORDER[@]}"; do
   p=${PORT[$n]}; log ""; log "=== $n (port $p) : $action ==="
   pre="test \$(hostname -s) = $n && "
-  [ "$action" != status ] && pre+="sudo -v && "
+  # パスワードなし(lab-sudo.sh on)の間は聞かない。sudo -v は、標準の (ALL) ALL の行が残っていると、パスワードなしでも要求する(2026-11-16 に観測。理由は推定)ため、先に sudo -n true で確かめる
+  [ "$action" != status ] && pre+="{ sudo -n true 2>/dev/null || sudo -v; } && "
   ssh -t -p "$p" "$USER_VM@127.0.0.1" "${pre}${CHAIN[$n]}"; code=$?
   log "  ssh 終了コード: $code（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）"
   results+=("$n: 終了コード $code")

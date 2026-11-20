@@ -1,0 +1,326 @@
+# 切り分けの道具箱(1)(追加の実験): client の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-15 JST。手順書 docs/OBS_STATE_RUNBOOK.md の 9 章。追加の実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある。実行されたコマンドは「### $」の行で確認できる。崩れは直していない
+# 注: 9.1、9.4、9.6 のコマンドの行に、貼り付けの崩れがある(出力の中に、別のコマンドの文字が混ざる)
+# 注: 9.6 の ip route get の出力の前後に、崩れた行がある
+### $ # T5 (client)   (client)
+exit=0
+### $ hostname -s   (client)
+rp_filter net.ipclient
+exit=0
+### $ ip route   (client)
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+### $ ip route get 192.168.30.2   (client)
+v4.conf.enp0s9.rp_filter
+RTNETLINK answers: No route to host
+exit=2
+### $ ip route get 192.168.31.1   (client)
+192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000
+    cache
+exit=0
+### $ sysctl net.ipv4.conf.all.rp_filter net.ipv4.conf.enp0s9.rp_filter   (client)
+net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.enp0s9.rp_filter = 1
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== 9.2 基準 ==="   (client)
+=== 9.2 基準 ===
+exit=0
+### $ nstat -n   (client)
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=5.29 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=3.71 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=3.85 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2007ms
+rtt min/avg/max/mdev = 3.713/4.284/5.289/0.712 ms
+exit=0
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T15:33:45+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 192.168.31.1               0.0%     5    1.9   2.1   1.8   2.4   0.3
+  2.|-- ???                       100.0     5    0.0   0.0   0.0   0.0   0.0
+  3.|-- 192.168.32.20              0.0%     5    4.3   5.0   4.0   7.8   1.6
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+200
+exit=0
+### $ nstat   (client)
+#kernel
+IpInReceives                    40                 0.0
+IpInDelivers                    34                 0.0
+IpOutRequests                   40                 0.0
+IpOutTransmits                  40                 0.0
+IcmpInMsgs                      14                 0.0
+IcmpInTimeExcds                 5                  0.0
+IcmpInEchoReps                  9                  0.0
+IcmpOutMsgs                     22                 0.0
+IcmpOutEchos                    22                 0.0
+IcmpMsgInType0                  9                  0.0
+IcmpMsgInType11                 5                  0.0
+IcmpMsgOutType8                 22                 0.0
+TcpActiveOpens                  1                  0.0
+TcpInSegs                       20                 0.0
+TcpOutSegs                      20                 0.0
+UdpOutDatagrams                 1                  0.0
+TcpExtTCPPureAcks               2                  0.0
+TcpExtTCPHPAcks                 13                 0.0
+TcpExtIPReversePathFilter       5                  0.0
+TcpExtTCPRcvCoalesce            1                  0.0
+TcpExtTCPOrigDataSent           15                 0.0
+TcpExtTCPDelivered              16                 0.0
+IpExtInBcastPkts                1                  0.0
+IpExtInOctets                   9834               0.0
+IpExtOutOctets                  4318               0.0
+IpExtInBcastOctets              576                0.0
+IpExtInNoECTPkts                42                 0.0
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== 9.4 障害 B(rp_filter=1) ==="   (client)
+=== 9.4 障害 B(rp_filter=1) ===
+exit=0
+### $ nstat -n   (client)
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+32.20
+curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/
+nstat
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2047ms
+
+exit=1
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T15:34:08+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 192.168.31.1               0.0%     5    1.3   1.9   1.3   3.3   0.8
+  2.|-- ???                       100.0     5    0.0   0.0   0.0   0.0   0.0
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+curl: (28) Connection timed out after 5001 milliseconds
+000
+exit=28
+### $ nstat   (client)
+#kernel
+IpInReceives                    243                0.0
+IpInDelivers                    226                0.0
+IpOutRequests                   200                0.0
+IpOutTransmits                  200                0.0
+IcmpInMsgs                      5                  0.0
+IcmpInTimeExcds                 5                  0.0
+IcmpOutMsgs                     81                 0.0
+IcmpOutEchos                    81                 0.0
+IcmpMsgInType11                 5                  0.0
+IcmpMsgOutType8                 81                 0.0
+TcpActiveOpens                  1                  0.0
+TcpInSegs                       221                0.0
+TcpOutSegs                      120                0.0
+TcpRetransSegs                  2                  0.0
+TcpExtTCPHPAcks                 118                0.0
+TcpExtTCPLostRetransmit         1                  0.0
+TcpExtTCPTimeouts               2                  0.0
+TcpExtIPReversePathFilter       17                 0.0
+TcpExtTCPAutoCorking            2                  0.0
+TcpExtTCPSynRetrans             2                  0.0
+TcpExtTCPOrigDataSent           119                0.0
+TcpExtTCPDelivered              119                0.0
+TcpExtTcpTimeoutRehash          2                  0.0
+IpExtInOctets                   15808              0.0
+IpExtOutOctets                  16576              0.0
+IpExtInNoECTPkts                243                0.0
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+### $ sudo sysctl -w net.ipv4.conf.enp0s9.rp_filter=0   (client)
+w '%{http_code}\n' http://192.168.32.20:8080/
+nstat
+net.ipv4.conf.enp0s9.rp_filter = 0
+exit=0
+### $ sysctl net.ipv4.conf.all.rp_filter net.ipv4.conf.enp0s9.rp_filter   (client)
+net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.enp0s9.rp_filter = 0
+exit=0
+### $ echo "=== 9.5 障害 B(rp_filter=0) ==="   (client)
+=== 9.5 障害 B(rp_filter=0) ===
+exit=0
+### $ nstat -n   (client)
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+From 192.168.30.2 icmp_seq=1 Packet filtered
+From 192.168.30.2 icmp_seq=2 Packet filtered
+From 192.168.30.2 icmp_seq=3 Packet filtered
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2005ms
+
+exit=1
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T15:34:31+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 192.168.31.1               0.0%     5    1.4   1.8   1.4   2.3   0.5
+  2.|-- 192.168.30.2              80.0%     5    3.4   3.4   3.4   3.4   0.0
+  3.|-- 192.168.30.2              80.0%     5    4.0   4.0   4.0   4.0   0.0
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+curl: (7) Failed to connect to 192.168.32.20 port 8080: No route to host
+000
+exit=7
+### $ nstat   (client)
+#kernel
+IpInReceives                    260                0.0
+IpInDelivers                    260                0.0
+IpOutRequests                   251                0.0
+IpOutTransmits                  251                0.0
+IcmpInMsgs                      20                 0.0
+IcmpInDestUnreachs              14                 0.0
+IcmpInTimeExcds                 6                  0.0
+IcmpOutMsgs                     126                0.0
+IcmpOutEchos                    126                0.0
+IcmpMsgInType3                  14                 0.0
+IcmpMsgInType11                 6                  0.0
+IcmpMsgOutType8                 126                0.0
+TcpActiveOpens                  1                  0.0
+TcpAttemptFails                 1                  0.0
+TcpInSegs                       239                0.0
+TcpOutSegs                      127                0.0
+UdpInDatagrams                  1                  0.0
+UdpOutDatagrams                 1                  0.0
+TcpExtTCPHPHits                 1                  0.0
+TcpExtTCPHPAcks                 126                0.0
+TcpExtTCPAutoCorking            2                  0.0
+TcpExtTCPOrigDataSent           126                0.0
+TcpExtTCPDelivered              126                0.0
+IpExtInOctets                   16676              0.0
+IpExtOutOctets                  21076              0.0
+IpExtInNoECTPkts                260                0.0
+exit=0
+### $ # T5 (client)   (client)
+stname -s
+sudo sysctl -w net.ipv4.conf.enp0s9.rp_filter=1
+sudo ip route add 192.168.30.0/30 via exit=0
+### $ hostname -s   (client)
+192.168.31.1 dev enp0s9
+ip route
+ip route get 192.168.30.2
+echo "=== 9.6 障害 B(rp_filter=1、経路あり) ==="
+nstat -n
+ping -c 3 -W 2 192.168.32.20
+mtr -n -r -c 5 192.168.32.20
+curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080client
+exit=0
+### $ sudo sysctl -w net.ipv4.conf.enp0s9.rp_filter=1   (client)
+/
+nstat
+net.ipv4.conf.enp0s9.rp_filter = 1
+exit=0
+### $ sudo ip route add 192.168.30.0/30 via 192.168.31.1 dev enp0s9   (client)
+exit=0
+### $ ip route   (client)
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.30.0/30 via 192.168.31.1 dev enp0s9
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+### $ ip route get 192.168.30.2   (client)
+192.168.30.2 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000
+    cache
+exit=0
+### $ echo "=== 9.6 障害 B(rp_filter=1、経路あり) ==="   (client)
+=== 9.6 障害 B(rp_filter=1、経路あり) ===
+exit=0
+### $ nstat -n   (client)
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+From 192.168.30.2 icmp_seq=1 Packet filtered
+From 192.168.30.2 icmp_seq=2 Packet filtered
+From 192.168.30.2 icmp_seq=3 Packet filtered
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2008ms
+
+exit=1
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T15:35:01+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 192.168.31.1               0.0%     5    1.8   1.7   1.4   1.8   0.2
+  2.|-- 192.168.30.2              80.0%     5    3.3   3.3   3.3   3.3   0.0
+  3.|-- 192.168.30.2              80.0%     5    3.1   3.1   3.1   3.1   0.0
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+curl: (7) Failed to connect to 192.168.32.20 port 8080: No route to host
+000
+exit=7
+### $ nstat   (client)
+#kernel
+IpInReceives                    276                0.0
+IpInDelivers                    276                0.0
+IpOutRequests                   260                0.0
+IpOutTransmits                  260                0.0
+IcmpInMsgs                      20                 0.0
+IcmpInDestUnreachs              14                 0.0
+IcmpInTimeExcds                 6                  0.0
+IcmpOutMsgs                     126                0.0
+IcmpOutEchos                    126                0.0
+IcmpMsgInType3                  14                 0.0
+IcmpMsgInType11                 6                  0.0
+IcmpMsgOutType8                 126                0.0
+TcpActiveOpens                  1                  0.0
+TcpAttemptFails                 1                  0.0
+TcpInSegs                       256                0.0
+TcpOutSegs                      137                0.0
+TcpExtTCPHPHits                 2                  0.0
+TcpExtTCPHPAcks                 136                0.0
+TcpExtTCPBacklogCoalesce        1                  0.0
+TcpExtTCPAutoCorking            5                  0.0
+TcpExtTCPOrigDataSent           136                0.0
+TcpExtTCPDelivered              136                0.0
+IpExtInOctets                   17592              0.0
+IpExtOutOctets                  21768              0.0
+IpExtInNoECTPkts                276                0.0
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ hostname -s   (client)
+p route del 192.168.30.0/30 via 192.168.31.1 dev enp0s9
+sudo sysctl -w net.ipv4.conf.enp0s9.rp_filter=1
+ip routeclient
+exit=0
+### $ sudo ip route del 192.168.30.0/30 via 192.168.31.1 dev enp0s9   (client)
+sysctl net.ipv4.conf.all.rp_filter net.ipv4.conf.enp0s9.rp_filter
+exit=0
+### $ sudo sysctl -w net.ipv4.conf.enp0s9.rp_filter=1   (client)
+net.ipv4.conf.enp0s9.rp_filter = 1
+exit=0
+### $ ip route   (client)
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+### $ sysctl net.ipv4.conf.all.rp_filter net.ipv4.conf.enp0s9.rp_filter   (client)
+net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.enp0s9.rp_filter = 1
+exit=0
+### $ exit   (client)
+exit
+Connection to 127.0.0.1 closed.

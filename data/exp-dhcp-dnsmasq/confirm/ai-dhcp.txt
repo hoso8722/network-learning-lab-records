@@ -1,0 +1,123 @@
+# DHCP 記事の確認の実験: router と client(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-16 JST)。labs/common/ai-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: dhcp-test.sh の表のコマンドを手で打つ形で確かめ直した記録
+# 注: sudo は lab-sudo.sh on で有効化済み
+# 注: tcpdump をバックグラウンドで起動した ssh の接続は、起動の直後に終わった。~/cap-dhcp.txt には開始の 3 行だけが入り、パケットは記録されなかった(原因は、接続の終了で tcpdump も止まった候補)。DORA の観測は、journalctl の出力で代える
+### $ rpm -q dnsmasq; sudo dnf install -y dnsmasq 2>&1 | tail -2; rpm -q dnsmasq; ip -br addr show enp0s8; sudo firewall-cmd --get-active-zones   (router)
+package dnsmasq is not installed
+
+Complete!
+dnsmasq-2.85-18.el9_8.2.x86_64
+enp0s8           UP             192.168.31.1/24 
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+### $ printf 'interface=%s\nbind-interfaces\nport=0\ndhcp-range=192.168.31.100,192.168.31.150,255.255.255.0,%s\ndhcp-option=option:router,192.168.31.1\ndhcp-option=option:dns-server,192.168.32.20\ndhcp-option=option:domain-search,lab.example\nlog-dhcp\nlog-facility=-\n' enp0s8 10m | sudo tee /etc/dnsmasq.d/lab-dhcp.conf >/dev/null; sudo restorecon -v /etc/dnsmasq.d/lab-dhcp.conf; cat /etc/dnsmasq.d/lab-dhcp.conf; sudo dnsmasq --test   (router)
+interface=enp0s8
+bind-interfaces
+port=0
+dhcp-range=192.168.31.100,192.168.31.150,255.255.255.0,10m
+dhcp-option=option:router,192.168.31.1
+dhcp-option=option:dns-server,192.168.32.20
+dhcp-option=option:domain-search,lab.example
+log-dhcp
+log-facility=-
+dnsmasq: syntax check OK.
+exit=0
+
+### $ sudo systemctl start dnsmasq; systemctl is-active dnsmasq; sudo ss -lunp "sport = :67"; sudo firewall-cmd --zone=internal --add-service=dhcp   (router)
+active
+State  Recv-Q Send-Q  Local Address:Port Peer Address:PortProcess                           
+UNCONN 0      0      0.0.0.0%enp0s8:67        0.0.0.0:*    users:(("dnsmasq",pid=7142,fd=4))
+success
+exit=0
+
+### $ sudo timeout 30 tcpdump -i enp0s8 -e -nn -c 8 "udp port 67 or udp port 68" > ~/cap-dhcp.txt 2>&1 < /dev/null &
+sleep 2; echo started   (router)
+started
+exit=0
+
+### $ ip -br link show enp0s9; sudo nmcli device set enp0s9 managed yes; sudo nmcli connection delete lab-dhcp; sudo nmcli connection add type ethernet ifname enp0s9 con-name lab-dhcp ipv4.method auto ipv4.never-default yes ipv4.ignore-auto-dns yes ipv4.dhcp-timeout 20 ipv6.method disabled connection.autoconnect no; sudo ip addr flush dev enp0s9; sudo nmcli connection up lab-dhcp; ip -br addr show enp0s9; ip route   (client)
+enp0s9           UP             08:00:27:ae:48:b1 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+Error: unknown connection 'lab-dhcp'.
+Error: cannot delete unknown connection(s): 'lab-dhcp'.
+Connection 'lab-dhcp' (6d58c6b0-b221-41f3-ad26-1faae56bf6e0) successfully added.
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/408)
+enp0s9           UP             192.168.31.103/24 
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.103 metric 101 
+exit=0
+
+### $ nmcli -f IP4,DHCP4 device show enp0s9   (client)
+IP4.ADDRESS[1]:                         192.168.31.103/24
+IP4.GATEWAY:                            --
+IP4.ROUTE[1]:                           dst = 192.168.31.0/24, nh = 0.0.0.0, mt = 101
+DHCP4.OPTION[1]:                        broadcast_address = 192.168.31.255
+DHCP4.OPTION[2]:                        dhcp_client_identifier = 01:08:00:27:ae:48:b1
+DHCP4.OPTION[3]:                        dhcp_lease_time = 600
+DHCP4.OPTION[4]:                        dhcp_server_identifier = 192.168.31.1
+DHCP4.OPTION[5]:                        domain_name_servers = 192.168.32.20
+DHCP4.OPTION[6]:                        domain_search = lab.example
+DHCP4.OPTION[7]:                        expiry = 1794771652
+DHCP4.OPTION[8]:                        host_name = client
+DHCP4.OPTION[9]:                        ip_address = 192.168.31.103
+DHCP4.OPTION[10]:                       next_server = 192.168.31.1
+DHCP4.OPTION[11]:                       requested_broadcast_address = 1
+DHCP4.OPTION[12]:                       requested_domain_name = 1
+DHCP4.OPTION[13]:                       requested_domain_name_servers = 1
+DHCP4.OPTION[14]:                       requested_domain_search = 1
+DHCP4.OPTION[15]:                       requested_host_name = 1
+DHCP4.OPTION[16]:                       requested_interface_mtu = 1
+DHCP4.OPTION[17]:                       requested_ms_classless_static_routes = 1
+DHCP4.OPTION[18]:                       requested_nis_domain = 1
+DHCP4.OPTION[19]:                       requested_nis_servers = 1
+DHCP4.OPTION[20]:                       requested_ntp_servers = 1
+DHCP4.OPTION[21]:                       requested_rfc3442_classless_static_routes = 1
+DHCP4.OPTION[22]:                       requested_root_path = 1
+DHCP4.OPTION[23]:                       requested_routers = 1
+DHCP4.OPTION[24]:                       requested_static_routes = 1
+DHCP4.OPTION[25]:                       requested_subnet_mask = 1
+DHCP4.OPTION[26]:                       requested_time_offset = 1
+DHCP4.OPTION[27]:                       requested_wpad = 1
+DHCP4.OPTION[28]:                       routers = 192.168.31.1
+DHCP4.OPTION[29]:                       subnet_mask = 255.255.255.0
+exit=0
+
+### $ wait; cat ~/cap-dhcp.txt; sudo cat /var/lib/dnsmasq/dnsmasq.leases; sudo journalctl -u dnsmasq -n 12 --no-pager   (router)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+1794771652 08:00:27:ae:48:b1 192.168.31.103 client 01:08:00:27:ae:48:b1
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 next server: 192.168.31.1
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  1 option: 53 message-type  5
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option: 54 server-identifier  192.168.31.1
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option: 51 lease-time  10m
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option: 58 T1  5m
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option: 59 T2  8m45s
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option:  1 netmask  255.255.255.0
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option: 28 broadcast  192.168.31.255
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  6 option: 12 hostname  client
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size: 13 option:119 domain-search  03:6c:61:62:07:65:78:61:6d:70:6c:65:00
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option:  6 dns-server  192.168.32.20
+Nov 16 04:30:52 router dnsmasq[7142]: Nov 16 04:30:52 dnsmasq-dhcp[7142]: 4091110946 sent size:  4 option:  3 router  192.168.31.1
+exit=0
+
+### $ sudo nmcli device set enp0s9 managed no; sudo nmcli connection delete lab-dhcp; sudo ip addr flush dev enp0s9; ip -br addr show enp0s9   (client)
+Connection 'lab-dhcp' (6d58c6b0-b221-41f3-ad26-1faae56bf6e0) successfully deleted.
+enp0s9           UP             
+exit=0
+
+### $ sudo systemctl stop dnsmasq; sudo rm -f /etc/dnsmasq.d/lab-dhcp.conf ~/cap-dhcp.txt; sudo sh -c ": > /var/lib/dnsmasq/dnsmasq.leases"; sudo firewall-cmd --reload; systemctl is-active dnsmasq; sudo dnf remove -y dnsmasq 2>&1 | tail -2; rpm -q dnsmasq   (router)
+success
+inactive
+
+Complete!
+package dnsmasq is not installed
+exit=1
+

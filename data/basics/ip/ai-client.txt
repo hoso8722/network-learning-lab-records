@@ -1,0 +1,55 @@
+# 基礎編 B1(ip コマンド): client の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/ai-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 1 章(予想は実験の前に書いた)
+# 注: 読み取りのみ。通信は出さない
+### $ ip -br addr   (client)
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64 
+enp0s9           UP             192.168.31.10/24 
+exit=0
+
+### $ ip route   (client)
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10 
+192.168.32.0/24 via 192.168.31.1 dev enp0s9 
+exit=0
+
+### $ ip route get 192.168.32.20   (client)
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000 
+    cache 
+exit=0
+
+### $ ip route get 192.168.31.99   (client)
+192.168.31.99 dev enp0s9 src 192.168.31.10 uid 1000 
+    cache 
+exit=0
+
+### $ ip route get 192.168.99.1   (client)
+RTNETLINK answers: No route to host
+exit=2
+
+### $ ip route get 8.8.8.8   (client)
+8.8.8.8 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 1000 
+    cache 
+exit=0
+
+### $ ip neigh show   (client)
+192.168.31.1 dev enp0s9 lladdr 08:00:27:41:49:68 REACHABLE 
+10.0.2.2 dev enp0s3 lladdr 52:55:0a:00:02:02 REACHABLE 
+10.0.2.3 dev enp0s3 lladdr 52:55:0a:00:02:03 STALE 
+fd17:625c:f037:2::2 dev enp0s3 lladdr 52:56:00:00:00:02 router STALE 
+fe80::2 dev enp0s3 lladdr 52:56:00:00:00:02 router STALE 
+exit=0
+
+### $ ip -s link show enp0s9   (client)
+3: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:ae:48:b1 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast           
+         46468     150      0       0       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+         65900     402      0       0       0       0 
+exit=0
+

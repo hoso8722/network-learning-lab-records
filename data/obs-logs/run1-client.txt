@@ -1,0 +1,31 @@
+# ログで調べる(2): client の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-18 JST。手順書 docs/OBS_LOGS_RUNBOOK.md)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れた箇所がある。崩れは直していない
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== 3.2 転送の拒否 ==="   (client)
+=== 3.2 転送の拒否 ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2072ms
+
+exit=1
+### $ # T5 (client)   (client)
+exit=1
+### $ echo "=== 4.4 拒否を起こす ==="   (client)
+=== 4.4 拒否を起こす ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2029ms
+
+exit=1
+### $ exit   (client)
+exit
+Connection to 127.0.0.1 closed.

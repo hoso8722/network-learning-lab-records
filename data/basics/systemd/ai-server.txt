@@ -1,0 +1,92 @@
+# 基礎編 B4(systemctl と journalctl): server の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/ai-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 4 章(予想は実験の前に書いた)
+# 注: 読み取りのみ
+# 注: 'systemctl list-units' の最初の出力には、名前に at 記号を含む 2 つのユニット(getty と user の、番号つきのもの)が含まれ、コミット前の検査(メールアドレスの形)に引っかかるため、その出力は、この記録から外した。次の取り直しの出力は、grep -v で、その 2 行を除いてある(コマンドの行に、そのまま書いてある)
+### $ systemctl status sshd --no-pager; systemctl is-active sshd; systemctl is-enabled sshd   (server)
+● sshd.service - OpenSSH server daemon
+     Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-11-19 03:23:26 JST; 55min ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+   Main PID: 814 (sshd)
+      Tasks: 1 (limit: 2605)
+     Memory: 6.5M (peak: 9.2M)
+        CPU: 1.945s
+     CGroup: /system.slice/sshd.service
+             └─814 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+
+Nov 19 04:18:20 server sshd-session[1314]: pam_unix(sshd:session): session opened for user user(uid=1000) by user(uid=0)
+Nov 19 04:18:20 server sshd-session[1314]: pam_unix(sshd:session): session closed for user user
+Nov 19 04:18:22 server sshd-session[1355]: Accepted publickey for user from 10.0.2.2 port 44738 ssh2: ED25519 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU
+Nov 19 04:18:23 server sshd-session[1355]: pam_unix(sshd:session): session opened for user user(uid=1000) by user(uid=0)
+Nov 19 04:18:23 server sshd-session[1355]: pam_unix(sshd:session): session closed for user user
+Nov 19 04:18:29 server sshd-session[1354]: error: kex_exchange_identification: read: Connection reset by peer
+Nov 19 04:18:29 server sshd-session[1354]: Connection reset by 192.168.31.10 port 47256
+Nov 19 04:18:30 server sshd-session[1383]: banner exchange: Connection from 192.168.31.10 port 55260: invalid format
+Nov 19 04:18:39 server sshd-session[1385]: Accepted publickey for user from 10.0.2.2 port 46074 ssh2: ED25519 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU
+Nov 19 04:18:40 server sshd-session[1385]: pam_unix(sshd:session): session opened for user user(uid=1000) by user(uid=0)
+active
+enabled
+exit=0
+
+### $ systemctl is-active firewalld chronyd   (server)
+active
+active
+exit=0
+
+### $ journalctl -u sshd --since "30 minutes ago" --no-pager -n 10   (server)
+Nov 19 04:10:21 server sshd-session[900]: Connection closed by authenticating user user 10.0.2.2 port 45128 [preauth]
+Nov 19 04:10:22 server sshd-session[902]: Failed password for user from 10.0.2.2 port 45132 ssh2
+Nov 19 04:10:22 server sshd-session[902]: Failed password for user from 10.0.2.2 port 45132 ssh2
+Nov 19 04:10:22 server sshd-session[902]: Connection closed by authenticating user user 10.0.2.2 port 45132 [preauth]
+Nov 19 04:12:22 server sshd-session[904]: Accepted publickey for user from 10.0.2.2 port 45184 ssh2: ED25519 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU
+Nov 19 04:12:23 server sshd-session[904]: pam_unix(sshd:session): session opened for user user(uid=1000) by user(uid=0)
+Nov 19 04:13:04 server sshd-session[966]: Accepted publickey for user from 10.0.2.2 port 46448 ssh2: ED25519 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU
+Nov 19 04:13:05 server sshd-session[966]: pam_unix(sshd:session): session opened for user user(uid=1000) by user(uid=0)
+Nov 19 04:13:05 server sshd-session[966]: pam_unix(sshd:session): session closed for user user
+Nov 19 04:13:10 server sshd-session[1010]: Accepted publickey for user from 10.0.2.2 port 46454 ssh2: ED25519 SHA256:ooHfXEbW7ueEwUNYmT51fm04zKsEbYhvtxNkuefE6zU
+exit=0
+
+### $ journalctl -p err -b --no-pager -n 10; journalctl -k -n 5 --no-pager; journalctl --disk-usage; ls -d /var/log/journal   (server)
+Nov 19 03:22:08 localhost kernel: Warning: Unmaintained driver is detected: e1000_init_module
+Nov 19 03:22:08 localhost kernel: Warning: Unmaintained driver is detected: e1000
+Nov 19 03:22:11 localhost kernel: vmwgfx 0000:00:02.0: [drm] *ERROR* vmwgfx seems to be running on an unsupported hypervisor.
+Nov 19 03:22:11 localhost kernel: vmwgfx 0000:00:02.0: [drm] *ERROR* This configuration is likely broken.
+Nov 19 03:22:11 localhost kernel: vmwgfx 0000:00:02.0: [drm] *ERROR* Please switch to a supported graphics device to avoid problems.
+Nov 19 03:22:51 server systemd[1]: Invalid DMI field header.
+Nov 19 03:24:27 server systemd[1]: Failed to start Network Manager Wait Online.
+Nov 19 03:24:27 server systemd[1]: Failed to start Crash recovery kernel arming.
+Nov 19 04:17:12 server sshd-session[1313]: error: kex_exchange_identification: read: Connection reset by peer
+Nov 19 04:18:29 server sshd-session[1354]: error: kex_exchange_identification: read: Connection reset by peer
+Nov 19 03:23:03 server kernel: intel_rapl_common: Found RAPL domain core
+Nov 19 03:23:05 server kernel: snd_intel8x0 0000:00:05.0: allow list rate for 1028:0177 is 48000
+Nov 19 03:23:23 server kernel: e1000: enp0s3 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+Nov 19 03:23:24 server kernel: e1000: enp0s9 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+Nov 19 03:35:32 server kernel: clocksource: Long readout interval, skipping watchdog check: cs_nsec: 1211103898 wd_nsec: 1211103532
+Archived and active journals take up 2.2M in the file system.
+ls: cannot access '/var/log/journal': No such file or directory
+exit=2
+
+### $ systemctl list-units --type=service --state=running --no-pager | grep -v '@'   (server)
+  UNIT                     LOAD   ACTIVE SUB     DESCRIPTION
+  auditd.service           loaded active running Security Auditing Service
+  chronyd.service          loaded active running NTP client/server
+  crond.service            loaded active running Command Scheduler
+  dbus-broker.service      loaded active running D-Bus System Message Bus
+  firewalld.service        loaded active running firewalld - dynamic firewall daemon
+  irqbalance.service       loaded active running irqbalance daemon
+  NetworkManager.service   loaded active running Network Manager
+  rsyslog.service          loaded active running System Logging Service
+  sshd.service             loaded active running OpenSSH server daemon
+  systemd-journald.service loaded active running Journal Service
+  systemd-logind.service   loaded active running User Login Management
+  systemd-udevd.service    loaded active running Rule-based Manager for Device Events and Files
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+14 loaded units listed.
+exit=0
+

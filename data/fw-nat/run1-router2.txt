@@ -1,0 +1,668 @@
+# 実験 A〜C(1 回目): router2(R2)の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 1〜6 章。1 回目の通し実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある(例: 「ewall-cmd --listrouter」)。実行されたコマンドは、「### $」の行で確認できる。崩れは直していない
+# 注: 記録の最初は、router 用のブロックとその出力(プロンプトの行を含む)を、誤って router2 の端末に貼った箇所。「command not found」などが並ぶ。この中で実行されたのは、読み取りのコマンドだけで、状態を変えたものはない
+# 注: A-3、A-4、B-1、B-3、C-2b、C-4 の tcpdump は前面で実行(手順書の旧版)。C-5 だけバックグラウンド。C-5 の cat は 2 回実行している
+# 注: C-4 の conntrack の確認は、R1 用のブロックを誤って R2 で実行したもの(R2 の conntrack が出ている)
+# 注: A-4 の conntrack は、ping の約 29 秒後で、行が取れていない
+### $ router:$ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+d --get-active-zones
+sudo firexit=0
+### $ hostname -s   (router)
+ewall-cmd --listrouter
+exit=0
+### $ rpm -q firewalld nftables conntrack-tools tcpdump   (router)
+-all-policies
+ls /proc/net/nf_conntrack
+firewabash: router:$: command not found
+exit=127
+lld-1.3.4-18.el9_7.noarch
+nftables-1.0.9-6.el9_7.x86_64
+package conntrack-tools is not installed
+tcpdump-4.99.0-9.el9.x86_64
+exit=1
+### $ sudo firewall-cmd --version   (router)
+1.3.4
+exit=0
+### $ sudo firewall-cmd --get-default-zone   (router)
+public
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router)
+allow-host-ipv6 (active)
+### $ do firewall-cmd --get-default-zone   (router2)
+bash: syntax error near unexpected token `do'
+exit=2
+### $ sudo firewall-cmd --get-active-zones   (router2)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+        rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+        rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+        rule family="ipv6" icmp-type name="router-advertisement" accept
+        rule family="ipv6" icmp-type name="redirect" accept
+        rule family="ipv6" icmp-type name="mld-listener-done" accept
+        rule family="ipv6" icmp-type name="mld-listener-query" accept
+        rule family="ipv6" icmp-type name="mld-listener-report" accept
+        rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ ls /proc/net/nf_conntrack   (router)
+/proc/net/nf_conntrack
+exit=0internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firexit=0   (router2)
+usage: sudo -h | -K | -k | -V
+usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
+usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
+            [-u user] [command [arg ...]]
+usage: sudo [-ABbEHkNnPS] [-r role] [-t type] [-C num] [-D directory]
+            [-g group] [-h host] [-p prompt] [-R directory] [-T timeout]
+            [-u user] [VAR=value] [-i | -s] [command [arg ...]]
+usage: sudo -e [-ABkNnS] [-r role] [-t type] [-C num] [-D directory]
+            [-g group] [-h host] [-p prompt] [-R directory] [-T timeout]
+            [-u user] file ...
+exit=1
+### $ router:$ hostname -s   (router2)
+bash: router:$: command not found
+exit=127
+### $ ewall-cmd --listrouter   (router2)
+bash: ewall-cmd: command not found
+exit=127
+### $ exit=0   (router2)
+exit=0
+### $ router:$ rpm -q firewalld nftables conntrack-tools tcpdump   (router2)
+bash: router:$: command not found
+exit=127
+### $ -all-policies   (router2)
+bash: -all-policies: command not found
+exit=127
+### $ ls /proc/net/nf_conntrack   (router2)
+/proc/net/nf_conntrack
+exit=0
+### $ firewalld-1.3.4-18.el9_7.noarch   (router2)
+bash: firewalld-1.3.4-18.el9_7.noarch: command not found
+exit=127
+### $ nftables-1.0.9-6.el9_7.x86_64   (router2)
+bash: nftables-1.0.9-6.el9_7.x86_64: command not found
+exit=127
+### $ package conntrack-tools is not installed   (router2)
+bash: package: command not found
+exit=127
+### $ tcpdump-4.99.0-9.el9.x86_64   (router2)
+bash: tcpdump-4.99.0-9.el9.x86_64: command not found
+exit=127
+### $ exit=1   (router2)
+exit=0
+### $ router:$ sudo firewall-cmd --version   (router2)
+bash: router:$: command not found
+exit=127
+### $ 1.3.4   (router2)
+bash: 1.3.4: command not found
+exit=127
+### $ exit=0   (router2)
+exit=0
+### $ router:$ sudo firewall-cmd --get-default-zone   (router2)
+bash: router:$: command not found
+exit=127
+### $ public   (router2)
+bash: public: command not found
+exit=127
+### $ exit=0   (router2)
+exit=0
+### $ router:$ sudo firewall-cmd --get-active-zones   (router2)
+bash: router:$: command not found
+exit=127
+### $ internal   (router2)
+bash: internal: command not found
+exit=127
+### $ interfaces: enp0s8 enp0s9   (router2)
+bash: interfaces:: command not found
+exit=127
+### $ public   (router2)
+bash: public: command not found
+exit=127
+### $ interfaces: enp0s3   (router2)
+bash: interfaces:: command not found
+exit=127
+### $ exit=0   (router2)
+exit=0
+### $ router:$ sudo firewall-cmd --list-all-policies   (router2)
+bash: router:$: command not found
+exit=127
+### $ allow-host-ipv6 (active)   (router2)
+bash: syntax error near unexpected token `active'
+exit=2
+### $ priority: -15000   (router2)
+bash: priority:: command not found
+exit=127
+### $ target: CONTINUE   (router2)
+bash: target:: command not found
+exit=127
+### $ ingress-zones: ANY   (router2)
+bash: ingress-zones:: command not found
+exit=127
+### $ egress-zones: HOST   (router2)
+bash: egress-zones:: command not found
+exit=127
+### $ services:   (router2)
+bash: services:: command not found
+exit=127
+### $ ports:   (router2)
+bash: ports:: command not found
+exit=127
+### $ protocols:   (router2)
+bash: protocols:: command not found
+exit=127
+### $ masquerade: no   (router2)
+bash: masquerade:: command not found
+exit=127
+### $ forward-ports:   (router2)
+bash: forward-ports:: command not found
+exit=127
+### $ source-ports:   (router2)
+bash: source-ports:: command not found
+exit=127
+### $ icmp-blocks:   (router2)
+bash: icmp-blocks:: command not found
+exit=127
+### $ rich rules:   (router2)
+bash: rich: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="neighbour-advertisement" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="neighbour-solicitation" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="router-advertisement" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="redirect" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="mld-listener-done" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="mld-listener-query" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="mld-listener-report" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ rule family="ipv6" icmp-type name="mld2-listener-report" accept   (router2)
+bash: rule: command not found
+exit=127
+### $ exit=0   (router2)
+exit=0
+### $ router:$ ls /proc/net/nf_conntrack   (router2)
+bash: router:$: command not found
+exit=127
+### $ /proc/net/nf_conntrack   (router2)
+bash: /proc/net/nf_conntrack: Permission denied
+exit=126
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=126
+### $ hostname -s   (router2)
+--get-default-zone
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --list-all-policies
+ls /proc/net/nf_corouter2
+exit=0
+### $ rpm -q firewalld nftables conntrack-tools tcpdump   (router2)
+nntrack
+firewalld-1.3.4-18.el9_7.noarch
+nftables-1.0.9-6.el9_7.x86_64
+package conntrack-tools is not installed
+tcpdump-4.99.0-9.el9.x86_64
+exit=1
+### $ sudo firewall-cmd --version   (router2)
+1.3.4
+exit=0
+### $ sudo firewall-cmd --get-default-zone   (router2)
+public
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router2)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ ls /proc/net/nf_conntrack   (router2)
+/proc/net/nf_conntrack
+exit=0
+### $ # T3 (router2)   (router2)
+ostname -s
+sudo firewall-cmd --permanent --new-policy=lana-to-lanb
+sudo firewallexit=0
+### $ hostname -s   (router2)
+-cmd --permanent --policy=lana-to-lanb --add-ingress-zone=internal
+sudo firewall-cmd --permanent --policy=lana-to-lanb --add-egress-zone=dmz
+sudo firewall-cmd --permanent --policy=lana-to-lanb --set-target=ACCEPT
+sudo firewall-cmd --reload
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --list-all-policies
+sudo firewall-cmd --zone=internal --change-interface=enp0s8
+sudo firewall-cmd --zone=dmz --change-interface=enp0s9
+sudo firewall-cmd router2
+exit=0
+### $ sudo firewall-cmd --permanent --new-policy=lana-to-lanb   (router2)
+--get-active-zones
+sudo firewall-cmd --info-policy=lana-to-lanb
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lana-to-lanb --add-ingress-zone=internal   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lana-to-lanb --add-egress-zone=dmz   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lana-to-lanb --set-target=ACCEPT   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --reload   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router2)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+lana-to-lanb (active)
+  priority: -1
+  target: ACCEPT
+  ingress-zones: internal
+  egress-zones: dmz
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+exit=0
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --zone=dmz --change-interface=enp0s9   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+dmz
+  interfaces: enp0s9
+internal
+  interfaces: enp0s8
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --info-policy=lana-to-lanb   (router2)
+lana-to-lanb (active)
+  priority: -1
+  target: ACCEPT
+  ingress-zones: internal
+  egress-zones: dmz
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+exit=0
+### $ # T3 (router2): 先に貼る。"listening on any" と出るまで待つ(最大 40 秒)   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 10:06:12 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni any -c 12 icmp   (router2)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+10:06:28.947267 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 25, seq 1, length 64
+10:06:28.947517 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 25, seq 1, length 64
+10:06:28.949700 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 25, seq 1, length 64
+10:06:28.949742 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 25, seq 1, length 64
+10:06:30.031153 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 25, seq 2, length 64
+10:06:30.031243 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 25, seq 2, length 64
+10:06:30.033076 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 25, seq 2, length 64
+10:06:30.033101 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 25, seq 2, length 64
+10:06:31.113664 enp0s8 In  IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 25, seq 3, length 64
+10:06:31.113829 enp0s9 Out IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 25, seq 3, length 64
+10:06:31.116916 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 25, seq 3, length 64
+10:06:31.117009 enp0s8 Out IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 25, seq 3, length 64
+12 packets captured
+14 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2): ping が終わったら、すぐに(10 秒以内に)   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 10:06:39 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router2)
+ipv4     2 icmp     1 21 src=192.168.31.10 dst=192.168.32.20 type=8 code=0 id=25 src=192.168.32.20 dst=192.168.31.10 type=0 code=0 id=25 mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T3 (router2): 先に貼る   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 10:07:10 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni any -c 12 icmp   (router2)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+10:07:19.072337 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo request, id 7, seq 1, length 64
+10:07:19.072760 enp0s9 Out IP 192.168.32.1 > 192.168.32.20: ICMP host 192.168.31.10 unreachable - admin prohibited filter, length 92
+10:07:20.155577 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo request, id 7, seq 2, length 64
+10:07:20.155719 enp0s9 Out IP 192.168.32.1 > 192.168.32.20: ICMP host 192.168.31.10 unreachable - admin prohibited filter, length 92
+10:07:21.238789 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo request, id 7, seq 3, length 64
+10:07:21.238897 enp0s9 Out IP 192.168.32.1 > 192.168.32.20: ICMP host 192.168.31.10 unreachable - admin prohibited filter, length 92
+# T3 (router2): ping が終わったら、すぐに(10 秒以内に)
+date
+sudo grep -E 'icmp|8080' /proc/net/nf_conntrack
+
+6 packets captured
+11 packets received by filter
+0 packets dropped by kernel
+exit=124
+### $ # T3 (router2): ping が終わったら、すぐに(10 秒以内に)   (router2)
+exit=124
+### $ date   (router2)
+Fri Nov 13 10:07:50 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router2)
+exit=1
+### $ # T3 (router2)   (router2)
+exit=1
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ sudo firewall-cmd --permanent --delete-policy=lan-to-transit   (router2)
+ve-zones
+Error: INVALID_POLICY: lan-to-transit
+exit=140
+### $ sudo firewall-cmd --permanent --delete-policy=lana-to-lanb   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --reload   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router2)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+public
+  interfaces: enp0s3
+exit=0
+### $ # T3 (router2): 先に貼る   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 10:11:34 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 6 icmp   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10:11:54.657566 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 27, seq 1, length 64
+10:11:54.659358 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 27, seq 1, length 64
+10:11:55.740068 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 27, seq 2, length 64
+10:11:55.742745 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 27, seq 2, length 64
+10:11:56.821688 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 27, seq 3, length 64
+10:11:56.823977 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 27, seq 3, length 64
+6 packets captured
+6 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2): 先に貼る   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 10:13:41 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 6 icmp   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10:13:47.665267 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 28, seq 1, length 64
+10:13:48.748611 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 28, seq 2, length 64
+10:13:49.832573 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 28, seq 3, length 64
+
+3 packets captured
+3 packets received by filter
+0 packets dropped by kernel
+exit=124
+### $ # T3 (router2): 先に貼る   (router2)
+exit=124
+### $ date   (router2)
+Fri Nov 13 10:26:20 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s9 -c 6 tcp port 8080   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s9, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10:26:30.628306 IP 192.168.30.1.36142 > 192.168.32.20.webcache: Flags [S], seq 2792153842, win 64240, options [mss 1460,sackOK,TS val 877581650 ecr 0,nop,wscale 6], length 0
+10:26:31.668612 IP 192.168.30.1.36142 > 192.168.32.20.webcache: Flags [S], seq 2792153842, win 64240, options [mss 1460,sackOK,TS val 877582691 ecr 0,nop,wscale 6], length 0
+10:26:33.715823 IP 192.168.30.1.36142 > 192.168.32.20.webcache: Flags [S], seq 2792153842, win 64240, options [mss 1460,sackOK,TS val 877584738 ecr 0,nop,wscale 6], length 0
+
+3 packets captured
+3 packets received by filter
+0 packets dropped by kernel
+exit=124
+### $ # T3 (router2): 先に貼る   (router2)
+exit=124
+### $ date   (router2)
+Fri Nov 13 10:27:34 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 8 tcp port 8080   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10:27:44.065278 IP 192.168.30.1.44554 > 192.168.32.20.webcache: Flags [S], seq 1141934348, win 64240, options [mss 1460,sackOK,TS val 459727144 ecr 0,nop,wscale 6], length 0
+10:27:45.086533 IP 192.168.30.1.44554 > 192.168.32.20.webcache: Flags [S], seq 1141934348, win 64240, options [mss 1460,sackOK,TS val 459728165 ecr 0,nop,wscale 6], length 0
+10:27:47.161254 IP 192.168.30.1.44554 > 192.168.32.20.webcache: Flags [S], seq 1141934348, win 64240, options [mss 1460,sackOK,TS val 459730240 ecr 0,nop,wscale 6], length 0
+# T2 (router): curl が終わったら、すぐに(10 秒以内に)
+date
+sudo grep -E 'icmp|8080' /proc/net/nf_conntrack
+
+3 packets captured
+3 packets received by filter
+0 packets dropped by kernel
+exit=124
+### $ # T2 (router): curl が終わったら、すぐに(10 秒以内に)   (router2)
+exit=124
+### $ date   (router2)
+Fri Nov 13 10:28:14 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router2)
+ipv4     2 tcp      6 16 SYN_SENT src=192.168.30.1 dst=192.168.32.20 sport=36142 dport=8080 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=8080 dport=36142 mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+ipv4     2 tcp      6 89 SYN_SENT src=192.168.30.1 dst=192.168.32.20 sport=44554 dport=8080 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=8080 dport=44554 mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T3 (router2): 先に貼る(バックグラウンドで動く。すぐにプロンプトが戻る)   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 10:40:11 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 8 tcp port 8080 > ~/cap-C-5.txt 2>&1 < /dev/null &   (router2)
+[1] 14939
+exit=0
+### $ sleep 2   (router2)
+exit=0
+### $ # T3 (router2): 通信の後。キャプチャが終わるまで待って(最大 40 秒)、出力を読む   (router2)
+exit=0
+[1]+  Done                    sudo timeout 40 tcpdump -ni enp0s8 -c 8 tcp port 8080 > ~/cap-C-5.txt 2>&1 < /dev/null
+### $ wait   (router2)
+exit=0
+### $ cat ~/cap-C-5.txt   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10:40:22.035717 IP 192.168.31.10.33254 > 192.168.32.20.webcache: Flags [S], seq 1142751361, win 64240, options [mss 1460,sackOK,TS val 460485114 ecr 0,nop,wscale 6], length 0
+10:40:22.037516 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [S.], seq 887807015, ack 1142751362, win 65160, options [mss 1460,sackOK,TS val 1319705568 ecr 460485114,nop,wscale 6], length 0
+10:40:22.040178 IP 192.168.31.10.33254 > 192.168.32.20.webcache: Flags [.], ack 1, win 1004, options [nop,nop,TS val 460485119 ecr 1319705568], length 0
+10:40:22.040180 IP 192.168.31.10.33254 > 192.168.32.20.webcache: Flags [P.], seq 1:82, ack 1, win 1004, options [nop,nop,TS val 460485119 ecr 1319705568], length 81: HTTP: GET / HTTP/1.1
+10:40:22.041452 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [.], ack 82, win 1017, options [nop,nop,TS val 1319705572 ecr 460485119], length 0
+10:40:22.052285 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [P.], seq 1:157, ack 82, win 1017, options [nop,nop,TS val 1319705582 ecr 460485119], length 156: HTTP: HTTP/1.0 200 OK
+10:40:22.052447 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [P.], seq 157:4501, ack 82, win 1017, options [nop,nop,TS val 1319705583 ecr 460485119], length 4344: HTTP
+10:40:22.054584 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [FP.], seq 4501:4528, ack 82, win 1017, options [nop,nop,TS val 1319705583 ecr 460485119], length 27: HTTP
+8 packets captured
+12 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2): 通信の後。キャプチャが終わるまで待って(最大 40 秒)、出力を読む   (router2)
+exit=0
+### $ wait   (router2)
+exit=0
+### $ cat ~/cap-C-5.txt   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10:40:22.035717 IP 192.168.31.10.33254 > 192.168.32.20.webcache: Flags [S], seq 1142751361, win 64240, options [mss 1460,sackOK,TS val 460485114 ecr 0,nop,wscale 6], length 0
+10:40:22.037516 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [S.], seq 887807015, ack 1142751362, win 65160, options [mss 1460,sackOK,TS val 1319705568 ecr 460485114,nop,wscale 6], length 0
+10:40:22.040178 IP 192.168.31.10.33254 > 192.168.32.20.webcache: Flags [.], ack 1, win 1004, options [nop,nop,TS val 460485119 ecr 1319705568], length 0
+10:40:22.040180 IP 192.168.31.10.33254 > 192.168.32.20.webcache: Flags [P.], seq 1:82, ack 1, win 1004, options [nop,nop,TS val 460485119 ecr 1319705568], length 81: HTTP: GET / HTTP/1.1
+10:40:22.041452 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [.], ack 82, win 1017, options [nop,nop,TS val 1319705572 ecr 460485119], length 0
+10:40:22.052285 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [P.], seq 1:157, ack 82, win 1017, options [nop,nop,TS val 1319705582 ecr 460485119], length 156: HTTP: HTTP/1.0 200 OK
+10:40:22.052447 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [P.], seq 157:4501, ack 82, win 1017, options [nop,nop,TS val 1319705583 ecr 460485119], length 4344: HTTP
+10:40:22.054584 IP 192.168.32.20.webcache > 192.168.31.10.33254: Flags [FP.], seq 4501:4528, ack 82, win 1017, options [nop,nop,TS val 1319705583 ecr 460485119], length 27: HTTP
+8 packets captured
+12 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+### $ hostname -s   (router2)
+olicy=lana-to-lanb
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-all-policies
+sudo firewall-cmd --get-actirouter2
+exit=0
+### $ sudo firewall-cmd --permanent --delete-policy=lan-to-transit   (router2)
+ve-zones
+Error: INVALID_POLICY: lan-to-transit
+exit=140
+### $ sudo firewall-cmd --permanent --delete-policy=lana-to-lanb   (router2)
+Error: INVALID_POLICY: lana-to-lanb
+exit=140
+### $ sudo firewall-cmd --reload   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router2)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+public
+  interfaces: enp0s3
+exit=0
+### $ exit   (router2)
+exit
+Connection to 127.0.0.1 closed.

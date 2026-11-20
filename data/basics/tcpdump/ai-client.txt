@@ -1,0 +1,28 @@
+# 基礎編 B2(tcpdump): client の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/ai-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 2 章
+### $ ping -c 3 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=4.12 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.11 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=4.21 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2010ms
+rtt min/avg/max/mdev = 4.111/4.145/4.210/0.045 ms
+exit=0
+
+### $ bash -c 'exec 3<>/dev/tcp/192.168.32.20/22; sleep 1'   (client)
+exit=0
+
+### $ ping -c 2 192.168.32.20 | tail -2   (client)
+2 packets transmitted, 2 received, 0% packet loss, time 1009ms
+rtt min/avg/max/mdev = 4.072/4.655/5.239/0.583 ms
+exit=0
+
+### $ ping -c 2 192.168.32.20 | tail -2   (client)
+2 packets transmitted, 2 received, 0% packet loss, time 1003ms
+rtt min/avg/max/mdev = 3.947/4.631/5.316/0.684 ms
+exit=0
+

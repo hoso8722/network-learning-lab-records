@@ -1,0 +1,113 @@
+# 基礎編 B4(systemctl と journalctl): client の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/ai-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 4 章
+# 注: 一時的なユニット(bs-demo-run、bs-demo)を作り、最後に削除した
+### $ sudo systemd-run --unit=bs-demo-run sleep 300; systemctl status bs-demo-run --no-pager; sudo systemctl stop bs-demo-run; systemctl is-active bs-demo-run   (client)
+Running as unit: bs-demo-run.service
+● bs-demo-run.service - /bin/sleep 300
+     Loaded: loaded (/run/systemd/transient/bs-demo-run.service; transient)
+  Transient: yes
+     Active: active (running) since Thu 2026-11-19 04:18:43 JST; 68ms ago
+   Main PID: 1990 (sleep)
+      Tasks: 1 (limit: 2621)
+     Memory: 284.0K (peak: 292.0K)
+        CPU: 13ms
+     CGroup: /system.slice/bs-demo-run.service
+             └─1990 /bin/sleep 300
+
+Nov 19 04:18:43 client systemd[1]: Started /bin/sleep 300.
+inactive
+exit=3
+
+### $ printf '[Service]\nExecStart=/usr/bin/sleep 300\n' | sudo tee /etc/systemd/system/bs-demo.service; cat /etc/systemd/system/bs-demo.service   (client)
+[Service]
+ExecStart=/usr/bin/sleep 300
+[Service]
+ExecStart=/usr/bin/sleep 300
+exit=0
+
+### $ sudo systemctl daemon-reload; sudo systemctl start bs-demo; systemctl is-active bs-demo; systemctl is-enabled bs-demo   (client)
+active
+static
+exit=0
+
+### $ sudo systemctl enable bs-demo; systemctl is-enabled bs-demo; sudo systemctl disable --now bs-demo; systemctl is-active bs-demo; systemctl is-enabled bs-demo   (client)
+The unit files have no installation config (WantedBy=, RequiredBy=, Also=,
+Alias= settings in the [Install] section, and DefaultInstance= for template
+units). This means they are not meant to be enabled or disabled using systemctl.
+ 
+Possible reasons for having this kind of units are:
+• A unit may be statically enabled by being symlinked from another unit's
+  .wants/ or .requires/ directory.
+• A unit's purpose may be to act as a helper for some other unit which has
+  a requirement dependency on it.
+• A unit may be started when needed via activation (socket, path, timer,
+  D-Bus, udev, scripted systemctl call, ...).
+• In case of template units, the unit is meant to be enabled with some
+  instance name specified.
+static
+The unit files have no installation config (WantedBy=, RequiredBy=, Also=,
+Alias= settings in the [Install] section, and DefaultInstance= for template
+units). This means they are not meant to be enabled or disabled using systemctl.
+ 
+Possible reasons for having this kind of units are:
+• A unit may be statically enabled by being symlinked from another unit's
+  .wants/ or .requires/ directory.
+• A unit's purpose may be to act as a helper for some other unit which has
+  a requirement dependency on it.
+• A unit may be started when needed via activation (socket, path, timer,
+  D-Bus, udev, scripted systemctl call, ...).
+• In case of template units, the unit is meant to be enabled with some
+  instance name specified.
+inactive
+static
+exit=0
+
+### $ journalctl -u bs-demo --no-pager -n 5   (client)
+Nov 19 04:18:45 client systemd[1]: Started bs-demo.service.
+Nov 19 04:18:47 client systemd[1]: Stopping bs-demo.service...
+Nov 19 04:18:47 client systemd[1]: bs-demo.service: Deactivated successfully.
+Nov 19 04:18:47 client systemd[1]: Stopped bs-demo.service.
+exit=0
+
+### $ sudo rm -f /etc/systemd/system/bs-demo.service; sudo systemctl daemon-reload; systemctl status bs-demo --no-pager; ls /etc/systemd/system | grep -c bs-demo   (client)
+Unit bs-demo.service could not be found.
+0
+exit=1
+
+### (実験中に追加) 上の bs-demo は [Install] の節がなく、enable できなかった(is-enabled は static)。[Install] を足したユニットで、やり直す
+### $ printf '[Unit]\nDescription=bs demo\n\n[Service]\nExecStart=/usr/bin/sleep 300\n\n[Install]\nWantedBy=multi-user.target\n' | sudo tee /etc/systemd/system/bs-demo.service >/dev/null; cat /etc/systemd/system/bs-demo.service   (client)
+[Unit]
+Description=bs demo
+
+[Service]
+ExecStart=/usr/bin/sleep 300
+
+[Install]
+WantedBy=multi-user.target
+exit=0
+
+### $ sudo systemctl daemon-reload; sudo systemctl start bs-demo; systemctl is-active bs-demo; systemctl is-enabled bs-demo   (client)
+active
+disabled
+exit=1
+
+### $ sudo systemctl enable bs-demo; systemctl is-enabled bs-demo; ls -l /etc/systemd/system/multi-user.target.wants/ | grep bs-demo; systemctl is-active bs-demo   (client)
+Created symlink /etc/systemd/system/multi-user.target.wants/bs-demo.service → /etc/systemd/system/bs-demo.service.
+enabled
+lrwxrwxrwx. 1 root root 35 Nov 19 04:19 bs-demo.service -> /etc/systemd/system/bs-demo.service
+active
+exit=0
+
+### $ sudo systemctl disable --now bs-demo; systemctl is-active bs-demo; systemctl is-enabled bs-demo   (client)
+Removed "/etc/systemd/system/multi-user.target.wants/bs-demo.service".
+inactive
+disabled
+exit=1
+
+### $ sudo rm -f /etc/systemd/system/bs-demo.service; sudo systemctl daemon-reload; systemctl status bs-demo --no-pager; ls /etc/systemd/system /etc/systemd/system/multi-user.target.wants | grep -c bs-demo   (client)
+Unit bs-demo.service could not be found.
+0
+exit=1
+

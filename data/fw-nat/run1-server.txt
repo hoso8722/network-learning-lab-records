@@ -1,0 +1,137 @@
+# 実験 A〜C(1 回目): server の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 1〜6 章。1 回目の通し実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある(例: 「ewall-cmd --listrouter」)。実行されたコマンドは、「### $」の行で確認できる。崩れは直していない
+# 注: C-1(8080/tcp の許可と待ち受けの起動)を 3 回実行している。1 回目と 2 回目は、待ち受けを起動して、すぐ Ctrl-C で止めている
+# 注: 待ち受けのアクセスログの時刻(server の時計)は、他の VM の時刻と、そのまま比べられない
+### $ # T4 (server)   (server)
+exit=0
+### $ hostname -s   (server)
+server
+exit=0
+### $ command -v python3   (server)
+/usr/bin/python3
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (server)
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --get-default-zone   (server)
+public
+exit=0
+### $ sudo firewall-cmd --get-zone-of-interface=enp0s9   (server)
+no zone
+exit=2
+### $ # T4 (server)   (server)
+exit=2
+### $ echo "=== A-1 server から client へ ==="   (server)
+=== A-1 server から client へ ===
+exit=0
+### $ ping -c 3 -W 2 192.168.31.10   (server)
+PING 192.168.31.10 (192.168.31.10) 56(84) bytes of data.
+64 bytes from 192.168.31.10: icmp_seq=1 ttl=62 time=5.66 ms
+64 bytes from 192.168.31.10: icmp_seq=2 ttl=62 time=5.50 ms
+64 bytes from 192.168.31.10: icmp_seq=3 ttl=62 time=7.29 ms
+
+--- 192.168.31.10 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+rtt min/avg/max/mdev = 5.499/6.150/7.290/0.808 ms
+exit=0
+### $ # T4 (server): T3 の tcpdump が動いている間に   (server)
+exit=0
+### $ echo "=== A-4 server から client へ ==="   (server)
+=== A-4 server から client へ ===
+exit=0
+### $ ping -c 3 -W 2 192.168.31.10   (server)
+PING 192.168.31.10 (192.168.31.10) 56(84) bytes of data.
+From 192.168.32.1 icmp_seq=1 Packet filtered
+From 192.168.32.1 icmp_seq=2 Packet filtered
+From 192.168.32.1 icmp_seq=3 Packet filtered
+
+--- 192.168.31.10 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2000ms
+
+exit=1
+### $ # T4 (server)   (server)
+exit=1
+### $ hostname -s   (server)
+server
+sudo firewall-cmd --list-ports
+exit=0
+### $ sudo firewall-cmd --add-port=8080/tcp   (server)
+success
+exit=0
+### $ sudo firewall-cmd --list-ports   (server)
+8080/tcp
+exit=0
+### $ # T4 (server)   (server)
+exit=0
+### $ python3 -m http.server 8080 --bind 192.168.32.20   (server)
+Serving HTTP on 192.168.32.20 port 8080 (http://192.168.32.20:8080/) ...
+^C
+Keyboard interrupt received, exiting.
+exit=0
+### $ # T4 (server)   (server)
+exit=0
+### $ hostname -s   (server)
+server
+exit=0
+### $ ip route   (server)
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+### $ ip route get 192.168.30.1   (server)
+192.168.30.1 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 1000
+    cache
+exit=0
+### $ ip route get 192.168.31.10   (server)
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1000
+    cache
+exit=0
+### $ # T4 (server)   (server)
+exit=0
+### $ hostname -s   (server)
+server
+exit=0
+### $ sudo firewall-cmd --add-port=8080/tcp   (server)
+Warning: ALREADY_ENABLED: '8080:tcp' already in 'public'
+success
+exit=0
+### $ sudo firewall-cmd --list-ports   (server)
+8080/tcp
+exit=0
+### $ # T4 (server)   (server)
+exit=0
+### $ python3 -m http.server 8080 --bind 192.168.32.20   (server)
+Serving HTTP on 192.168.32.20 port 8080 (http://192.168.32.20:8080/) ...
+^C
+Keyboard interrupt received, exiting.
+exit=0
+### $ python3 -m http.server 8080 --bind 192.168.32.20   (server)
+# T4 (server)
+sudo firewall-cmd --add-port=8080/tcp
+hostname -s
+# T4 (server)
+exit=0
+### $ python3 -m http.server 8080 --bind 192.168.32.20   (server)
+Serving HTTP on 192.168.32.20 port 8080 (http://192.168.32.20:8080/) ...
+192.168.31.10 - - [13/Nov/2026 10:39:59] "GET / HTTP/1.1" 200 -
+192.168.31.10 - - [13/Nov/2026 10:42:20] "GET / HTTP/1.1" 200 -
+^C
+Keyboard interrupt received, exiting.
+exit=0
+### $ # T4 (server): 待ち受けを Ctrl-C で止めてから   (server)
+exit=0
+### $ hostname -s   (server)
+server
+exit=0
+### $ sudo firewall-cmd --remove-port=8080/tcp   (server)
+success
+exit=0
+### $ sudo firewall-cmd --list-ports   (server)
+exit=0
+### $ exit   (server)
+exit
+Connection to 127.0.0.1 closed.

@@ -1,0 +1,114 @@
+# HTTP 記事の確認の実験: server(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-16 JST)。labs/common/ai-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: http-test.sh の表のコマンドを手で打つ形で確かめ直した記録
+# 注: sudo は lab-sudo.sh on で有効化済み
+# 注: ok.cgi を作る行は、ssh の引用符の重ね方が原因で、printf の文字列の中の改行が、「\n」ではなく実際の改行として書かれた(cat の出力のとおり)。シェルとしては同じ意味で、200 が返った。http-test.sh の記述と、書き込まれる文字が完全に同じとは限らない
+### $ rpm -q httpd; sudo dnf install -y httpd 2>&1 | tail -4; rpm -q httpd; httpd -v   (server)
+package httpd is not installed
+  mod_http2-2.0.26-6.el9_8.2.alma.1.x86_64                                      
+  mod_lua-2.4.62-13.el9_8.9.x86_64                                              
+
+Complete!
+httpd-2.4.62-13.el9_8.9.x86_64
+Server version: Apache/2.4.62 (AlmaLinux)
+Server built:   Oct 14 2026 00:00:00
+exit=0
+
+### $ sudo sh -c 'echo "index: ok" > /var/www/html/index.html'; sudo sh -c 'echo "perm: secret" > /var/www/html/perm.html && chown root:root /var/www/html/perm.html && chmod 0600 /var/www/html/perm.html'; echo 'selinux: mislabeled' > ~/selinux.html; chmod 0644 ~/selinux.html; sudo mv ~/selinux.html /var/www/html/selinux.html; sudo chmod 0644 /var/www/html/selinux.html   (server)
+exit=0
+
+### $ sudo sh -c 'printf "Redirect 301 /old /index.html\n" > /etc/httpd/conf.d/lab-http.conf'; cat /etc/httpd/conf.d/lab-http.conf   (server)
+Redirect 301 /old /index.html
+exit=0
+
+### $ sudo sh -c 'printf "#!/bin/sh\nprintf \"Content-Type: text/plain\\n\\n\"\necho cgi-ok\n" > /var/www/cgi-bin/ok.cgi && chmod 0755 /var/www/cgi-bin/ok.cgi'; sudo sh -c 'printf "#!/bin/sh\necho no-header-here\n" > /var/www/cgi-bin/bad.cgi && chmod 0755 /var/www/cgi-bin/bad.cgi'; cat /var/www/cgi-bin/ok.cgi; echo ---; cat /var/www/cgi-bin/bad.cgi   (server)
+#!/bin/sh
+printf "Content-Type: text/plain
+
+"
+echo cgi-ok
+---
+#!/bin/sh
+echo no-header-here
+exit=0
+
+### $ sudo restorecon -v /var/www/cgi-bin/ok.cgi /var/www/cgi-bin/bad.cgi /var/www/html/index.html /var/www/html/perm.html; sudo httpd -t; ls -lZ /var/www/html /var/www/cgi-bin   (server)
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using fe80::a00:27ff:fec6:ae35%enp0s3. Set the 'ServerName' directive globally to suppress this message
+Syntax OK
+/var/www/cgi-bin:
+total 8
+-rwxr-xr-x. 1 root root unconfined_u:object_r:httpd_sys_script_exec_t:s0 30 Nov 16 04:29 bad.cgi
+-rwxr-xr-x. 1 root root unconfined_u:object_r:httpd_sys_script_exec_t:s0 58 Nov 16 04:29 ok.cgi
+
+/var/www/html:
+total 12
+-rw-r--r--. 1 root root unconfined_u:object_r:httpd_sys_content_t:s0 10 Nov 16 04:29 index.html
+-rw-------. 1 root root unconfined_u:object_r:httpd_sys_content_t:s0 13 Nov 16 04:29 perm.html
+-rw-r--r--. 1 user user unconfined_u:object_r:user_home_t:s0         20 Nov 16 04:29 selinux.html
+exit=0
+
+### $ sudo systemctl start httpd; systemctl is-active httpd; sudo ss -tlnp "sport = :80"; sudo firewall-cmd --add-service=http   (server)
+active
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                                                                                                     
+LISTEN 0      511                *:80              *:*    users:(("httpd",pid=19253,fd=4),("httpd",pid=19252,fd=4),("httpd",pid=19251,fd=4),("httpd",pid=19249,fd=4))
+success
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w "/ http_code=%{http_code}\n" http://192.168.32.20/   (client)
+/ http_code=200
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w "/nofile http_code=%{http_code}\n" http://192.168.32.20/nofile   (client)
+/nofile http_code=404
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w "/perm.html http_code=%{http_code}\n" http://192.168.32.20/perm.html   (client)
+/perm.html http_code=403
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w "/selinux.html http_code=%{http_code}\n" http://192.168.32.20/selinux.html   (client)
+/selinux.html http_code=403
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w "/old http_code=%{http_code}\n" http://192.168.32.20/old   (client)
+/old http_code=301
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w "/cgi-bin/ok.cgi http_code=%{http_code}\n" http://192.168.32.20/cgi-bin/ok.cgi   (client)
+/cgi-bin/ok.cgi http_code=200
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w "/cgi-bin/bad.cgi http_code=%{http_code}\n" http://192.168.32.20/cgi-bin/bad.cgi   (client)
+/cgi-bin/bad.cgi http_code=500
+exit=0
+
+### $ sudo restorecon -v /var/www/html/selinux.html   (server)
+Relabeled /var/www/html/selinux.html from unconfined_u:object_r:user_home_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+exit=0
+
+### $ curl -s --max-time 5 -o /dev/null -w 'selinux.html(restorecon後) http_code=%{http_code}\n' http://192.168.32.20/selinux.html   (client)
+selinux.html(restorecon後) http_code=200
+exit=0
+
+### $ sudo tail -n 4 /var/log/httpd/error_log | cut -c1-220   (server)
+[Mon Nov 16 04:29:46.099552 2026] [core:notice] [pid 19249:tid 19249] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'
+[Mon Nov 16 04:29:50.025205 2026] [core:error] [pid 19253:tid 19371] (13)Permission denied: [client 192.168.31.10:33278] AH00132: file permissions deny server access: /var/www/html/perm.html
+[Mon Nov 16 04:29:50.956875 2026] [core:error] [pid 19253:tid 19373] (13)Permission denied: [client 192.168.31.10:33288] AH00132: file permissions deny server access: /var/www/html/selinux.html
+[Mon Nov 16 04:29:53.846750 2026] [cgid:error] [pid 19252:tid 19342] [client 192.168.31.10:33314] malformed header from script 'bad.cgi': Bad header: no-header-here
+exit=0
+
+### $ sudo systemctl stop httpd; sudo rm -f /var/www/html/index.html /var/www/html/perm.html /var/www/html/selinux.html /var/www/cgi-bin/ok.cgi /var/www/cgi-bin/bad.cgi /etc/httpd/conf.d/lab-http.conf; sudo firewall-cmd --reload; systemctl is-active httpd; sudo dnf remove -y httpd 2>&1 | tail -3; rpm -q httpd   (server)
+success
+inactive
+  mod_lua-2.4.62-13.el9_8.9.x86_64                                              
+
+Complete!
+package httpd is not installed
+exit=1
+
+### $ ping -c 2 -W 2 192.168.32.20 | tail -2   (client)
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 4.086/5.334/6.583/1.248 ms
+exit=0
+

@@ -1,0 +1,373 @@
+# 切り分けの道具箱(1)(1 回目): client の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-15 JST。手順書 docs/OBS_STATE_RUNBOOK.md の 1〜7 章。1 回目の通し実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある。実行されたコマンドは「### $」の行で確認できる。崩れは直していない
+# 注: 障害 B の ping の冒頭(「PING …」と「From …」の行)は、貼り付けの崩れで読めない(「32.20」だけが残っている)
+# 注: 障害 B と障害 C の間に、^C(exit=130)の入力が 1 回ある
+### $ # T5 (client)   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+### $ rpm -q mtr traceroute iproute   (client)
+package mtr is not installed
+package traceroute is not installed
+iproute-6.17.0-2.el9.x86_64
+exit=2
+### $ # T5 (client)   (client)
+exit=2
+### $ sudo dnf install -y mtr traceroute   (client)
+Last metadata expiration check: 19:51:14 ago on Sat Nov 14 17:43:02 2026.
+Dependencies resolved.
+=======================================================================================================================
+ Package                      Architecture             Version                          Repository                Size
+=======================================================================================================================
+Installing:
+ mtr                         B x86_64                   2:0.94-6.el9_4                   baseos                    86 k
+ traceroute                  B x86_64                   3:2.1.1-1.el9                    baseos                    56 k
+
+Transaction Summary
+=======================================================================================================================
+Install  2 Packages
+
+Total download size: 142 k
+Installed size: 294 k
+Downloading Packages:
+                                             [===                                    ] ---  B/s |   0  B     --:-- ETA
+                                             [===                                    ] ---  B/s |   0  B     --:-- ETA
+(1/2): mtr-0.94-6.el9_4.x86_64.rpm        0% [                                       ] ---  B/s |   0  B     --:-- ETA
+(1/2): mtr-0.94-6.el9_4.x86_64.rpm                                                     763 kB/s |  86 kB     00:00
+(2/2): traceroute-2.1.1-1.el9.x86_64.rpm 89% [==================================-    ] 1.1 MB/s | 127 kB     00:00 ETA
+(2/2): traceroute-2.1.1-1.el9.x86_64.rpm                                               471 kB/s |  56 kB     00:00
+-----------------------------------------------------------------------------------------------------------------------
+Total                                                                                  178 kB/s | 142 kB     00:00
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+
+  Preparing        :  [=============================================                                             ] 1/1
+  Preparing        :                                                                                               1/1
+
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [                                                           ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [=================                                          ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [===================================                        ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [==========================================                 ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [===========================================                ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [============================================               ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [======================================================     ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64 [========================================================== ] 1/2
+  Installing       : traceroute-3:2.1.1-1.el9.x86_64                                                               1/2
+
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [                                                                 ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [===========                                                      ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [======================                                           ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [=========================                                        ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [====================================                             ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [=====================================                            ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [======================================                           ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [=======================================                          ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [========================================                         ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [===================================================              ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [=====================================================            ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [======================================================           ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [=======================================================          ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [=============================================================    ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [===============================================================  ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64 [================================================================ ] 2/2
+  Installing       : mtr-2:0.94-6.el9_4.x86_64                                                                     2/2
+
+  Running scriptlet: mtr-2:0.94-6.el9_4.x86_64                                                                     2/2
+
+  Verifying        : mtr-2:0.94-6.el9_4.x86_64                                                                     1/2
+
+  Verifying        : traceroute-3:2.1.1-1.el9.x86_64                                                               2/2
+
+Installed:
+  mtr-2:0.94-6.el9_4.x86_64                               traceroute-3:2.1.1-1.el9.x86_64
+
+Complete!
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ rpm -q mtr traceroute iproute   (client)
+mtr-0.94-6.el9_4.x86_64
+traceroute-2.1.1-1.el9.x86_64
+iproute-6.17.0-2.el9.x86_64
+exit=0
+### $ mtr --version   (client)
+mtr 0.94
+exit=0
+### $ mtr --help 2>&1 | head -40   (client)
+Usage:
+ mtr [options] hostname
+
+ -F, --filename FILE        read hostname(s) from a file
+ -4                         use IPv4 only
+ -6                         use IPv6 only
+ -u, --udp                  use UDP instead of ICMP echo
+ -T, --tcp                  use TCP instead of ICMP echo
+ -I, --interface NAME       use named network interface
+ -a, --address ADDRESS      bind the outgoing socket to ADDRESS
+ -f, --first-ttl NUMBER     set what TTL to start
+ -m, --max-ttl NUMBER       maximum number of hops
+ -U, --max-unknown NUMBER   maximum unknown host
+ -P, --port PORT            target port number for TCP, SCTP, or UDP
+ -L, --localport LOCALPORT  source port number for UDP
+ -s, --psize PACKETSIZE     set the packet size used for probing
+ -B, --bitpattern NUMBER    set bit pattern to use in payload
+ -i, --interval SECONDS     ICMP echo request interval
+ -G, --gracetime SECONDS    number of seconds to wait for responses
+ -Q, --tos NUMBER           type of service field in IP header
+ -e, --mpls                 display information from ICMP extensions
+ -Z, --timeout SECONDS      seconds to keep probe sockets open
+ -M, --mark MARK            mark each sent packet
+ -r, --report               output using report mode
+ -w, --report-wide          output wide report
+ -c, --report-cycles COUNT  set the number of pings sent
+ -j, --json                 output json
+ -x, --xml                  output xml
+ -C, --csv                  output comma separated values
+ -l, --raw                  output raw format
+ -p, --split                split output
+ -t, --curses               use curses terminal interface
+     --displaymode MODE     select initial display mode
+ -n, --no-dns               do not resolve host names
+ -b, --show-ips             show IP numbers and host names
+ -o, --order FIELDS         select output fields
+ -y, --ipinfo NUMBER        select IP information in output
+ -z, --aslookup             display AS number
+ -h, --help                 display this help and exit
+exit=0
+### $ ss -V   (client)
+ss utility, iproute2-6.17.0
+exit=0
+### $ ip -V   (client)
+ip utility, iproute2-6.17.0, libbpf 1.5.0
+exit=0
+### $ # T2 (router)、T3 (router2)、T4 (server)、T5 (client): それぞれで、状態の名前を入れる(基準のとき)   (client)
+exit=0
+### $ S=baseline   (client)
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: ICMP ==="   (client)
+=== baseline: ICMP ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=3.43 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=3.70 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=3.53 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2006ms
+rtt min/avg/max/mdev = 3.425/3.552/3.698/0.112 ms
+exit=0
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T13:40:23+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 192.168.31.1               0.0%     5    2.6   3.7   1.6  10.9   4.0
+  2.|-- ???                       100.0     5    0.0   0.0   0.0   0.0   0.0
+  3.|-- 192.168.32.20              0.0%     5    5.3   4.4   4.1   5.3   0.6
+exit=0
+### $ traceroute -n -w 1 -m 5 192.168.32.20   (client)
+traceroute to 192.168.32.20 (192.168.32.20), 5 hops max, 60 byte packets
+ 1  192.168.31.1  18.233 ms  16.881 ms  15.608 ms
+ 2  * * *
+ 3  192.168.32.20  3.538 ms !X  3.058 ms !X  6.236 ms !X
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: TCP ==="   (client)
+=== baseline: TCP ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null &   (client)
+[1] 2096
+exit=0
+### $ sleep 2   (client)
+[1]+  Done                    curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null
+exit=0
+### $ ss -tn state syn-sent   (client)
+Recv-Q            Send-Q                       Local Address:Port                         Peer Address:Port
+exit=0
+### $ ss -tn   (client)
+State         Recv-Q          Send-Q                   Local Address:Port                   Peer Address:Port
+ESTAB         0               0                            10.0.2.15:22                         10.0.2.2:46970
+exit=0
+### $ wait   (client)
+exit=0
+### $ cat ~/curl-$S.txt   (client)
+200
+exit=0
+### $ S=A   (client)
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: ICMP ==="   (client)
+=== A: ICMP ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+From 192.168.31.1 icmp_seq=1 Destination Net Unreachable
+From 192.168.31.1 icmp_seq=2 Destination Net Unreachable
+From 192.168.31.1 icmp_seq=3 Destination Net Unreachable
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2013ms
+
+exit=1
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T13:50:08+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- ???                       100.0     5    0.0   0.0   0.0   0.0   0.0
+  2.|-- ???                       100.0     5    0.0   0.0   0.0   0.0   0.0
+  3.|-- 192.168.31.1              80.0%     5    1.6   1.6   1.6   1.6   0.0
+exit=0
+### $ traceroute -n -w 1 -m 5 192.168.32.20   (client)
+traceroute to 192.168.32.20 (192.168.32.20), 5 hops max, 60 byte packets
+ 1  192.168.31.1  1.720 ms  2.066 ms  0.992 ms
+ 2  192.168.31.1  1.234 ms !X  1.601 ms !X *
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: TCP ==="   (client)
+=== A: TCP ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null &   (client)
+[1] 2110
+exit=0
+### $ sleep 2   (client)
+[1]+  Exit 7                  curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null
+exit=0
+### $ ss -tn state syn-sent   (client)
+Recv-Q            Send-Q                       Local Address:Port                         Peer Address:Port
+exit=0
+### $ ss -tn   (client)
+State         Recv-Q          Send-Q                   Local Address:Port                   Peer Address:Port
+ESTAB         0               0                            10.0.2.15:22                         10.0.2.2:46970
+exit=0
+### $ wait   (client)
+exit=0
+### $ cat ~/curl-$S.txt   (client)
+curl: (7) Failed to connect to 192.168.32.20 port 8080: No route to host
+000
+exit=0
+### $ S=B   (client)
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: ICMP ==="   (client)
+=== B: ICMP ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+32.20
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2032ms
+
+exit=1
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T13:54:04+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 192.168.31.1               0.0%     5    1.8   1.5   1.2   1.8   0.3
+  2.|-- ???                       100.0     5    0.0   0.0   0.0   0.0   0.0
+exit=0
+### $ traceroute -n -w 1 -m 5 192.168.32.20   (client)
+traceroute to 192.168.32.20 (192.168.32.20), 5 hops max, 60 byte packets
+ 1  192.168.31.1  1.507 ms  1.144 ms  0.969 ms
+ 2  * * *
+ 3  * * *
+ 4  * * *
+ 5  * * *
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: TCP ==="   (client)
+=== B: TCP ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null &   (client)
+[1] 2384
+exit=0
+### $ sleep 2   (client)
+ss -tn
+wait
+cat ~/curl-$S.txt
+exit=0
+### $ ss -tn state syn-sent   (client)
+Recv-Q            Send-Q                       Local Address:Port                         Peer Address:Port
+0                 1                            192.168.31.10:48306                       192.168.32.20:8080
+exit=0
+### $ ss -tn   (client)
+State            Recv-Q         Send-Q                 Local Address:Port                   Peer Address:Port
+SYN-SENT         0              1                      192.168.31.10:48306                 192.168.32.20:8080
+ESTAB            0              36                         10.0.2.15:22                         10.0.2.2:46970
+exit=0
+### $ wait   (client)
+[1]+  Exit 28                 curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null
+exit=0
+### $ cat ~/curl-$S.txt   (client)
+curl: (28) Connection timed out after 5012 milliseconds
+000
+exit=0
+### $ ^C   (client)
+exit=130
+### $ S=C   (client)
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: ICMP ==="   (client)
+=== C: ICMP ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2051ms
+
+exit=1
+### $ mtr -n -r -c 5 192.168.32.20   (client)
+Start: 2026-11-15T13:56:03+0900
+HOST: client                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 192.168.31.1               0.0%     5    1.4   1.7   1.4   2.3   0.4
+  2.|-- ???                       100.0     5    0.0   0.0   0.0   0.0   0.0
+exit=0
+### $ traceroute -n -w 1 -m 5 192.168.32.20   (client)
+traceroute to 192.168.32.20 (192.168.32.20), 5 hops max, 60 byte packets
+ 1  192.168.31.1  3.672 ms  3.428 ms  3.251 ms
+ 2  * * *
+ 3  * * *
+ 4  * * *
+ 5  * * *
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== $S: TCP ==="   (client)
+=== C: TCP ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null &   (client)
+[1] 2477
+exit=0
+### $ sleep 2   (client)
+exit=0
+### $ ss -tn state syn-sent   (client)
+Recv-Q              Send-Q                            Local Address:Port                               Peer Address:Port
+0                   1                                 192.168.31.10:48532                             192.168.32.20:8080
+exit=0
+### $ ss -tn   (client)
+State              Recv-Q           Send-Q                     Local Address:Port                        Peer Address:Port
+SYN-SENT           0                1                          192.168.31.10:48532                      192.168.32.20:8080
+ESTAB              0                0                              10.0.2.15:22                              10.0.2.2:46970
+exit=0
+### $ wait   (client)
+[1]+  Exit 28                 curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/ > ~/curl-$S.txt 2>&1 < /dev/null
+exit=0
+### $ cat ~/curl-$S.txt   (client)
+curl: (28) Connection timed out after 5002 milliseconds
+000
+exit=0
+### $ exit   (client)
+exit
+Connection to 127.0.0.1 closed.

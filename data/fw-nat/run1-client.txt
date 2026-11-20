@@ -1,0 +1,143 @@
+# 実験 A〜C(1 回目): client の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 1〜6 章。1 回目の通し実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある(例: 「ewall-cmd --listrouter」)。実行されたコマンドは、「### $」の行で確認できる。崩れは直していない
+# 注: C-2 を 2 回実行している(1 回目は、貼り付けの崩れで、curl の URL が途中から始まっている)
+# 注: B-1 の前に、router2 用の tcpdump のブロックを誤って client に貼った(tcpdump がなく、exit=127)
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== A-1 client から server へ ==="   (client)
+=== A-1 client から server へ ===
+exit=0
+### $ ping -c 3 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=7.03 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=7.77 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=5.06 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+rtt min/avg/max/mdev = 5.058/6.619/7.767/1.143 ms
+exit=0
+### $ # T5 (client): T3 の tcpdump が動いている間に   (client)
+exit=0
+### $ echo "=== A-3 client から server へ ==="   (client)
+=== A-3 client から server へ ===
+exit=0
+### $ ping -c 3 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=6.01 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=5.54 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=10.6 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+rtt min/avg/max/mdev = 5.538/7.377/10.587/2.277 ms
+exit=0
+### $ # T3 (router2): 先に貼る   (client)
+exit=0
+### $ date   (client)
+Fri Nov 13 10:11:16 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 6 icmp   (client)
+timeout: failed to run command ‘tcpdump’: No such file or directory
+exit=127
+### $ # T5 (client): T3 の tcpdump が動いている間に   (client)
+exit=127
+### $ echo "=== B-1 client から server へ(NAT なし) ==="   (client)
+=== B-1 client から server へ(NAT なし) ===
+exit=0
+### $ ping -c 3 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=5.58 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=6.24 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=5.70 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 1998ms
+rtt min/avg/max/mdev = 5.581/5.840/6.237/0.284 ms
+exit=0
+### $ # T5 (client): T3 の tcpdump が動いている間に   (client)
+exit=0
+### $ echo "=== B-3 client から server へ(NAT あり) ==="   (client)
+=== B-3 client から server へ(NAT あり) ===
+exit=0
+### $ ping -c 3 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2001ms
+
+exit=1
+### $ # T5 (client)   (client)
+//192.168.32.20:8080/
+echo "=== C-2 R1 宛(forward-port の前) ==="
+curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.31.1:8080/
+exit=1
+### $ echo "=== C-2 server へ直接 ==="   (client)
+=== C-2 server へ直接 ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+curl: (28) Connection timed out after 5137 milliseconds
+000
+exit=28
+### $ echo "=== C-2 R1 宛(forward-port の前) ==="   (client)
+=== C-2 R1 宛(forward-port の前) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.31.1:8080/   (client)
+curl: (7) Failed to connect to 192.168.31.1 port 8080: No route to host
+000
+exit=7
+### $ # T5 (client)   (client)
+exit=7
+### $ echo "=== C-2 server へ直接 ==="   (client)
+=== C-2 server へ直接 ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+curl: (28) Connection timed out after 5082 milliseconds
+000
+exit=28
+### $ echo "=== C-2 R1 宛(forward-port の前) ==="   (client)
+=== C-2 R1 宛(forward-port の前) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.31.1:8080/   (client)
+curl: (7) Failed to connect to 192.168.31.1 port 8080: No route to host
+000
+exit=7
+### $ # T5 (client): T3 の tcpdump が動いている間に   (client)
+exit=7
+### $ echo "=== C-2b server へ直接(マスカレードあり) ==="   (client)
+=== C-2b server へ直接(マスカレードあり) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+curl: (28) Connection timed out after 5003 milliseconds
+000
+exit=28
+### $ # T5 (client): T3 の tcpdump が動いている間に   (client)
+exit=28
+### $ echo "=== C-4 R1 宛(forward-port の後) ==="   (client)
+=== C-4 R1 宛(forward-port の後) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.31.1:8080/   (client)
+curl: (28) Connection timed out after 5015 milliseconds
+000
+exit=28
+### $ # T5 (client): T3 の tcpdump が動いている間に   (client)
+exit=28
+### $ echo "=== C-5 R1 宛(マスカレードなし) ==="   (client)
+=== C-5 R1 宛(マスカレードなし) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.31.1:8080/   (client)
+200
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== C-5b server へ直接(マスカレードなし) ==="   (client)
+=== C-5b server へ直接(マスカレードなし) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+200
+exit=0
+### $ exit   (client)
+exit
+Connection to 127.0.0.1 closed.

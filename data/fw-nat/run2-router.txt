@@ -1,0 +1,144 @@
+# 実験 D と A-4'(2 回目): router(R1)の端末
+# 注: 最初の date(11:46:59)は、同じ記録の以降の date(19 時台)と大きく違う。実験の直前に sync-all-auto.sh で VM の時計を合わせた(WSL の記録 run2-wsl.txt)ので、合わせる前の値と見られる
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 8.4。実験 D のやり直しと、A-4' の再実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある。実行されたコマンドは「### $」の行で確認できる。崩れは直していない
+### $ date   (router)
+Fri Nov 13 11:46:59 JST 2026
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+irewall-cmd --permanent --new-policy=lan-to-transit
+sudo firewall-cmd --permanent --policy=lan-to-transit --add-ingress-zone=internal
+sudo firewall-cmd --permanent --policy=lan-to-transit --add-egress-zone=external
+sudo firewall-cmd --permanent --policy=lan-to-transit --set-target=ACCEPT
+sudo firewall-cmd --reload
+sudo firewall-cmd --zone=internal --change-interface=enp0s8
+sudo firewall-cmd --zone=external --change-interface=enp0s9
+sudo firewall-cmd --zone=external --query-masquerade
+sudo firewall-cmd --zone=internal --add-forward-port=port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --zone=internal --listrouter
+exit=0
+### $ sudo firewall-cmd --permanent --new-policy=lan-to-transit   (router)
+-forward-ports
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lan-to-transit --add-ingress-zone=internal   (router)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lan-to-transit --add-egress-zone=external   (router)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lan-to-transit --set-target=ACCEPT   (router)
+success
+exit=0
+### $ sudo firewall-cmd --reload   (router)
+success
+exit=0
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8   (router)
+success
+exit=0
+### $ sudo firewall-cmd --zone=external --change-interface=enp0s9   (router)
+success
+exit=0
+### $ sudo firewall-cmd --zone=external --query-masquerade   (router)
+yes
+exit=0
+### $ sudo firewall-cmd --zone=internal --add-forward-port=port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20   (router)
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+external
+  interfaces: enp0s9
+internal
+  interfaces: enp0s8
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --zone=internal --list-forward-ports   (router)
+port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20
+exit=0
+### $ # T2 (router): ping の直後に   (router)
+exit=0
+### $ date   (router)
+Fri Nov 13 19:09:37 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router)
+ipv4     2 icmp     1 17 src=192.168.31.10 dst=192.168.32.20 type=8 code=0 id=38 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 type=0 code=0 id=38 mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T2 (router): ping の直後に   (router)
+exit=0
+### $ date   (router)
+Fri Nov 13 19:10:37 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router)
+ipv4     2 icmp     1 24 src=192.168.31.10 dst=192.168.32.20 type=8 code=0 id=39 src=192.168.32.20 dst=192.168.30.1 type=0 code=0 id=39 mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T2 (router): curl の直後に   (router)
+exit=0
+### $ date   (router)
+Fri Nov 13 19:11:39 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router)
+ipv4     2 tcp      6 113 TIME_WAIT src=192.168.31.10 dst=192.168.32.20 sport=33634 dport=8080 src=192.168.32.20 dst=192.168.30.1 sport=8080 dport=33634 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T2 (router): curl の直後に   (router)
+exit=0
+### $ date   (router)
+Fri Nov 13 19:12:12 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router)
+ipv4     2 tcp      6 81 TIME_WAIT src=192.168.31.10 dst=192.168.32.20 sport=33634 dport=8080 src=192.168.32.20 dst=192.168.30.1 sport=8080 dport=33634 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+ipv4     2 tcp      6 114 TIME_WAIT src=192.168.31.10 dst=192.168.31.1 sport=53282 dport=8080 src=192.168.32.20 dst=192.168.30.1 sport=8080 dport=53282 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+wall-cmd --permanent --delete-policy=lan-to-transit
+sudo firewall-cmd --reload
+sudo firewall-cmdrouter
+exit=0
+### $ sudo firewall-cmd --zone=internal --remove-forward-port=port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20   (router)
+ --list-all-policies
+sudo firewall-cmd --get-active-zones
+success
+exit=0
+### $ sudo firewall-cmd --permanent --delete-policy=lan-to-transit   (router)
+success
+exit=0
+### $ sudo firewall-cmd --reload   (router)
+success
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+public
+  interfaces: enp0s3
+exit=0
+### $ exit   (router)
+exit
+Connection to 127.0.0.1 closed.

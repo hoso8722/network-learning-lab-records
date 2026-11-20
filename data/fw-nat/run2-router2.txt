@@ -1,0 +1,260 @@
+# 実験 D と A-4'(2 回目): router2(R2)の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 8.4。実験 D のやり直しと、A-4' の再実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある。実行されたコマンドは「### $」の行で確認できる。崩れは直していない
+# 注: A-4' の conntrack は、最後のパケットの約 6 秒後に確認した(行なし)
+### $ # T3 (router2)   (router2)
+exit=0
+### $ hostname -s   (router2)
+firewall-cmd --permanent --new-policy=lana-to-lanb
+sudo firewall-cmd --permanent --policy=lana-to-lanb --add-ingress-zone=internal
+sudo firewall-cmd --permanent --policy=lana-to-lanb --add-egress-zone=dmz
+sudo firewall-cmd --permanent --policy=lana-to-lanb --set-target=ACCEPT
+sudo firewall-cmd --reload
+sudo firewall-cmd --zone=internal --change-interface=enp0s8
+sudo firewall-cmd --zone=dmz --change-interface=enp0s9
+sudo firewall-cmd --get-active-zones
+router2
+exit=0
+### $ sudo firewall-cmd --permanent --new-policy=lana-to-lanb   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lana-to-lanb --add-ingress-zone=internal   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lana-to-lanb --add-egress-zone=dmz   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lana-to-lanb --set-target=ACCEPT   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --reload   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --zone=dmz --change-interface=enp0s9   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+dmz
+  interfaces: enp0s9
+internal
+  interfaces: enp0s8
+public
+  interfaces: enp0s3
+exit=0
+### $ # T3 (router2): 先に貼る(バックグラウンドで動く)   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 19:06:32 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni any -c 12 icmp > ~/cap-A4b.txt 2>&1 < /dev/null &   (router2)
+[1] 16298
+exit=0
+### $ sleep 2   (router2)
+exit=0
+### $ # T3 (router2): ping の直後に   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 19:06:50 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router2)
+exit=1
+### $ wait   (router2)
+[1]+  Exit 124                sudo timeout 40 tcpdump -ni any -c 12 icmp > ~/cap-A4b.txt 2>&1 < /dev/null
+exit=0
+### $ cat ~/cap-A4b.txt   (router2)
+tcpdump: data link type LINUX_SLL2
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+19:06:42.057589 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo request, id 9, seq 1, length 64
+19:06:42.057894 enp0s9 Out IP 192.168.32.1 > 192.168.32.20: ICMP host 192.168.31.10 unreachable - admin prohibited filter, length 92
+19:06:43.060210 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo request, id 9, seq 2, length 64
+19:06:43.060310 enp0s9 Out IP 192.168.32.1 > 192.168.32.20: ICMP host 192.168.31.10 unreachable - admin prohibited filter, length 92
+19:06:44.062737 enp0s9 In  IP 192.168.32.20 > 192.168.31.10: ICMP echo request, id 9, seq 3, length 64
+19:06:44.062826 enp0s9 Out IP 192.168.32.1 > 192.168.32.20: ICMP host 192.168.31.10 unreachable - admin prohibited filter, length 92
+
+6 packets captured
+9 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+### $ hostname -s   (router2)
+firewall-cmd --permanent --delete-policy=lana-to-lanb
+sudo firewall-cmd --reload
+sudo firewall-crouter2
+exit=0
+### $ sudo firewall-cmd --permanent --delete-policy=lana-to-lanb   (router2)
+md --list-all-policies
+sudo firewall-cmd --get-active-zones
+success
+exit=0
+### $ sudo firewall-cmd --reload   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router2)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+public
+  interfaces: enp0s3
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ # T3 (router2): 先に貼る   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 19:09:13 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 6 icmp > ~/cap-D2.txt 2>&1 < /dev/null &   (router2)
+[1] 16549
+exit=0
+### $ sleep 2   (router2)
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+### $ wait   (router2)
+.txt
+[1]+  Exit 124                sudo timeout 40 tcpdump -ni enp0s8 -c 6 icmp > ~/cap-D2.txt 2>&1 < /dev/null
+exit=0
+### $ cat ~/cap-D2.txt   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+19:09:22.974709 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 38, seq 1, length 64
+19:09:24.021568 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 38, seq 2, length 64
+19:09:25.044787 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 38, seq 3, length 64
+
+3 packets captured
+3 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2): 先に貼る   (router2)
+exit=0
+imeout 40 tcpdump -ni enp0s8 -c 6 icmp > ~/cap-D4.txt 2>&1 < /dev/null &
+sleep 2
+### $ date   (router2)
+Fri Nov 13 19:10:20 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 6 icmp > ~/cap-D4.txt 2>&1 < /dev/null &   (router2)
+[1] 16556
+exit=0
+### $ sleep 2   (router2)
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+### $ wait   (router2)
+exit=0
+### $ cat ~/cap-D4.txt   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+19:10:29.290005 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 39, seq 1, length 64
+19:10:29.292021 IP 192.168.32.20 > 192.168.30.1: ICMP echo reply, id 39, seq 1, length 64
+19:10:30.293371 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 39, seq 2, length 64
+19:10:30.296689 IP 192.168.32.20 > 192.168.30.1: ICMP echo reply, id 39, seq 2, length 64
+19:10:31.297052 IP 192.168.30.1 > 192.168.32.20: ICMP echo request, id 39, seq 3, length 64
+19:10:31.298729 IP 192.168.32.20 > 192.168.30.1: ICMP echo reply, id 39, seq 3, length 64
+6 packets captured
+6 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2): 先に貼る   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 19:11:23 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 8 tcp port 8080 > ~/cap-D5.txt 2>&1 < /dev/null &   (router2)
+[1] 16563
+exit=0
+### $ sleep 2   (router2)
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+[1]+  Done                    sudo timeout 40 tcpdump -ni enp0s8 -c 8 tcp port 8080 > ~/cap-D5.txt 2>&1 < /dev/null
+### $ wait   (router2)
+exit=0
+### $ cat ~/cap-D5.txt   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+19:11:33.427693 IP 192.168.30.1.33634 > 192.168.32.20.webcache: Flags [S], seq 2029390138, win 64240, options [mss 1460,sackOK,TS val 883079582 ecr 0,nop,wscale 6], length 0
+19:11:33.429760 IP 192.168.32.20.webcache > 192.168.30.1.33634: Flags [S.], seq 787471245, ack 2029390139, win 65160, options [mss 1460,sackOK,TS val 2091167197 ecr 883079582,nop,wscale 6], length 0
+19:11:33.433596 IP 192.168.30.1.33634 > 192.168.32.20.webcache: Flags [.], ack 1, win 1004, options [nop,nop,TS val 883079588 ecr 2091167197], length 0
+19:11:33.462106 IP 192.168.30.1.33634 > 192.168.32.20.webcache: Flags [P.], seq 1:83, ack 1, win 1004, options [nop,nop,TS val 883079591 ecr 2091167197], length 82: HTTP: GET / HTTP/1.1
+19:11:33.463709 IP 192.168.32.20.webcache > 192.168.30.1.33634: Flags [.], ack 83, win 1017, options [nop,nop,TS val 2091167231 ecr 883079591], length 0
+19:11:33.468698 IP 192.168.32.20.webcache > 192.168.30.1.33634: Flags [P.], seq 1:157, ack 83, win 1017, options [nop,nop,TS val 2091167236 ecr 883079591], length 156: HTTP: HTTP/1.0 200 OK
+19:11:33.469563 IP 192.168.32.20.webcache > 192.168.30.1.33634: Flags [P.], seq 157:3053, ack 83, win 1017, options [nop,nop,TS val 2091167237 ecr 883079591], length 2896: HTTP
+19:11:33.470622 IP 192.168.32.20.webcache > 192.168.30.1.33634: Flags [.], seq 3053:4501, ack 83, win 1017, options [nop,nop,TS val 2091167237 ecr 883079591], length 1448: HTTP
+8 packets captured
+14 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ # T3 (router2): 先に貼る   (router2)
+exit=0
+### $ date   (router2)
+Fri Nov 13 19:11:59 JST 2026
+exit=0
+### $ sudo timeout 40 tcpdump -ni enp0s8 -c 8 tcp port 8080 > ~/cap-D6.txt 2>&1 < /dev/null &   (router2)
+[1] 16570
+exit=0
+### $ sleep 2   (router2)
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+[1]+  Done                    sudo timeout 40 tcpdump -ni enp0s8 -c 8 tcp port 8080 > ~/cap-D6.txt 2>&1 < /dev/null
+### $ wait   (router2)
+exit=0
+### $ cat ~/cap-D6.txt   (router2)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+19:12:06.382989 IP 192.168.30.1.53282 > 192.168.32.20.webcache: Flags [S], seq 2947357017, win 64240, options [mss 1460,sackOK,TS val 465184596 ecr 0,nop,wscale 6], length 0
+19:12:06.385096 IP 192.168.32.20.webcache > 192.168.30.1.53282: Flags [S.], seq 1809351735, ack 2947357018, win 65160, options [mss 1460,sackOK,TS val 2091200152 ecr 465184596,nop,wscale 6], length 0
+19:12:06.388017 IP 192.168.30.1.53282 > 192.168.32.20.webcache: Flags [.], ack 1, win 1004, options [nop,nop,TS val 465184600 ecr 2091200152], length 0
+19:12:06.388017 IP 192.168.30.1.53282 > 192.168.32.20.webcache: Flags [P.], seq 1:82, ack 1, win 1004, options [nop,nop,TS val 465184601 ecr 2091200152], length 81: HTTP: GET / HTTP/1.1
+19:12:06.389198 IP 192.168.32.20.webcache > 192.168.30.1.53282: Flags [.], ack 82, win 1017, options [nop,nop,TS val 2091200157 ecr 465184601], length 0
+19:12:06.393696 IP 192.168.32.20.webcache > 192.168.30.1.53282: Flags [P.], seq 1:157, ack 82, win 1017, options [nop,nop,TS val 2091200162 ecr 465184601], length 156: HTTP: HTTP/1.0 200 OK
+19:12:06.395458 IP 192.168.32.20.webcache > 192.168.30.1.53282: Flags [P.], seq 157:4501, ack 82, win 1017, options [nop,nop,TS val 2091200162 ecr 465184601], length 4344: HTTP
+19:12:06.395566 IP 192.168.32.20.webcache > 192.168.30.1.53282: Flags [FP.], seq 4501:5153, ack 82, win 1017, options [nop,nop,TS val 2091200163 ecr 465184601], length 652: HTTP
+8 packets captured
+12 packets received by filter
+0 packets dropped by kernel
+exit=0
+### $ exit   (router2)
+exit
+Connection to 127.0.0.1 closed.

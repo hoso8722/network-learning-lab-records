@@ -1,0 +1,159 @@
+# DNS の確認の実験: server
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-16 JST)。labs/common/ai-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 確認の実験(手で打つ形)。対象: dns-test.sh の install、conf、record、web、start、fw、resolve、teardown(記事 dns-dnsmasq-01 の付録 A)。実験の本体の記録(exp9)は、別にある
+# 注: 昇格: lab-sudo.sh on の状態で実行した(sudo はパスワードなし)
+### $ sudo dnf install -y dnsmasq httpd 2>&1 | tail -6   (server)
+  httpd-tools-2.4.62-13.el9_8.9.x86_64                                          
+  mailcap-2.1.49-5.el9.noarch                                                   
+  mod_http2-2.0.26-6.el9_8.2.alma.1.x86_64                                      
+  mod_lua-2.4.62-13.el9_8.9.x86_64                                              
+
+Complete!
+exit=0
+
+### $ rpm -q dnsmasq httpd; dnsmasq --version | head -1   (server)
+dnsmasq-2.85-18.el9_8.2.x86_64
+httpd-2.4.62-13.el9_8.9.x86_64
+Dnsmasq version 2.85  Copyright (c) 2000-2021 Simon Kelley
+exit=0
+
+### $ sudo sh -c "printf 'listen-address=192.168.32.20\nbind-interfaces\nno-resolv\ndomain=lab.example\nlocal=/lab.example/\nno-hosts\naddn-hosts=/etc/lab-hosts\ncname=web.lab.example,www.lab.example\nlog-queries\nlog-facility=-\n' > /etc/dnsmasq.d/lab-dns.conf"   (server)
+exit=0
+
+### $ sudo sh -c "printf '192.168.32.20 www.lab.example\n192.168.31.10 client.lab.example\n' > /etc/lab-hosts"   (server)
+exit=0
+
+### $ sudo restorecon -v /etc/dnsmasq.d/lab-dns.conf /etc/lab-hosts   (server)
+exit=0
+
+### $ cat /etc/dnsmasq.d/lab-dns.conf   (server)
+listen-address=192.168.32.20
+bind-interfaces
+no-resolv
+domain=lab.example
+local=/lab.example/
+no-hosts
+addn-hosts=/etc/lab-hosts
+cname=web.lab.example,www.lab.example
+log-queries
+log-facility=-
+exit=0
+
+### $ sudo dnsmasq --test   (server)
+dnsmasq: syntax check OK.
+exit=0
+
+### $ sudo systemctl start dnsmasq   (server)
+exit=0
+
+### $ systemctl is-active dnsmasq   (server)
+active
+exit=0
+
+### $ sudo ss -lunp 'sport = :53'   (server)
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                            
+UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:(("dnsmasq",pid=13518,fd=6))
+UNCONN 0      0      192.168.32.20:53        0.0.0.0:*    users:(("dnsmasq",pid=13518,fd=4))
+UNCONN 0      0              [::1]:53           [::]:*    users:(("dnsmasq",pid=13518,fd=8))
+exit=0
+
+### $ sudo ss -ltnp 'sport = :53'   (server)
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                            
+LISTEN 0      32     192.168.32.20:53        0.0.0.0:*    users:(("dnsmasq",pid=13518,fd=5))
+LISTEN 0      32         127.0.0.1:53        0.0.0.0:*    users:(("dnsmasq",pid=13518,fd=7))
+LISTEN 0      32             [::1]:53           [::]:*    users:(("dnsmasq",pid=13518,fd=9))
+exit=0
+
+### $ sudo firewall-cmd --add-service=dns   (server)
+success
+exit=0
+
+### $ sudo sh -c 'echo "dns-test: index ok" > /var/www/html/index.html'   (server)
+exit=0
+
+### $ sudo restorecon -v /var/www/html/index.html   (server)
+exit=0
+
+### $ sudo systemctl start httpd   (server)
+exit=0
+
+### $ sudo firewall-cmd --add-service=http   (server)
+success
+exit=0
+
+### $ systemctl is-active httpd   (server)
+active
+exit=0
+
+### $ printf '192.168.32.21 www.lab.example\n192.168.31.10 client.lab.example\n' | sudo tee /etc/lab-hosts >/dev/null   (server)
+exit=0
+
+### $ sudo systemctl kill -s HUP dnsmasq   (server)
+exit=0
+
+### $ cat /etc/lab-hosts   (server)
+192.168.32.21 www.lab.example
+192.168.31.10 client.lab.example
+exit=0
+
+### $ printf '192.168.31.10 client.lab.example\n' | sudo tee /etc/lab-hosts >/dev/null   (server)
+exit=0
+
+### $ sudo systemctl kill -s HUP dnsmasq   (server)
+exit=0
+
+### $ cat /etc/lab-hosts   (server)
+192.168.31.10 client.lab.example
+exit=0
+
+### $ printf '192.168.32.20 www.lab.example\n192.168.31.10 client.lab.example\n' | sudo tee /etc/lab-hosts >/dev/null   (server)
+exit=0
+
+### $ sudo systemctl kill -s HUP dnsmasq   (server)
+exit=0
+
+### $ cat /etc/lab-hosts   (server)
+192.168.32.20 www.lab.example
+192.168.31.10 client.lab.example
+exit=0
+
+### $ sudo systemctl stop dnsmasq   (server)
+exit=0
+
+### $ sudo systemctl stop httpd   (server)
+exit=0
+
+### $ sudo rm -f /etc/dnsmasq.d/lab-dns.conf /etc/lab-hosts /var/www/html/index.html   (server)
+exit=0
+
+### $ sudo firewall-cmd --reload   (server)
+success
+exit=0
+
+### $ systemctl is-active dnsmasq   (server)
+inactive
+exit=3
+
+### $ sudo dnf remove -y dnsmasq httpd 2>&1 | tail -3   (server)
+  mod_lua-2.4.62-13.el9_8.9.x86_64                                              
+
+Complete!
+exit=0
+
+### $ rpm -q dnsmasq httpd   (server)
+package dnsmasq is not installed
+package httpd is not installed
+exit=2
+
+### $ sudo firewall-cmd --list-all | head -8   (server)
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 
+  protocols: 
+exit=0
+

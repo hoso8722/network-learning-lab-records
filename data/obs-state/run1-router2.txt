@@ -1,0 +1,693 @@
+# 切り分けの道具箱(1)(1 回目): router2(R2)の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-15 JST。手順書 docs/OBS_STATE_RUNBOOK.md の 1〜7 章。1 回目の通し実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある。実行されたコマンドは「### $」の行で確認できる。崩れは直していない
+# 注: 障害 B の投入(enp0s9 を dmz に移す)と復旧が含まれる
+# 注: nstat と conntrack -L には、SSH の通信が混ざる
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=0
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ rpm -q iproute conntrack-tools   (router2)
+iproute-6.17.0-2.el9.x86_64
+package conntrack-tools is not installed
+exit=1
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=1
+### $ sudo dnf install -y conntrack-tools   (router2)
+Last metadata expiration check: 0:07:10 ago on Sun Nov 15 13:27:16 2026.
+Dependencies resolved.
+=======================================================================================================================
+ Package                              Architecture         Version                       Repository               Size
+=======================================================================================================================
+Installing:
+ conntrack-tools                     B x86_64               1.4.7-4.el9_5                 appstream               222 k
+Installing dependencies:
+ libnetfilter_cthelper               B x86_64               1.0.0-22.el9                  appstream                23 k
+ libnetfilter_cttimeout              B x86_64               1.0.0-19.el9                  appstream                22 k
+ libnetfilter_queue                  B x86_64               1.0.5-1.el9                   appstream                28 k
+
+Transaction Summary
+=======================================================================================================================
+Install  4 Packages
+
+Total download size: 295 k
+Installed size: 831 k
+Downloading Packages:
+                                             [===                                    ] ---  B/s |   0  B     --:-- ETA
+                                             [===                                    ] ---  B/s |   0  B     --:-- ETA
+(1/4): conntrack-tools-1.4.7-4.el9_5.x86  0% [                                       ] ---  B/s |   0  B     --:-- ETA
+(1/4): libnetfilter_cttimeout-1.0.0-19.el9.x86_64.rpm                                  269 kB/s |  22 kB     00:00
+(2-3/4): libnetfilter_cthelper-1.0.0-22. 17% [======-                                ] 612 kB/s |  52 kB     00:00 ETA
+(2/4): libnetfilter_cthelper-1.0.0-22.el9.x86_64.rpm                                   228 kB/s |  23 kB     00:00
+(3-4/4): libnetfilter_queue-1.0.5-1.el9. 25% [=========-                             ] 614 kB/s |  75 kB     00:00 ETA
+(3/4): libnetfilter_queue-1.0.5-1.el9.x86_64.rpm                                       556 kB/s |  28 kB     00:00
+(4/4): conntrack-tools-1.4.7-4.el9_5.x86 94% [====================================-  ] 651 kB/s | 280 kB     00:00 ETA
+(4/4): conntrack-tools-1.4.7-4.el9_5.x86_64.rpm                                        1.5 MB/s | 222 kB     00:00
+-----------------------------------------------------------------------------------------------------------------------
+Total                                                                                  362 kB/s | 295 kB     00:00
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+
+  Preparing        :  [======================                                                                    ] 1/1
+  Preparing        :  [=============================================                                             ] 1/1
+  Preparing        :  [===================================================================                       ] 1/1
+  Preparing        :                                                                                               1/1
+
+  Installing       : libnetfilter_queue-1.0.5-1.el9.x86_64 [                                                     ] 1/4
+  Installing       : libnetfilter_queue-1.0.5-1.el9.x86_64 [===============================                      ] 1/4
+  Installing       : libnetfilter_queue-1.0.5-1.el9.x86_64 [==================================                   ] 1/4
+  Installing       : libnetfilter_queue-1.0.5-1.el9.x86_64 [===================================                  ] 1/4
+  Installing       : libnetfilter_queue-1.0.5-1.el9.x86_64 [==================================================== ] 1/4
+  Installing       : libnetfilter_queue-1.0.5-1.el9.x86_64                                                         1/4
+
+  Installing       : libnetfilter_cttimeout-1.0.0-19.el9.x86_64 [                                                ] 2/4
+  Installing       : libnetfilter_cttimeout-1.0.0-19.el9.x86_64 [=========================                       ] 2/4
+  Installing       : libnetfilter_cttimeout-1.0.0-19.el9.x86_64 [=============================================   ] 2/4
+  Installing       : libnetfilter_cttimeout-1.0.0-19.el9.x86_64 [=============================================== ] 2/4
+  Installing       : libnetfilter_cttimeout-1.0.0-19.el9.x86_64                                                    2/4
+
+  Installing       : libnetfilter_cthelper-1.0.0-22.el9.x86_64 [                                                 ] 3/4
+  Installing       : libnetfilter_cthelper-1.0.0-22.el9.x86_64 [==========================                       ] 3/4
+  Installing       : libnetfilter_cthelper-1.0.0-22.el9.x86_64 [==============================================   ] 3/4
+  Installing       : libnetfilter_cthelper-1.0.0-22.el9.x86_64 [================================================ ] 3/4
+  Installing       : libnetfilter_cthelper-1.0.0-22.el9.x86_64                                                     3/4
+
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [                                                      ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=                                                     ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [==                                                    ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [===                                                   ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [====                                                  ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=====                                                 ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=======                                               ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [========                                              ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=========                                             ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [==========                                            ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [===========                                           ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=============                                         ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [===============                                       ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [==================                                    ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [====================                                  ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=====================                                 ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=======================                               ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=========================                             ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [============================                          ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [==============================                        ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [================================                      ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [===================================                   ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=====================================                 ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=======================================               ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [==========================================            ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [============================================          ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=============================================         ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [==============================================        ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [===============================================       ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [================================================      ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [=================================================     ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [==================================================    ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [===================================================   ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [====================================================  ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64 [===================================================== ] 4/4
+  Installing       : conntrack-tools-1.4.7-4.el9_5.x86_64                                                          4/4
+
+  Running scriptlet: conntrack-tools-1.4.7-4.el9_5.x86_64                                                          4/4
+
+  Verifying        : conntrack-tools-1.4.7-4.el9_5.x86_64                                                          1/4
+
+  Verifying        : libnetfilter_cthelper-1.0.0-22.el9.x86_64                                                     2/4
+
+  Verifying        : libnetfilter_cttimeout-1.0.0-19.el9.x86_64                                                    3/4
+
+  Verifying        : libnetfilter_queue-1.0.5-1.el9.x86_64                                                         4/4
+
+Installed:
+  conntrack-tools-1.4.7-4.el9_5.x86_64                       libnetfilter_cthelper-1.0.0-22.el9.x86_64
+  libnetfilter_cttimeout-1.0.0-19.el9.x86_64                 libnetfilter_queue-1.0.5-1.el9.x86_64
+
+Complete!
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=0
+### $ rpm -q conntrack-tools iproute   (router2)
+d -30
+ip -s link show dev enp0s8
+conntrack-tools-1.4.7-4.el9_5.x86_64
+iproute-6.17.0-2.el9.x86_64
+exit=0
+### $ nstat -V   (router2)
+nstat utility, iproute2-6.17.0
+exit=0
+### $ conntrack -V   (router2)
+conntrack v1.4.7 (conntrack-tools)
+exit=0
+### $ conntrack -h 2>&1 | head -30   (router2)
+Command line interface for the connection tracking system. Version 1.4.7
+Usage: conntrack [commands] [options]
+
+Commands:
+  -L [table] [options]		List conntrack or expectation table
+  -G [table] parameters		Get conntrack or expectation
+  -D [table] parameters		Delete conntrack or expectation
+  -I [table] parameters		Create a conntrack or expectation
+  -U [table] parameters		Update a conntrack
+  -E [table] [options]		Show events
+  -F [table]			Flush table
+  -C [table]			Show counter
+  -S				Show statistics
+
+Tables: conntrack, expect, dying, unconfirmed
+
+Conntrack parameters and options:
+  -n, --src-nat ip			source NAT ip
+  -g, --dst-nat ip			destination NAT ip
+  -j, --any-nat ip			source or destination NAT ip
+  -m, --mark mark			Set mark
+  -c, --secmark secmark			Set selinux secmark
+  -e, --event-mask eventmask		Event mask, eg. NEW,DESTROY
+  -z, --zero 				Zero counters while listing
+  -o, --output type[,...]		Output format, eg. xml
+  -l, --label label[,...]		conntrack labels
+
+Expectation parameters and options:
+  --tuple-src ip	Source address in expect tuple
+  --tuple-dst ip	Destination address in expect tuple
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        659702    2034      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        942098    5670      0       0       0       0
+exit=0
+### $ # T2 (router)、T3 (router2)、T4 (server)、T5 (client): それぞれで、状態の名前を入れる(基準のとき)   (router2)
+exit=0
+### $ S=baseline   (router2)
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=0
+### $ echo "=== $S: 通信の前 ==="   (router2)
+=== baseline: 通信の前 ===
+exit=0
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ nstat -n   (router2)
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        659702    2034      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        942098    5670      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        659642    2033      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        942038    5669      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 102
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る(3.2 の直後に)   (router2)
+exit=0
+### $ echo "=== $S: 通信の後 ==="   (router2)
+=== baseline: 通信の後 ===
+exit=0
+### $ date   (router2)
+Sun Nov 15 13:46:19 JST 2026
+exit=0
+### $ nstat   (router2)
+#kernel
+IpInReceives                    92                 0.0
+IpInHdrErrors                   8                  0.0
+IpForwDatagrams                 45                 0.0
+IpInDelivers                    32                 0.0
+IpOutRequests                   48                 0.0
+IpOutTransmits                  93                 0.0
+IcmpOutMsgs                     8                  0.0
+IcmpOutTimeExcds                8                  0.0
+IcmpMsgOutType11                8                  0.0
+TcpInSegs                       18                 0.0
+TcpOutSegs                      17                 0.0
+UdpInDatagrams                  14                 0.0
+UdpOutDatagrams                 23                 0.0
+Ip6InReceives                   1                  0.0
+Ip6InDelivers                   1                  0.0
+Ip6OutRequests                  2                  0.0
+Ip6InMcastPkts                  1                  0.0
+Ip6OutMcastPkts                 2                  0.0
+Ip6InOctets                     120                0.0
+Ip6OutOctets                    152                0.0
+Ip6InMcastOctets                120                0.0
+Ip6OutMcastOctets               152                0.0
+Ip6InNoECTPkts                  1                  0.0
+Ip6OutTransmits                 2                  0.0
+Icmp6InMsgs                     1                  0.0
+Icmp6OutMsgs                    2                  0.0
+Icmp6InRouterAdvertisements     1                  0.0
+Icmp6OutMLDv2Reports            2                  0.0
+Icmp6InType134                  1                  0.0
+Icmp6OutType143                 2                  0.0
+TcpExtDelayedACKLocked          1                  0.0
+TcpExtTCPHPHits                 1                  0.0
+TcpExtTCPHPAcks                 16                 0.0
+TcpExtTCPRcvCoalesce            1                  0.0
+TcpExtTCPAutoCorking            2                  0.0
+TcpExtTCPOrigDataSent           16                 0.0
+TcpExtTCPDelivered              16                 0.0
+IpExtInBcastPkts                7                  0.0
+IpExtInOctets                   15906              0.0
+IpExtOutOctets                  16145              0.0
+IpExtInBcastOctets              4032               0.0
+IpExtInNoECTPkts                94                 0.0
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        662688    2070      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        953884    5705      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        667596    2060      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        944312    5697      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 102
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ sudo conntrack -L   (router2)
+tcp      6 431999 ESTABLISHED src=10.0.2.2 dst=10.0.2.15 sport=46286 dport=22 src=10.0.2.15 dst=10.0.2.2 sport=22 dport=46286 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 14 src=10.0.2.15 dst=44.30.62.51 sport=40868 dport=123 src=44.30.62.51 dst=10.0.2.15 sport=123 dport=40868 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 5 src=10.0.2.15 dst=10.0.2.2 sport=68 dport=67 [UNREPLIED] src=10.0.2.2 dst=10.0.2.15 sport=67 dport=68 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+conntrack v1.4.7 (conntrack-tools): 3 flow entries have been shown.
+exit=0
+### $ S=A   (router2)
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=0
+### $ echo "=== $S: 通信の前 ==="   (router2)
+=== A: 通信の前 ===
+exit=0
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ nstat -n   (router2)
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        662688    2070      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        953884    5705      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        667596    2060      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        944312    5697      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 109
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る(3.2 の直後に)   (router2)
+exit=0
+### $ echo "=== $S: 通信の後 ==="   (router2)
+=== A: 通信の後 ===
+exit=0
+### $ date   (router2)
+o conntrack -L
+Sun Nov 15 13:50:34 JST 2026
+exit=0
+### $ nstat   (router2)
+#kernel
+IpInReceives                    302                0.0
+IpInDelivers                    301                0.0
+IpOutRequests                   159                0.0
+IpOutTransmits                  159                0.0
+TcpInSegs                       300                0.0
+TcpOutSegs                      157                0.0
+UdpInDatagrams                  1                  0.0
+UdpOutDatagrams                 2                  0.0
+TcpExtTCPHPHits                 1                  0.0
+TcpExtTCPHPAcks                 157                0.0
+TcpExtTCPRcvCoalesce            1                  0.0
+TcpExtTCPOrigDataSent           157                0.0
+TcpExtTCPDelivered              157                0.0
+IpExtInBcastPkts                1                  0.0
+IpExtInOctets                   19078              0.0
+IpExtOutOctets                  13977              0.0
+IpExtInBcastOctets              576                0.0
+IpExtInNoECTPkts                302                0.0
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        662688    2070      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        953884    5705      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        667596    2060      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        944312    5697      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 105
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ sudo conntrack -L   (router2)
+tcp      6 431999 ESTABLISHED src=10.0.2.2 dst=10.0.2.15 sport=46286 dport=22 src=10.0.2.15 dst=10.0.2.2 sport=22 dport=46286 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 17 src=10.0.2.15 dst=44.30.62.51 sport=42706 dport=123 src=44.30.62.51 dst=10.0.2.15 sport=123 dport=42706 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+conntrack v1.4.7 (conntrack-tools): 2 flow entries have been shown.
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+### $ hostname -s   (router2)
+firewall-cmd --get-active-zones
+sudo firewall-cmd --zone=dmz --change-interface=enp0s9
+sudo firerouter2
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+wall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --zone=dmz --change-interface=enp0s9   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+dmz
+  interfaces: enp0s9
+internal
+  interfaces: enp0s8
+public
+  interfaces: enp0s3
+exit=0
+### $ S=B   (router2)
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=0
+### $ echo "=== $S: 通信の前 ==="   (router2)
+=== B: 通信の前 ===
+exit=0
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ nstat -n   (router2)
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        663396    2078      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        954592    5713      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        668304    2068      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        945020    5705      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 102
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る(3.2 の直後に)   (router2)
+exit=0
+### $ echo "=== $S: 通信の後 ==="   (router2)
+=== B: 通信の後 ===
+exit=0
+### $ date   (router2)
+Sun Nov 15 13:54:37 JST 2026
+exit=0
+### $ nstat   (router2)
+#kernel
+IpInReceives                    109                0.0
+IpInHdrErrors                   8                  0.0
+IpInDelivers                    20                 0.0
+IpOutRequests                   41                 0.0
+IpOutTransmits                  41                 0.0
+IcmpOutMsgs                     22                 0.0
+IcmpOutRateLimitHost            66                 0.0
+IcmpOutDestUnreachs             18                 0.0
+IcmpOutTimeExcds                4                  0.0
+IcmpMsgOutType3                 18                 0.0
+IcmpMsgOutType11                4                  0.0
+TcpInSegs                       20                 0.0
+TcpOutSegs                      18                 0.0
+UdpOutDatagrams                 1                  0.0
+TcpExtTCPHPHits                 1                  0.0
+TcpExtTCPHPAcks                 16                 0.0
+TcpExtTCPRcvCoalesce            1                  0.0
+TcpExtTCPAutoCorking            4                  0.0
+TcpExtTCPOrigDataSent           17                 0.0
+TcpExtTCPDelivered              16                 0.0
+IpExtInBcastPkts                1                  0.0
+IpExtInOctets                   8984               0.0
+IpExtOutOctets                  5581               0.0
+IpExtInBcastOctets              576                0.0
+IpExtInNoECTPkts                109                0.0
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        671780    2168      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        957292    5737      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        668304    2068      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        945020    5705      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 102
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ sudo conntrack -L   (router2)
+tcp      6 431999 ESTABLISHED src=10.0.2.2 dst=10.0.2.15 sport=46286 dport=22 src=10.0.2.15 dst=10.0.2.2 sport=22 dport=46286 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+tcp      6 2 TIME_WAIT src=10.0.2.2 dst=10.0.2.15 sport=47210 dport=22 src=10.0.2.15 dst=10.0.2.2 sport=22 dport=47210 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+conntrack v1.4.7 (conntrack-tools): 2 flow entries have been shown.
+exit=0
+### $ # T3 (router2)   (router2)
+exit=0
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s9   (router2)
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router2)
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ S=C   (router2)
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router2)
+exit=0
+### $ echo "=== $S: 通信の前 ==="   (router2)
+=== C: 通信の前 ===
+exit=0
+### $ hostname -s   (router2)
+router2
+exit=0
+### $ nstat -n   (router2)
+s link show dev enp0s9
+ss -s
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        672194    2173      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        957706    5742      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        668718    2073      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        945434    5710      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 109
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る(3.2 の直後に)   (router2)
+exit=0
+### $ echo "=== $S: 通信の後 ==="   (router2)
+=== C: 通信の後 ===
+exit=0
+### $ date   (router2)
+Sun Nov 15 13:56:30 JST 2026
+exit=0
+### $ nstat   (router2)
+#kernel
+IpInReceives                    311                0.0
+IpInHdrErrors                   8                  0.0
+IpForwDatagrams                 80                 0.0
+IpInDelivers                    222                0.0
+IpOutRequests                   126                0.0
+IpOutTransmits                  206                0.0
+IcmpOutMsgs                     8                  0.0
+IcmpOutTimeExcds                8                  0.0
+IcmpMsgOutType11                8                  0.0
+TcpInSegs                       222                0.0
+TcpOutSegs                      117                0.0
+UdpOutDatagrams                 1                  0.0
+TcpExtTCPHPHits                 2                  0.0
+TcpExtTCPHPAcks                 116                0.0
+TcpExtTCPRcvCoalesce            1                  0.0
+TcpExtTCPAutoCorking            2                  0.0
+TcpExtTCPOrigDataSent           116                0.0
+TcpExtTCPDelivered              117                0.0
+IpExtInBcastPkts                1                  0.0
+IpExtInOctets                   21380              0.0
+IpExtOutOctets                  18009              0.0
+IpExtInBcastOctets              576                0.0
+IpExtInNoECTPkts                312                0.0
+exit=0
+### $ ip -s link show dev enp0s8   (router2)
+enp0s9
+ss -s
+sudo conntrack -L
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:4b:89:85 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        680578    2263      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        958762    5752      0       0       0       0
+exit=0
+### $ ip -s link show dev enp0s9   (router2)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:38:28:34 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+        668778    2074      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        953046    5791      0       0       0       0
+exit=0
+### $ ss -s   (router2)
+Total: 105
+TCP:   3 (estab 1, closed 0, orphaned 0, timewait 0)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1
+UDP	  3         2         1
+TCP	  3         2         1
+INET	  7         4         3
+FRAG	  0         0         0
+
+exit=0
+### $ sudo conntrack -L   (router2)
+tcp      6 27 TIME_WAIT src=10.0.2.2 dst=10.0.2.15 sport=44928 dport=22 src=10.0.2.15 dst=10.0.2.2 sport=22 dport=44928 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+icmp     1 8 src=192.168.30.1 dst=192.168.32.20 type=8 code=0 id=2472 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 type=0 code=0 id=2472 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+tcp      6 431999 ESTABLISHED src=10.0.2.2 dst=10.0.2.15 sport=46286 dport=22 src=10.0.2.15 dst=10.0.2.2 sport=22 dport=46286 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=45488 dport=33446 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33446 dport=45488 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=48722 dport=33448 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33448 dport=48722 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=44553 dport=33447 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33447 dport=44553 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=32787 dport=33442 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33442 dport=32787 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+tcp      6 108 SYN_SENT src=192.168.30.1 dst=192.168.32.20 sport=48532 dport=8080 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=8080 dport=48532 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=51304 dport=33441 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33441 dport=51304 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=44307 dport=33440 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33440 dport=44307 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=54481 dport=33443 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33443 dport=54481 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=48990 dport=33444 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33444 dport=48990 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+udp      17 13 src=192.168.30.1 dst=192.168.32.20 sport=33424 dport=33445 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 sport=33445 dport=33424 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+icmp     1 0 src=192.168.30.1 dst=192.168.32.20 type=8 code=0 id=10 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 type=0 code=0 id=10 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+conntrack v1.4.7 (conntrack-tools): 14 flow entries have been shown.
+exit=0
+### $ exit   (router2)
+exit
+Connection to 127.0.0.1 closed.

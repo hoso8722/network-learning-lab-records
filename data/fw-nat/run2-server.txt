@@ -1,0 +1,90 @@
+# 実験 D と A-4'(2 回目): server の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 8.4。実験 D のやり直しと、A-4' の再実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある。実行されたコマンドは「### $」の行で確認できる。崩れは直していない
+# 注: 待ち受けは、バックグラウンドで起動し、出力を ~/srv-D.txt に書いた(cat で記録に出している)
+### $ # T4 (server)   (server)
+exit=0
+### $ echo "=== A-4' server から client へ ==="   (server)
+=== A-4' server から client へ ===
+exit=0
+### $ ping -c 3 -W 2 192.168.31.10   (server)
+PING 192.168.31.10 (192.168.31.10) 56(84) bytes of data.
+From 192.168.32.1 icmp_seq=1 Packet filtered
+From 192.168.32.1 icmp_seq=2 Packet filtered
+From 192.168.32.1 icmp_seq=3 Packet filtered
+
+--- 192.168.31.10 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2005ms
+
+exit=1
+### $ # T4 (server): 待ち受けは、バックグラウンドで動かす(出力はファイルに書く)   (server)
+exit=1
+### $ hostname -s   (server)
+server
+exit=0
+### $ sudo firewall-cmd --add-port=8080/tcp   (server)
+ > ~/srv-D.txt 2>&1 < /dev/null &
+sleep 2
+ip route get 192.168.30.1
+success
+exit=0
+### $ python3 -m http.server 8080 --bind 192.168.32.20 > ~/srv-D.txt 2>&1 < /dev/null &   (server)
+[1] 8710
+exit=0
+### $ sleep 2   (server)
+exit=0
+### $ ip route get 192.168.30.1   (server)
+192.168.30.1 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 1000
+    cache
+exit=0
+### $ # T4 (server)   (server)
+exit=0
+### $ hostname -s   (server)
+server
+exit=0
+### $ sudo ip route add 192.168.30.0/30 via 192.168.32.1 dev enp0s9   (server)
+exit=0
+### $ ip route   (server)
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 via 192.168.32.1 dev enp0s9
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+### $ ip route get 192.168.30.1   (server)
+192.168.30.1 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1000
+    cache
+exit=0
+### $ # T4 (server): server から見た接続元(アクセスのログ)   (server)
+exit=0
+### $ cat ~/srv-D.txt   (server)
+192.168.30.1 - - [13/Nov/2026 19:11:33] "GET / HTTP/1.1" 200 -
+192.168.30.1 - - [13/Nov/2026 19:12:06] "GET / HTTP/1.1" 200 -
+exit=0
+### $ # T4 (server)   (server)
+exit=0
+### $ hostname -s   (server)
+server
+exit=0
+### $ sudo ip route del 192.168.30.0/30 via 192.168.32.1 dev enp0s9   (server)
+ove-port=8080/tcp
+sudo firewall-cmd --list-ports
+exit=0
+### $ ip route   (server)
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+### $ kill %1   (server)
+exit=0
+### $ sudo firewall-cmd --remove-port=8080/tcp   (server)
+success
+[1]+  Terminated              python3 -m http.server 8080 --bind 192.168.32.20 > ~/srv-D.txt 2>&1 < /dev/null
+exit=0
+### $ sudo firewall-cmd --list-ports   (server)
+exit=0
+### $ exit   (server)
+exit
+Connection to 127.0.0.1 closed.

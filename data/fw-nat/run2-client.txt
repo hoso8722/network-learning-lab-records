@@ -1,0 +1,50 @@
+# 実験 D(2 回目): client の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 8.4。実験 D のやり直しと、A-4' の再実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある。実行されたコマンドは「### $」の行で確認できる。崩れは直していない
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== D-2 経路を足す前: client から server へ(NAT あり) ==="   (client)
+=== D-2 経路を足す前: client から server へ(NAT あり) ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2070ms
+
+exit=1
+### $ # T5 (client)   (client)
+exit=1
+### $ echo "=== D-4 経路を足した後: client から server へ(NAT あり) ==="   (client)
+=== D-4 経路を足した後: client から server へ(NAT あり) ===
+exit=0
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=4.72 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=6.78 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=3.85 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2008ms
+rtt min/avg/max/mdev = 3.850/5.116/6.779/1.228 ms
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== D-5 経路を足した後: server へ直接(NAT あり) ==="   (client)
+=== D-5 経路を足した後: server へ直接(NAT あり) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.32.20:8080/   (client)
+200
+exit=0
+### $ # T5 (client)   (client)
+exit=0
+### $ echo "=== D-6 経路を足した後: R1 宛(forward-port、NAT あり) ==="   (client)
+=== D-6 経路を足した後: R1 宛(forward-port、NAT あり) ===
+exit=0
+### $ curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://192.168.31.1:8080/   (client)
+200
+exit=0
+### $ exit   (client)
+exit
+Connection to 127.0.0.1 closed.

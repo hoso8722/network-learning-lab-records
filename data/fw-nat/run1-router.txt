@@ -1,0 +1,288 @@
+# 実験 A〜C(1 回目): router(R1)の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-13 JST。手順書 docs/FW_NAT_RUNBOOK.md の 1〜6 章。1 回目の通し実験)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れている箇所がある(例: 「ewall-cmd --listrouter」)。実行されたコマンドは、「### $」の行で確認できる。崩れは直していない
+# 注: C-4 の conntrack の確認(R1 側)は、取れていない(そのブロックを router2 の端末に貼ってしまったため)
+# 注: C-3 の後、C-5 の前に R1 の記録がない区間がある(C-4 の通信)
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router)
+exit=0
+### $ hostname -s   (router)
+ nftables conntrack-tools tcpdump
+sudo firewall-cmd --version
+sudo firewall-cmd --get-default-zone
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --list-all-policies
+ls /proc/net/nf_conntrack
+router
+exit=0
+### $ rpm -q firewalld nftables conntrack-tools tcpdump   (router)
+firewalld-1.3.4-18.el9_7.noarch
+nftables-1.0.9-6.el9_7.x86_64
+package conntrack-tools is not installed
+tcpdump-4.99.0-9.el9.x86_64
+exit=1
+### $ sudo firewall-cmd --version   (router)
+sudo firewall-cmd --get-default-zone
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --list-all-policies
+ls /proc/net/nf_conntrack
+1.3.4
+exit=0
+### $ sudo firewall-cmd --get-default-zone   (router)
+public
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ # T2 (router)、T3 (router2): それぞれに貼る   (router)
+do firewall-cmd --get-default-zone
+sudo firewall-cmd --get-active-zones
+sudo firexit=0
+### $ hostname -s   (router)
+ewall-cmd --listrouter
+exit=0
+### $ rpm -q firewalld nftables conntrack-tools tcpdump   (router)
+-all-policies
+ls /proc/net/nf_conntrack
+firewalld-1.3.4-18.el9_7.noarch
+nftables-1.0.9-6.el9_7.x86_64
+package conntrack-tools is not installed
+tcpdump-4.99.0-9.el9.x86_64
+exit=1
+### $ sudo firewall-cmd --version   (router)
+1.3.4
+exit=0
+### $ sudo firewall-cmd --get-default-zone   (router)
+public
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ ls /proc/net/nf_conntrack   (router)
+/proc/net/nf_conntrack
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+all-cmd --permanent --policy=lan-to-transit --add-egress-zone=external
+sudo firewall-cmd --permanent --policy=lan-to-transit --set-target=ACCEPT
+sudo firewall-cmd --reload
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --zone=internal --change-interface=enp0s8
+sudo firewall-cmd --zone=external --change-interface=enp0s9
+sudo firewall-cmd --zone=external --query-masquerade
+sudo firewall-cmd --zone=external --add-masquerade
+sudo firewall-cmd --zone=external --query-masquerade
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --irouter
+exit=0
+### $ sudo firewall-cmd --permanent --new-policy=lan-to-transit   (router)
+nfo-policy=lan-to-transit
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lan-to-transit --add-ingress-zone=internal   (router)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lan-to-transit --add-egress-zone=external   (router)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --policy=lan-to-transit --set-target=ACCEPT   (router)
+success
+exit=0
+### $ sudo firewall-cmd --reload   (router)
+success
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --zone=internal --change-interface=enp0s8   (router)
+success
+exit=0
+### $ sudo firewall-cmd --zone=external --change-interface=enp0s9   (router)
+success
+exit=0
+### $ sudo firewall-cmd --zone=external --query-masquerade   (router)
+yes
+exit=0
+### $ sudo firewall-cmd --zone=external --add-masquerade   (router)
+Warning: ALREADY_ENABLED: masquerade already enabled in 'external'
+success
+exit=0
+### $ sudo firewall-cmd --zone=external --query-masquerade   (router)
+yes
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+external
+  interfaces: enp0s9
+internal
+  interfaces: enp0s8
+public
+  interfaces: enp0s3
+exit=0
+### $ sudo firewall-cmd --info-policy=lan-to-transit   (router)
+lan-to-transit (active)
+  priority: -1
+  target: ACCEPT
+  ingress-zones: internal
+  egress-zones: external
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+exit=0
+### $ # T2 (router): ping が終わったら、すぐに(10 秒以内に)   (router)
+exit=0
+### $ date   (router)
+Fri Nov 13 10:13:34 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router)
+ipv4     2 icmp     1 21 src=192.168.31.10 dst=192.168.32.20 type=8 code=0 id=28 [UNREPLIED] src=192.168.32.20 dst=192.168.30.1 type=0 code=0 id=28 mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+router
+exit=0
+### $ sudo firewall-cmd --zone=internal --add-forward-port=port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20   (router)
+success
+exit=0
+### $ sudo firewall-cmd --zone=internal --list-forward-ports   (router)
+port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+router
+exit=0
+### $ sudo firewall-cmd --zone=external --remove-masquerade   (router)
+rade
+success
+exit=0
+### $ sudo firewall-cmd --zone=external --query-masquerade   (router)
+no
+exit=1
+### $ # T2 (router): curl が終わったら、すぐに(ICMP の conntrack の行は、短い時間で消える。前回は 20 秒以上遅れて取 れなかった)   (router)
+exit=1
+### $ date   (router)
+/proc/net/nf_conntrack
+Fri Nov 13 10:40:17 JST 2026
+exit=0
+### $ sudo grep -E 'icmp|8080' /proc/net/nf_conntrack   (router)
+ipv4     2 tcp      6 101 TIME_WAIT src=192.168.31.10 dst=192.168.31.1 sport=33254 dport=8080 src=192.168.32.20 dst=192.168.31.10 sport=8080 dport=33254 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 zone=0 use=2
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+irewall-cmd --zone=internal --remove-forward-port=port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20
+sudo firewall-cmd --zone=internal --list-forward-ports
+sudo firewall-cmd --permanent --delete-policy=lan-to-transit
+sudo firewall-cmd --permanent --delete-policy=lana-to-lanb
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-all-policies
+sudo firewall-cmd --get-active-zones
+router
+exit=0
+### $ sudo firewall-cmd --zone=internal --remove-forward-port=port=8080:proto=tcp:toport=8080:toaddr=192.168.32.20   (router)
+success
+exit=0
+### $ sudo firewall-cmd --zone=internal --list-forward-ports   (router)
+exit=0
+### $ sudo firewall-cmd --permanent --delete-policy=lan-to-transit   (router)
+success
+exit=0
+### $ sudo firewall-cmd --permanent --delete-policy=lana-to-lanb   (router)
+Error: INVALID_POLICY: lana-to-lanb
+exit=140
+### $ sudo firewall-cmd --reload   (router)
+success
+exit=0
+### $ sudo firewall-cmd --list-all-policies   (router)
+allow-host-ipv6 (active)
+  priority: -15000
+  target: CONTINUE
+  ingress-zones: ANY
+  egress-zones: HOST
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+	rule family="ipv6" icmp-type name="neighbour-advertisement" accept
+	rule family="ipv6" icmp-type name="neighbour-solicitation" accept
+	rule family="ipv6" icmp-type name="router-advertisement" accept
+	rule family="ipv6" icmp-type name="redirect" accept
+	rule family="ipv6" icmp-type name="mld-listener-done" accept
+	rule family="ipv6" icmp-type name="mld-listener-query" accept
+	rule family="ipv6" icmp-type name="mld-listener-report" accept
+	rule family="ipv6" icmp-type name="mld2-listener-report" accept
+
+exit=0
+### $ sudo firewall-cmd --get-active-zones   (router)
+public
+  interfaces: enp0s3
+exit=0
+### $ exit   (router)
+exit
+Connection to 127.0.0.1 closed.

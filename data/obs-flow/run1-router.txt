@@ -1,0 +1,148 @@
+# conntrack の累積(簡易フロー): router の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-21 JST。手順書 docs/OBS_FLOW_RUNBOOK.md)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れた箇所がある場合がある。崩れは直していない
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+router
+exit=0
+### $ sysctl net.netfilter.nf_conntrack_acct   (router)
+net.netfilter.nf_conntrack_acct = 0
+exit=0
+### $ sysctl net.netfilter.nf_conntrack_count   (router)
+net.netfilter.nf_conntrack_count = 1
+exit=0
+### $ # T2 (router): 通信の直後に(接続の行は、約 10〜120 秒で消える)   (router)
+exit=0
+### $ sudo conntrack -L -p tcp 2>&1 | grep 9090   (router)
+tcp      6 114 TIME_WAIT src=192.168.31.10 dst=192.168.32.20 sport=47908 dport=9090 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=47908 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+router
+exit=0
+### $ sudo sysctl -w net.netfilter.nf_conntrack_acct=1   (router)
+net.netfilter.nf_conntrack_acct = 1
+exit=0
+### $ sysctl net.netfilter.nf_conntrack_acct   (router)
+net.netfilter.nf_conntrack_acct = 1
+exit=0
+### $ sysctl net.netfilter.nf_conntrack_acct   (router)
+udo sysctl -w net.netfilter.nf_conntrack_acct=1
+hostname -s
+# T2 (router)
+sudo conntrack -L -p tcp 2>&1 | grep 9090
+tcp      6 108 TIME_WAIT src=192.168.31.10 dst=192.168.32.20 sport=59488 dport=9090 packets=65 bytes=3473 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=59488 packets=63 bytes=1052065 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+exit=0
+### $ # T2 (router): ping の直後に(ICMP の行は、約 30 秒で消える)   (router)
+exit=0
+### $ sudo conntrack -L -p icmp 2>&1   (router)
+icmp     1 29 src=192.168.31.10 dst=192.168.32.20 type=8 code=0 id=19 packets=56 bytes=79968 src=192.168.32.20 dst=192.168.31.10 type=0 code=0 id=19 packets=56 bytes=79968 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+conntrack v1.4.7 (conntrack-tools): 1 flow entries have been shown.
+exit=0
+### $ sudo conntrack -L -p icmp 2>&1   (router)
+icmp     1 0 src=192.168.31.10 dst=192.168.32.20 type=8 code=0 id=19 packets=100 bytes=142800 src=192.168.32.20 dst=192.168.31.10 type=0 code=0 id=19 packets=100 bytes=142800 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+conntrack v1.4.7 (conntrack-tools): 1 flow entries have been shown.
+exit=0
+### $ sudo conntrack -L -p icmp 2>&1   (router)
+conntrack v1.4.7 (conntrack-tools): 0 flow entries have been shown.
+exit=0
+### $ # T2 (router): 通信の直後に   (router)
+exit=0
+### $ sudo conntrack -L -p tcp 2>&1 | grep 9090   (router)
+sysctl net.netfilter.nf_conntrack_count
+tcp      6 299 ESTABLISHED src=192.168.31.10 dst=192.168.32.20 sport=35236 dport=9090 packets=2154 bytes=112627 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=35236 packets=3366 bytes=55675639 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=21
+tcp      6 116 TIME_WAIT src=192.168.31.10 dst=192.168.32.20 sport=54908 dport=9090 packets=431 bytes=23278 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=54908 packets=600 bytes=10517174 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+tcp      6 115 TIME_WAIT src=192.168.31.10 dst=192.168.32.20 sport=54892 dport=9090 packets=75 bytes=4005 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=54892 packets=74 bytes=1052861 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+exit=0
+### $ sysctl net.netfilter.nf_conntrack_count   (router)
+net.netfilter.nf_conntrack_count = 5
+exit=0
+### $ # T2 (router): GRO が on の状態で、前の値を取る   (router)
+exit=0
+### $ hostname -s   (router)
+router
+exit=0
+### $ ethtool -k enp0s9 | grep generic-receive-offload   (router)
+generic-receive-offload: on
+exit=0
+### $ ip -s link show enp0s9   (router)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:0c:c0:39 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+    7983342099 5273367      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+      22809007  340436      0       0       0       0
+exit=0
+### $ # T2 (router): 後の値と、接続の行   (router)
+exit=0
+### $ ip -s link show enp0s9   (router)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:0c:c0:39 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+    8083552540 5339562      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+      23038014  343870      0       0       0       0
+exit=0
+### $ sudo conntrack -L -p tcp 2>&1 | grep 9090   (router)
+tcp      6 299 ESTABLISHED src=192.168.31.10 dst=192.168.32.20 sport=37092 dport=9090 packets=3552 bytes=187079 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=37092 packets=5768 bytes=98653799 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=4
+exit=0
+### $ # T2 (router): GRO を切る(実行時)   (router)
+exit=0
+### $ sudo ethtool -K enp0s9 gro off   (router)
+s9
+exit=0
+### $ ethtool -k enp0s9 | grep generic-receive-offload   (router)
+generic-receive-offload: off
+exit=0
+### $ ip -s link show enp0s9   (router)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:0c:c0:39 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+    8093364376 5346044      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+      23062170  344236      0       0       0       0
+exit=0
+### $ # T2 (router): 後の値と、接続の行(新しい接続が、もう 1 本ある)   (router)
+exit=0
+### $ ip -s link show enp0s9   (router)
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:0c:c0:39 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+    8155403967 5387024      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+      23488659  350687      0       0       0       0
+exit=0
+### $ sudo conntrack -L -p tcp 2>&1 | grep 9090   (router)
+ethtool -K enp0s9 gro on
+ethtool -k enp0s9 | grep generic-receive-offload
+tcp      6 99 TIME_WAIT src=192.168.31.10 dst=192.168.32.20 sport=37092 dport=9090 packets=3798 bytes=199871 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=37092 packets=6216 bytes=105548839 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+tcp      6 300 ESTABLISHED src=192.168.31.10 dst=192.168.32.20 sport=55960 dport=9090 packets=6623 bytes=345119 src=192.168.32.20 dst=192.168.31.10 sport=9090 dport=55960 packets=41644 bytes=62461871 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=16
+exit=0
+### $ sudo ethtool -K enp0s9 gro on   (router)
+exit=0
+### $ ethtool -k enp0s9 | grep generic-receive-offload   (router)
+generic-receive-offload: on
+exit=0
+### $ # T2 (router)   (router)
+exit=0
+### $ hostname -s   (router)
+router
+exit=0
+### $ sudo sysctl -w net.netfilter.nf_conntrack_acct=0   (router)
+net.netfilter.nf_conntrack_acct = 0
+exit=0
+### $ sysctl net.netfilter.nf_conntrack_acct   (router)
+net.netfilter.nf_conntrack_acct = 0
+exit=0
+### $ ethtool -k enp0s9 | grep generic-receive-offload   (router)
+generic-receive-offload: on
+exit=0
+### $ sysctl net.netfilter.nf_conntrack_count   (router)
+net.netfilter.nf_conntrack_count = 3
+exit=0
+### $ exit   (router)
+exit
+Connection to 127.0.0.1 closed.

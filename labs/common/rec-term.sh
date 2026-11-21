@@ -7,7 +7,7 @@
 #              学習の対象は、実験のコマンドであって、記録の取り方ではないため。
 # 状態変更   : (1) 記録のファイル ~/<実験名>-<ノード>.txt を作る。同名のファイルがあれば ~/<実験名>-old/ に移す(上書きしない)。
 #              (2) VM のとき、~/.lab-rec-rc(プロンプトの設定。PS1、PROMPT_COMMAND、貼り付けの設定)を VM に置く。VM の設定は変えない。
-#              (3) 端末の中は bash --noprofile --rcfile で起動し、プロンプトを「<ノード>:$ 」、各コマンドの後に「exit=<終了コード>」を出す
+#              (3) 端末の中は bash --noprofile --rcfile で起動し、プロンプトを「<ノード>:$ 」(ノード名はノードごとの色)、各コマンドの後に「exit=<終了コード>」(成功は緑、失敗は赤)を出す。ls、grep、diff、ip は色つきの別名にする
 #                  (scripts/script2record.py が、この形を記録に変換する)。貼り付けは、1 行ずつ実行される形(bracketed paste を無効)にする。
 # 影響       : なし(ラボの設定は変えない)。記録には、端末に表示されたものがすべて入る。パスワードは、画面に出ないので入らない。
 # 終了       : 端末で exit を 1 回(VM から抜けると、script も終わる)。
@@ -30,9 +30,16 @@ if [ -e "$rec" ]; then
   mv "$rec" "$old" && echo "前の記録を移しました: $old"
 fi
 rc="$(mktemp)"; trap 'rm -f "$rc"' EXIT
+# ノードごとの色(プロンプトのノード名)。端末を見分けやすくする。色の制御の文字は、記録の変換(scripts/script2record.py)が取り除く
+case "$node" in wsl) col=36;; client) col=32;; server) col=34;; switch) col=35;; router) col=33;; router2) col=95;; esac
 cat > "$rc" <<EOF
-PS1='${node}:\$ '
-PROMPT_COMMAND='echo "exit=\$?"'
+PS1='\[\e[1;${col}m\]${node}\[\e[0m\]:\$ '
+PROMPT_COMMAND='_rc=\$?; if [ \$_rc -eq 0 ]; then printf "\e[32mexit=%s\e[0m\n" \$_rc; else printf "\e[1;31mexit=%s\e[0m\n" \$_rc; fi'
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip -color=auto'
 bind 'set enable-bracketed-paste off'
 EOF
 echo "記録を開始します: $rec(終わるときは exit を 1 回)"

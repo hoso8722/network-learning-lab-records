@@ -1,0 +1,678 @@
+# SNMP でカウンターを読む: WSL2 の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-21 JST。手順書 docs/OBS_SNMP_RUNBOOK.md)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れた箇所がある。崩れは直していない
+# 注: lab-sudo.sh on を、貼り付けが重なって、2 回実行した(どちらも成功)
+### $ # T1 (wsl): 1 行だけ。パスワードは、ノードごとに 1 回、自分で入力する   (wsl)
+exit=0
+### $ labs/common/lab-sudo.sh on --only router,server   (wsl)
+# lab-sudo.sh  action=on  2026-11-21T04:05:02+09:00
+
+=== server (port 2223) : on ===
+/tmp/lab-nopasswd.sudoers: parsed OK
+on-ok:server
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で on-ok:server が表示されていれば成功)
+
+=== router (port 2225) : on ===
+/tmp/lab-nopasswd.sudoers: parsed OK
+on-ok:router
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で on-ok:router が表示されていれば成功)
+
+記録: /home/<WSL_USER>/network-learning-handoff/data/lab-sudo/lab-sudo-sh-on-20261121T040502.txt
+exit=0
+### $ # T1 (wsl): 1 行だけ。パスワードは、ノードごとに 1 回、自分で入力する   (wsl)
+uter,server
+exit=0
+### $ labs/common/lab-sudo.sh on --only router,server   (wsl)
+# lab-sudo.sh  action=on  2026-11-21T04:05:24+09:00
+
+=== server (port 2223) : on ===
+/tmp/lab-nopasswd.sudoers: parsed OK
+on-ok:server
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で on-ok:server が表示されていれば成功)
+
+=== router (port 2225) : on ===
+/tmp/lab-nopasswd.sudoers: parsed OK
+on-ok:router
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で on-ok:router が表示されていれば成功)
+
+記録: /home/<WSL_USER>/network-learning-handoff/data/lab-sudo/lab-sudo-sh-on-20261121T040524.txt
+exit=0
+### $ # T1 (wsl)   (wsl)
+sh status
+labs/cexit=0
+### $ labs/common/baseline.sh status   (wsl)
+uto.sh --check-only
+# baseline.sh  action=status  2026-11-21T04:08:41+09:00  wsl=mirrored
+
+=== router (port 2225) : status ===
+labs/common/sync-all-auto.sh --check-only
+# exp4 router show    2026-11-20T23:17:31+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             192.168.31.1/24
+enp0s9           UP             192.168.30.1/30
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1
+192.168.32.0/24 via 192.168.30.2 dev enp0s9
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : status ===
+# exp4 router2 show    2026-11-20T23:17:12+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             192.168.30.2/30
+enp0s9           UP             192.168.32.1/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s8 proto kernel scope link src 192.168.30.2
+192.168.31.0/24 via 192.168.30.1 dev enp0s8
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.1
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : status ===
+# exp5 client show   2026-11-20T23:17:13+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             192.168.31.10/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+192.168.31.1 lladdr 08:00:27:41:49:68 STALE
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : status ===
+# exp5 server show   2026-11-20T23:17:13+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             192.168.32.20/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+192.168.32.1 lladdr 08:00:27:38:28:34 STALE
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-20T23:17:14+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+  64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=7.46 ms
+  64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=3.86 ms
+  64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=27.8 ms
+
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+  rtt min/avg/max/mdev = 3.864/13.058/27.849/10.561 ms
+  exit=0
+  判定: 基準どおり（ttl=62 で応答あり）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 基準どおり（ttl=62 で応答あり）
+記録: /home/<WSL_USER>/network-learning-handoff/data/baseline/baseline-sh-status-20261121T040841.txt
+exit=0
+### $ labs/common/baseline.sh status   (wsl)
+# T1 (wsl)
+labs/common/baseline.sh status
+labs/common/baseline.sh status
+# T1 (wsl)
+labs/common/baseline.sh status
+labs/common/sync-all-auto.sh --check-only
+# sync-all-auto.sh  2026-11-21T04:09:34+09:00  しきい値=2秒  check_only=1  parallel=0  wsl=mirrored
+
+=== client (port 2222) ===
+  vm_utc=1795184287.994104143  差(VM−ホスト)=-17487.253秒
+
+=== server (port 2223) ===
+  vm_utc=1795184288.262425322  差(VM−ホスト)=-17487.326秒
+
+=== switch (port 2224) ===
+  vm_utc=1795184299.745681606  差(VM−ホスト)=-17476.540秒
+
+=== router (port 2225) ===
+  vm_utc=1795184310.901297558  差(VM−ホスト)=-17465.811秒
+
+=== router2 (port 2226) ===
+  vm_utc=1795184290.350331254  差(VM−ホスト)=-17487.058秒
+
+## まとめ
+  client: 【ずれあり】差 -17487.253 秒（--check-only のため補正せず）
+  server: 【ずれあり】差 -17487.326 秒（--check-only のため補正せず）
+  switch: 【ずれあり】差 -17476.540 秒（--check-only のため補正せず）
+  router: 【ずれあり】差 -17465.811 秒（--check-only のため補正せず）
+  router2: 【ずれあり】差 -17487.058 秒（--check-only のため補正せず）
+記録: /home/<WSL_USER>/network-learning-handoff/data/time-sync/sync-all-auto-sh-20261121T040934.txt
+exit=0
+### $ labs/common/sync-all-auto.sh   (wsl)
+# sync-all-auto.sh  2026-11-21T04:16:03+09:00  しきい値=2秒  check_only=0  parallel=0  wsl=mirrored
+
+=== client (port 2222) ===
+  vm_utc=1795184709.272488233  差(VM−ホスト)=-17454.883秒
+
+=== server (port 2223) ===
+  vm_utc=1795184709.555210057  差(VM−ホスト)=-17454.960秒
+
+=== switch (port 2224) ===
+  vm_utc=1795184721.005820922  差(VM−ホスト)=-17444.178秒
+
+=== router (port 2225) ===
+  vm_utc=1795184732.067635859  差(VM−ホスト)=-17433.459秒
+
+=== router2 (port 2226) ===
+  vm_utc=1795184711.517927421  差(VM−ホスト)=-17454.712秒
+
+## 補正（1回目）: client server switch router router2（順番、BatchMode。sudo のパスワードは聞かない）
+
+=== client : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-20T23:25:11+09:00
+  ### 補正前
+  date: 2026-11-20T23:25:11+09:00
+  date_utc: 2026-11-20T14:25:11+00:00
+                   RTC time: Fri 2026-11-20 12:25:22
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 67BDBD39 (b.same.jp)
+  Ref time (UTC)  : Fri Nov 20 19:10:20 2026
+  System time     : 17454.427734375 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^- 172-233-91-137.ip.linode>     2   9   377     7  -2944us[-2944us] +/-   41ms
+  ^? jp.time01.netchron.de         0  10     0     -     +0ns[   +0ns] +/-    0ns
+  ^* b.same.jp                     2  10   377     8  -3235us[-3527us] +/- 7402us
+  ^- tok2.jp.ntp.li                3  10   377     8  -3530us[-3822us] +/-   45ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 67BDBD39, correction: 0.000000143, skew: 0.629
+  ### 補正後
+  date: 2026-11-21T04:16:20+09:00
+  date_utc: 2026-11-20T19:16:20+00:00
+                   RTC time: Fri 2026-11-20 12:25:36
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 67BDBD39 (b.same.jp)
+  Ref time (UTC)  : Fri Nov 20 19:16:11 2026
+  System time     : 0.000000135 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== server : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-20T23:25:27+09:00
+  ### 補正前
+  date: 2026-11-20T23:25:27+09:00
+  date_utc: 2026-11-20T14:25:27+00:00
+                   RTC time: Fri 2026-11-20 12:25:38
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 2BE5109E (43-229-16-158.ip.neody.ad.jp)
+  Ref time (UTC)  : Fri Nov 20 19:14:14 2026
+  System time     : 17453.310546875 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^- 103.131.151.30                2   9   377    10   -935us[ -892us] +/-   23ms
+  ^- ec2-18-182-32-224.ap-nor>     2  10   377    12    +36us[  +77us] +/-  186ms
+  ^* 43-229-16-158.ip.neody.a>     2   8   377     8   +151us[ +194us] +/-   11ms
+  ^- 208.88.66.8                   2   8    77     8    -28ms[  -28ms] +/-   65ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 2BE5109E, correction: 0.000000165, skew: 3.063
+  ### 補正後
+  date: 2026-11-21T04:16:35+09:00
+  date_utc: 2026-11-20T19:16:35+00:00
+                   RTC time: Fri 2026-11-20 12:25:52
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 2BE5109E (43-229-16-158.ip.neody.ad.jp)
+  Ref time (UTC)  : Fri Nov 20 19:16:26 2026
+  System time     : 0.000000157 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== switch : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-20T23:25:54+09:00
+  ### 補正前
+  date: 2026-11-20T23:25:54+09:00
+  date_utc: 2026-11-20T14:25:54+00:00
+                   RTC time: Fri 2026-11-20 12:25:52
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 2BE5109E (43-229-16-158.ip.neody.ad.jp)
+  Ref time (UTC)  : Fri Nov 20 19:10:20 2026
+  System time     : 17441.332031250 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^- ec2-18-182-32-224.ap-nor>     2  10   377     8  +1569us[+1467us] +/-  186ms
+  ^* 43-229-16-158.ip.neody.a>     2  10   377     8  +1416us[+1314us] +/-   11ms
+  ^- 161.33.7.70                   2   9    17     8  +1630us[+1630us] +/-   12ms
+  ^- y.ns.gin.ntt.net              2   9   377     8  +4791us[+4689us] +/-   91ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 2BE5109E, correction: 0.000000144, skew: 0.992
+  ### 補正後
+  date: 2026-11-21T04:16:50+09:00
+  date_utc: 2026-11-20T19:16:50+00:00
+                   RTC time: Fri 2026-11-20 12:26:06
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 2BE5109E (43-229-16-158.ip.neody.ad.jp)
+  Ref time (UTC)  : Fri Nov 20 19:16:41 2026
+  System time     : 0.000000136 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== router : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-20T23:26:21+09:00
+  ### 補正前
+  date: 2026-11-20T23:26:21+09:00
+  date_utc: 2026-11-20T14:26:21+00:00
+                   RTC time: Fri 2026-11-20 12:26:06
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : AC687C95 (ntp-jp.vulp.ca)
+  Ref time (UTC)  : Fri Nov 20 19:15:03 2026
+  System time     : 17429.417968750 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^* ntp-jp.vulp.ca                2   8   377     7    -89us[ -139us] +/- 8214us
+  ^- 140.245.90.15                 2  10   377     8  -2654ns[  -53us] +/- 9908us
+  ^? ec2-18-182-32-224.ap-nor>     0  10     0     -     +0ns[   +0ns] +/-    0ns
+  ^- 43-229-16-158.ip.neody.a>     2  10   377     8   -202us[ -252us] +/-   12ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: AC687C95, correction: 0.000000156, skew: 1.518
+  ### 補正後
+  date: 2026-11-21T04:17:04+09:00
+  date_utc: 2026-11-20T19:17:04+00:00
+                   RTC time: Fri 2026-11-20 12:26:20
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : AC687C95 (ntp-jp.vulp.ca)
+  Ref time (UTC)  : Fri Nov 20 19:16:56 2026
+  System time     : 0.000000146 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== router2 : 補正の出力（1回目）===
+  # sync-time.sh  2026-11-20T23:26:16+09:00
+  ### 補正前
+  date: 2026-11-20T23:26:16+09:00
+  date_utc: 2026-11-20T14:26:16+00:00
+                   RTC time: Fri 2026-11-20 12:26:22
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 2D4D1467 (v4.ntp.admtan.jp)
+  Ref time (UTC)  : Fri Nov 20 19:15:13 2026
+  System time     : 17449.447265625 seconds slow of NTP time
+  Leap status     : Normal
+  ### $ sudo chronyc burst 4/4; sleep 15   (新しい NTP 測定を促す。ホスト休止後の再開直後は chrony の推定が古いため)
+  200 OK
+  ### $ chronyc sources
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample
+  ===============================================================================
+  ^- tok2.jp.ntp.li                3   9   377     8   +952us[ +733us] +/-   44ms
+  ^+ 45.66.166.63                  2  10   377     8  -1098us[-1317us] +/-   11ms
+  ^* v4.ntp.admtan.jp              2  10   377     8   +987us[ +768us] +/- 7526us
+  ^- ec2-18-182-32-224.ap-nor>     2  10   377     8   +596us[ +377us] +/-  187ms
+
+  ### $ sudo chronyc makestep   (状態変更: システム時計を補正)
+  200 OK
+  ### $ chronyc waitsync 6 0.5   (最大約60秒待つ。読み取りのみ)
+  try: 1, refid: 2D4D1467, correction: 0.000000140, skew: 0.648
+  ### 補正後
+  date: 2026-11-21T04:17:20+09:00
+  date_utc: 2026-11-20T19:17:20+00:00
+                   RTC time: Fri 2026-11-20 12:26:36
+                  Time zone: Asia/Tokyo (JST, +0900)
+  System clock synchronized: no
+                NTP service: active
+  Reference ID    : 2D4D1467 (v4.ntp.admtan.jp)
+  Ref time (UTC)  : Fri Nov 20 19:17:11 2026
+  System time     : 0.000000132 seconds fast of NTP time
+  Leap status     : Normal
+  sync_result: OK
+  __exit__:0
+
+=== client : 補正後の再測定（1回目）===
+  vm_utc=1795202240.705553947  差(VM−ホスト)=-0.169秒
+
+=== server : 補正後の再測定（1回目）===
+  vm_utc=1795202241.075007862  差(VM−ホスト)=-0.162秒
+
+=== switch : 補正後の再測定（1回目）===
+  vm_utc=1795202241.816265201  差(VM−ホスト)=-0.158秒
+
+=== router : 補正後の再測定（1回目）===
+  vm_utc=1795202242.152789775  差(VM−ホスト)=-0.158秒
+
+=== router2 : 補正後の再測定（1回目）===
+  vm_utc=1795202242.499427126  差(VM−ホスト)=-0.159秒
+
+## まとめ
+  client: 補正した（差 -17454.883 → -0.169 秒、1回目）
+  server: 補正した（差 -17454.960 → -0.162 秒、1回目）
+  switch: 補正した（差 -17444.178 → -0.158 秒、1回目）
+  router: 補正した（差 -17433.459 → -0.158 秒、1回目）
+  router2: 補正した（差 -17454.712 → -0.159 秒、1回目）
+記録: /home/<WSL_USER>/network-learning-handoff/data/time-sync/sync-all-auto-sh-20261121T041603.txt
+exit=0
+### $ # T1 (wsl)   (wsl)
+exit=0
+### $ labs/common/baseline.sh status   (wsl)
+# baseline.sh  action=status  2026-11-21T05:16:59+09:00  wsl=mirrored
+
+=== router (port 2225) : status ===
+# exp4 router show    2026-11-21T05:17:00+09:00  host=router
+# ホスト名の確認: OK（host=router と role=router が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fede:3533/64 fe80::a00:27ff:fede:3533/64
+enp0s8           UP             192.168.31.1/24
+enp0s9           UP             192.168.30.1/30
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s9 proto kernel scope link src 192.168.30.1
+192.168.31.0/24 dev enp0s8 proto kernel scope link src 192.168.31.1
+192.168.32.0/24 via 192.168.30.2 dev enp0s9
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== router2 (port 2226) : status ===
+# exp4 router2 show    2026-11-21T05:17:01+09:00  host=router2
+# ホスト名の確認: OK（host=router2 と role=router2 が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe06:dbe9/64 fe80::a00:27ff:fe06:dbe9/64
+enp0s8           UP             192.168.30.2/30
+enp0s9           UP             192.168.32.1/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.30.0/30 dev enp0s8 proto kernel scope link src 192.168.30.2
+192.168.31.0/24 via 192.168.30.1 dev enp0s8
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.1
+exit=0
+
+### $ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+exit=0
+
+### $ sudo firewall-cmd --get-active-zones
+internal
+  interfaces: enp0s8 enp0s9
+public
+  interfaces: enp0s3
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== client (port 2222) : status ===
+# exp5 client show   2026-11-21T05:17:03+09:00  host=client
+# ホスト名の確認: OK（host=client と role=client が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fe7d:fb41/64 fe80::a00:27ff:fe7d:fb41/64
+enp0s9           UP             192.168.31.10/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+unreachable 192.168.0.0/16 metric 4000
+192.168.31.0/24 dev enp0s9 proto kernel scope link src 192.168.31.10
+192.168.32.0/24 via 192.168.31.1 dev enp0s9
+exit=0
+
+### $ ip route get 192.168.32.20
+192.168.32.20 via 192.168.31.1 dev enp0s9 src 192.168.31.10 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+192.168.31.1 lladdr 08:00:27:41:49:68 STALE
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+=== server (port 2223) : status ===
+# exp5 server show   2026-11-21T05:17:04+09:00  host=server
+# ホスト名の確認: OK（host=server と role=server が一致）
+### $ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fec6:ae35/64 fe80::a00:27ff:fec6:ae35/64
+enp0s9           UP             192.168.32.20/24
+exit=0
+
+### $ ip route
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
+192.168.31.0/24 via 192.168.32.1 dev enp0s9
+192.168.32.0/24 dev enp0s9 proto kernel scope link src 192.168.32.20
+exit=0
+
+### $ ip route get 192.168.31.10
+192.168.31.10 via 192.168.32.1 dev enp0s9 src 192.168.32.20 uid 1000
+    cache
+exit=0
+
+### $ ip neigh show dev enp0s9
+192.168.32.1 lladdr 08:00:27:38:28:34 STALE
+exit=0
+
+Connection to 127.0.0.1 closed.
+
+  ssh 終了コード: 0（0 = 一連のコマンドを最後まで実行。個々のコマンドの成否は VM 側の記録 exp4-* / exp5-* を参照）
+
+## 確認: client から 192.168.32.20 へ ping（基準: 成功、ttl=62）
+  # exp5 client ping 192.168.32.20  2026-11-21T05:17:04+09:00  host=client
+  # ホスト名の確認: OK（host=client と role=client が一致）
+  ### $ ping -c 3 -W 2 192.168.32.20
+  PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+  64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=4.42 ms
+  64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.68 ms
+  64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=6.60 ms
+
+  --- 192.168.32.20 ping statistics ---
+  3 packets transmitted, 3 received, 0% packet loss, time 2009ms
+  rtt min/avg/max/mdev = 4.416/5.231/6.599/0.973 ms
+  exit=0
+  判定: 基準どおり（ttl=62 で応答あり）
+
+## まとめ
+  router: 終了コード 0
+  router2: 終了コード 0
+  client: 終了コード 0
+  server: 終了コード 0
+  ping client→server: 基準どおり（ttl=62 で応答あり）
+記録: /home/<WSL_USER>/network-learning-handoff/data/baseline/baseline-sh-status-20261121T051659.txt
+exit=0
+### $ # T1 (wsl): 最後に。4 台すべてを戻す   (wsl)
+exit=0
+### $ labs/common/lab-sudo.sh off   (wsl)
+n/lab-sudo.sh check
+# lab-sudo.sh  action=off  2026-11-21T05:17:17+09:00
+
+=== client (port 2222) : off ===
+labs/common/lab-sudo.sh check
+off-ok:client
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で off-ok:client が表示されていれば成功。パスワードが必要に戻っている)
+
+=== server (port 2223) : off ===
+off-ok:server
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で off-ok:server が表示されていれば成功。パスワードが必要に戻っている)
+
+=== switch (port 2224) : off ===
+off-ok:switch
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で off-ok:switch が表示されていれば成功。パスワードが必要に戻っている)
+
+=== router (port 2225) : off ===
+off-ok:router
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で off-ok:router が表示されていれば成功。パスワードが必要に戻っている)
+
+=== router2 (port 2226) : off ===
+off-ok:router2
+Connection to 127.0.0.1 closed.
+
+  終了コード: 0(0 で off-ok:router2 が表示されていれば成功。パスワードが必要に戻っている)
+
+記録: /home/<WSL_USER>/network-learning-handoff/data/lab-sudo/lab-sudo-sh-off-20261121T051717.txt
+exit=0
+### $ exit   (wsl)
+exit

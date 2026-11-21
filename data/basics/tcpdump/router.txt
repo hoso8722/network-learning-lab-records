@@ -1,0 +1,90 @@
+# 基礎編 B2(tcpdump): router の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 2 章(予想は実験の前に書いた)
+# 注: tcpdump は setsid -f で切り離して起動した(ssh の接続の終了で止まらないようにするため)
+# 注: ping と tcp の接続は、client から出した
+### $ setsid -f sudo timeout 20 tcpdump -ni enp0s8 -c 6 icmp > ~/bs-cap-icmp.txt 2>&1 < /dev/null; sleep 2; echo started   (router)
+started
+exit=0
+
+### $ sleep 2; cat ~/bs-cap-icmp.txt   (router)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+04:17:03.859589 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 5, seq 1, length 64
+04:17:03.862516 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 5, seq 1, length 64
+04:17:04.871516 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 5, seq 2, length 64
+04:17:04.873843 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 5, seq 2, length 64
+04:17:05.885022 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 5, seq 3, length 64
+04:17:05.887870 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 5, seq 3, length 64
+6 packets captured
+6 packets received by filter
+0 packets dropped by kernel
+exit=0
+
+### $ setsid -f sudo timeout 20 tcpdump -ni enp0s8 -c 10 'tcp port 22' > ~/bs-cap-tcp.txt 2>&1 < /dev/null; sleep 2; echo started   (router)
+started
+exit=0
+
+### $ sleep 3; cat ~/bs-cap-tcp.txt   (router)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+exit=0
+
+### $ cat ~/bs-cap-tcp.txt   (router)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+04:17:11.421882 IP 192.168.31.10.41684 > 192.168.32.20.ssh: Flags [S], seq 1171341815, win 64240, options [mss 1460,sackOK,TS val 910083689 ecr 0,nop,wscale 6], length 0
+04:17:11.424445 IP 192.168.32.20.ssh > 192.168.31.10.41684: Flags [S.], seq 197131803, ack 1171341816, win 65160, options [mss 1460,sackOK,TS val 2555031576 ecr 910083689,nop,wscale 6], length 0
+04:17:11.425797 IP 192.168.31.10.41684 > 192.168.32.20.ssh: Flags [.], ack 1, win 1004, options [nop,nop,TS val 910083693 ecr 2555031576], length 0
+04:17:11.459641 IP 192.168.32.20.ssh > 192.168.31.10.41684: Flags [P.], seq 1:22, ack 1, win 1019, options [nop,nop,TS val 2555031609 ecr 910083693], length 21: SSH: SSH-2.0-OpenSSH_9.9
+04:17:11.460739 IP 192.168.31.10.41684 > 192.168.32.20.ssh: Flags [.], ack 22, win 1004, options [nop,nop,TS val 910083728 ecr 2555031609], length 0
+04:17:12.457596 IP 192.168.31.10.41684 > 192.168.32.20.ssh: Flags [R.], seq 1, ack 22, win 1004, options [nop,nop,TS val 910084717 ecr 2555031609], length 0
+
+6 packets captured
+6 packets received by filter
+0 packets dropped by kernel
+exit=0
+
+### $ setsid -f sudo timeout 20 tcpdump -eni enp0s8 -c 4 icmp > ~/bs-cap-e.txt 2>&1 < /dev/null; sleep 2; echo started   (router)
+started
+exit=0
+
+### $ sleep 2; cat ~/bs-cap-e.txt   (router)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+04:17:53.300594 08:00:27:ae:48:b1 > 08:00:27:41:49:68, ethertype IPv4 (0x0800), length 98: 192.168.31.10 > 192.168.32.20: ICMP echo request, id 6, seq 1, length 64
+04:17:53.303952 08:00:27:41:49:68 > 08:00:27:ae:48:b1, ethertype IPv4 (0x0800), length 98: 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 6, seq 1, length 64
+04:17:54.375321 08:00:27:ae:48:b1 > 08:00:27:41:49:68, ethertype IPv4 (0x0800), length 98: 192.168.31.10 > 192.168.32.20: ICMP echo request, id 6, seq 2, length 64
+04:17:54.377791 08:00:27:41:49:68 > 08:00:27:ae:48:b1, ethertype IPv4 (0x0800), length 98: 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 6, seq 2, length 64
+4 packets captured
+4 packets received by filter
+0 packets dropped by kernel
+exit=0
+
+### $ setsid -f sudo timeout 30 tcpdump -i enp0s8 -c 4 icmp > ~/bs-cap-nn.txt 2>&1 < /dev/null; sleep 2; echo started   (router)
+started
+exit=0
+
+### $ sleep 12; cat ~/bs-cap-nn.txt; ls -l ~/bs-cap-nn.txt   (router)
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp0s8, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+04:17:59.928104 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 7, seq 1, length 64
+04:17:59.931872 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 7, seq 1, length 64
+04:18:01.013680 IP 192.168.31.10 > 192.168.32.20: ICMP echo request, id 7, seq 2, length 64
+04:18:01.016578 IP 192.168.32.20 > 192.168.31.10: ICMP echo reply, id 7, seq 2, length 64
+4 packets captured
+4 packets received by filter
+0 packets dropped by kernel
+-rw-r--r--. 1 user user 618 Nov 19 04:18 /home/user/bs-cap-nn.txt
+exit=0
+
+### $ rm -f ~/bs-cap-icmp.txt ~/bs-cap-tcp.txt ~/bs-cap-e.txt ~/bs-cap-nn.txt; ls ~ | grep -c bs-cap   (router)
+0
+exit=1
+

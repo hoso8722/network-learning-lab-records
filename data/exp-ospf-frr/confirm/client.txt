@@ -1,0 +1,36 @@
+# OSPF の確認の実験: client
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-16 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 確認の実験(手で打つ形)。OSPF の経路が入った後の、client からの確認
+# 注: 昇格: lab-sudo.sh on の状態で実行した(client では sudo は使っていない)
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=6.10 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=4.65 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=13.6 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2016ms
+rtt min/avg/max/mdev = 4.654/8.106/13.567/3.905 ms
+exit=0
+
+### $ tracepath -n 192.168.32.20   (client)
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  192.168.31.1                                          7.260ms 
+ 1:  192.168.31.1                                          4.431ms 
+ 2:  no reply
+ 3:  192.168.32.20                                         7.087ms !H
+     Resume: pmtu 1500 
+exit=0
+
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=4.89 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=5.22 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=4.86 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2008ms
+rtt min/avg/max/mdev = 4.863/4.990/5.222/0.163 ms
+exit=0
+

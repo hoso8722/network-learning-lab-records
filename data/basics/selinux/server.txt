@@ -1,0 +1,35 @@
+# 基礎編 B10(SELinux): server の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 10 章
+# 注: /etc に一時的なファイル 2 つを作り、最後に削除した
+### $ echo mv-demo > ~/bs-se-mv.txt; ls -Z ~/bs-se-mv.txt   (server)
+unconfined_u:object_r:user_home_t:s0 /home/user/bs-se-mv.txt
+exit=0
+
+### $ sudo mv ~/bs-se-mv.txt /etc/bs-se-mv.txt; ls -Z /etc/bs-se-mv.txt   (server)
+unconfined_u:object_r:user_home_t:s0 /etc/bs-se-mv.txt
+exit=0
+
+### $ matchpathcon /etc/bs-se-mv.txt   (server)
+/etc/bs-se-mv.txt	system_u:object_r:etc_t:s0
+exit=0
+
+### $ sudo restorecon -v /etc/bs-se-mv.txt; ls -Z /etc/bs-se-mv.txt   (server)
+Relabeled /etc/bs-se-mv.txt from unconfined_u:object_r:user_home_t:s0 to unconfined_u:object_r:etc_t:s0
+unconfined_u:object_r:etc_t:s0 /etc/bs-se-mv.txt
+exit=0
+
+### $ echo cp-demo > ~/bs-se-cp.txt; sudo cp ~/bs-se-cp.txt /etc/bs-se-cp.txt; ls -Z /etc/bs-se-cp.txt   (server)
+unconfined_u:object_r:etc_t:s0 /etc/bs-se-cp.txt
+exit=0
+
+### $ sudo ausearch -m avc -ts recent   (server)
+<no matches>
+exit=1
+
+### $ sudo rm -f /etc/bs-se-mv.txt /etc/bs-se-cp.txt ~/bs-se-cp.txt; ls /etc | grep -c bs-se; ls ~ | grep -c bs-se   (server)
+0
+0
+exit=1
+

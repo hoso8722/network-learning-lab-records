@@ -1,0 +1,62 @@
+# SNMP でカウンターを読む: client の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-21 JST。手順書 docs/OBS_SNMP_RUNBOOK.md)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れた箇所がある。崩れは直していない
+### $ # T4 (client): T3 の 1 回目のあとに実行。約 20 秒、バックグラウンドで動く   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+### $ ping -c 100 -i 0.2 -s 1400 192.168.32.20 > ~/ping-snmp.txt 2>&1 < /dev/null &   (client)
+p 2
+[1] 4528
+exit=0
+### $ sleep 2   (client)
+exit=0
+### $ # T4 (client): ping が終わるまで待つ(約 20 秒。待つ間、この端末は使えない)   (client)
+exit=0
+### $ wait   (client)
+[1]+  Done                    ping -c 100 -i 0.2 -s 1400 192.168.32.20 > ~/ping-snmp.txt 2>&1 < /dev/null
+exit=0
+### $ tail -4 ~/ping-snmp.txt   (client)
+--- 192.168.32.20 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 20580ms
+rtt min/avg/max/mdev = 3.038/4.536/38.067/4.131 ms
+exit=0
+### $ # T4 (client): T3 のポーリングを起動したあとに実行する。1 GiB を 5 回、バックグラウンドで取得   (client)
+exit=0
+### $ hostname -s   (client)
+8.32.20:8080/snmp-big; done > ~/dl-snmp.txt 2>&1 < /dev/null &
+sleep 2
+client
+exit=0
+### $ for i in 1 2 3 4 5; do curl -s -o /dev/null -w "%{size_download} bytes %{time_total} s\n" http://192.168.32.20:8080/snmp-big; done > ~/dl-snmp.txt 2>&1 < /dev/null &   (client)
+[1] 4534
+exit=0
+### $ sleep 2   (client)
+exit=0
+### $ # T4 (client): 終わるまで待つ。待つ間、この端末は使えない(Ctrl-C は押さない)   (client)
+exit=0
+### $ wait   (client)
+[1]+  Done                    for i in 1 2 3 4 5;
+do
+    curl -s -o /dev/null -w "%{size_download} bytes %{time_total} s\n" http://192.168.32.20:8080/snmp-big;
+done > ~/dl-snmp.txt 2>&1 < /dev/null
+exit=0
+### $ cat ~/dl-snmp.txt   (client)
+1073741824 bytes 68.271584 s
+1073741824 bytes 65.499452 s
+1073741824 bytes 69.207579 s
+1073741824 bytes 65.542311 s
+1073741824 bytes 64.540793 s
+exit=0
+### $ # T4 (client)   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+### $ rm -f ~/ping-snmp.txt ~/dl-snmp.txt   (client)
+exit=0
+### $ exit   (client)
+exit
+Connection to 127.0.0.1 closed.

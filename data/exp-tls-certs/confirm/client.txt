@@ -1,0 +1,102 @@
+# TLS の確認の実験: client
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-16 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 確認の実験(手で打つ形)。対象: tls-test.sh の install、ca init、cert make、cert use、site setup、fw open、fetch-ca、curl、sclient、teardown(記事 tls-certs-01 の付録 A)。実験の本体の記録(exp8)は、別にある
+# 注: 昇格: lab-sudo.sh on の状態で実行した
+### $ curl -s --max-time 5 -o ~/lab-ca.crt http://192.168.32.20/lab-ca.crt; openssl x509 -in ~/lab-ca.crt -noout -subject -dates -fingerprint -sha256   (client)
+subject=CN=Lab Test CA
+notBefore=Nov 15 19:12:35 2026 GMT
+notAfter=Nov 12 19:12:35 2036 GMT
+sha256 Fingerprint=07:D1:89:9E:02:C8:D1:14:02:FE:B2:39:0D:A2:59:EA:BD:37:FF:B6:5A:58:4E:45:54:B3:3A:EB:9D:06:02:36
+exit=0
+
+### $ curl -s --max-time 5 --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --cacert ~/lab-ca.crt --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=200
+curl_exit=0
+exit=0
+
+### $ curl -s --max-time 5 --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --cacert ~/lab-ca.crt --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --cacert ~/lab-ca.crt --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --cacert ~/lab-ca.crt --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ curl -s --max-time 5 --cacert ~/lab-ca.crt --resolve www.lab.example:443:192.168.32.20 -o /dev/null -w 'http_code=%{http_code}\n' https://www.lab.example/; echo curl_exit=$?   (client)
+http_code=000
+curl_exit=60
+exit=0
+
+### $ openssl s_client -connect 192.168.32.20:443 -servername www.lab.example -CAfile ~/lab-ca.crt -verify_hostname www.lab.example </dev/null 2>&1 | grep -E '^(depth|verify|Verification|Verify return code|subject|issuer)'   (client)
+depth=1 CN=Lab Test CA
+verify return:1
+depth=0 CN=www.lab.example
+verify return:1
+subject=CN=www.lab.example
+issuer=CN=Lab Test CA
+Verification: OK
+Verify return code: 0 (ok)
+exit=0
+
+### $ openssl s_client -connect 192.168.32.20:443 -servername www.lab.example -CAfile ~/lab-ca.crt -verify_hostname www.lab.example </dev/null 2>&1 | grep -E '^(depth|verify|Verification|Verify return code|subject|issuer)'   (client)
+depth=1 CN=Lab Test CA
+verify return:1
+depth=0 CN=www.lab.example
+verify error:num=10:certificate has expired
+verify return:1
+depth=0 CN=www.lab.example
+verify return:1
+subject=CN=www.lab.example
+issuer=CN=Lab Test CA
+Verification error: certificate has expired
+Verify return code: 10 (certificate has expired)
+exit=0
+
+### $ rm -f ~/lab-ca.crt; ls -l ~/lab-ca.crt 2>&1 | head -1   (client)
+ls: cannot access '/home/user/lab-ca.crt': No such file or directory
+exit=0
+
+### $ ping -c 3 -W 2 192.168.32.20   (client)
+PING 192.168.32.20 (192.168.32.20) 56(84) bytes of data.
+64 bytes from 192.168.32.20: icmp_seq=1 ttl=62 time=4.78 ms
+64 bytes from 192.168.32.20: icmp_seq=2 ttl=62 time=3.78 ms
+64 bytes from 192.168.32.20: icmp_seq=3 ttl=62 time=3.17 ms
+
+--- 192.168.32.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2004ms
+rtt min/avg/max/mdev = 3.172/3.911/4.777/0.661 ms
+exit=0
+

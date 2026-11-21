@@ -1,0 +1,39 @@
+# 基礎編 B5(firewalld): client の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 5 章
+# 注: 実行時のゾーンの割り当て(enp0s9)を変え、reload で戻る/消えることを確かめた
+### $ sudo firewall-cmd --get-default-zone; sudo firewall-cmd --get-active-zones; sudo firewall-cmd --get-zone-of-interface=enp0s9; sudo firewall-cmd --permanent --get-zone-of-interface=enp0s9   (client)
+public
+public
+  interfaces: enp0s3
+no zone
+no zone
+exit=2
+
+### $ sudo firewall-cmd --zone=dmz --change-interface=enp0s9; sudo firewall-cmd --get-active-zones; sudo firewall-cmd --get-zone-of-interface=enp0s9   (client)
+success
+dmz
+  interfaces: enp0s9
+public
+  interfaces: enp0s3
+dmz
+exit=0
+
+### $ ping -c 2 -W 2 192.168.32.20 | tail -2   (client)
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 4.815/5.129/5.444/0.314 ms
+exit=0
+
+### $ sudo firewall-cmd --reload; sudo firewall-cmd --get-active-zones; sudo firewall-cmd --get-zone-of-interface=enp0s9   (client)
+success
+public
+  interfaces: enp0s3
+no zone
+exit=2
+
+### $ ping -c 2 -W 2 192.168.32.20 | tail -2   (client)
+2 packets transmitted, 2 received, 0% packet loss, time 1003ms
+rtt min/avg/max/mdev = 3.941/4.250/4.560/0.309 ms
+exit=0
+

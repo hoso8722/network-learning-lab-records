@@ -1,0 +1,76 @@
+# conntrack の累積(簡易フロー): client の端末
+# 出所: ユーザーが script で取った端末の記録(2026-11-21 JST。手順書 docs/OBS_FLOW_RUNBOOK.md)
+# 注: script の記録から、端末の制御の文字、sudo のパスワード入力待ちの行、Enter だけの入力を除いた。コマンドと出力の文字は変えていない。
+# 注: 複数行を一度に貼ったため、貼った文字のエコーが、コマンドの出力に混ざって崩れた箇所がある場合がある。崩れは直していない
+### $ # T4 (client): 1 MB を 1 回(累積が 0 のとき)   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+### $ curl -s -o /dev/null -w "%{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f1m   (client)
+1048576 bytes 0.103480 s
+exit=0
+### $ # T4 (client): 1 MB を 1 回(累積が 0 のとき)   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+\n" http://192.168.32.20:9090/f1m
+### $ curl -s -o /dev/null -w "%{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f1m   (client)
+1048576 bytes 0.104727 s
+exit=0
+### $ # T4 (client): バックグラウンドで 100 個(約 20 秒)。続けて wait   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+### $ ping -c 100 -i 0.2 -s 1400 192.168.32.20 > ~/ping-flow.txt 2>&1 < /dev/null &   (client)
+[1] 5520
+exit=0
+### $ sleep 2   (client)
+exit=0
+### $ # T4 (client): ping が終わるまで待つ(約 20 秒。この端末は使えない)   (client)
+exit=0
+### $ wait   (client)
+[1]+  Done                    ping -c 100 -i 0.2 -s 1400 192.168.32.20 > ~/ping-flow.txt 2>&1 < /dev/null
+exit=0
+### $ tail -3 ~/ping-flow.txt   (client)
+--- 192.168.32.20 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 20288ms
+rtt min/avg/max/mdev = 3.442/4.772/49.659/4.598 ms
+exit=0
+### $ # T4 (client): 3 つを続けて(合計約 8 秒)   (client)
+exit=0
+### $ hostname -s   (client)
+"f100m %{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f100m
+client
+exit=0
+### $ curl -s -o /dev/null -w "f1m %{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f1m   (client)
+f1m 1048576 bytes 0.097593 s
+exit=0
+### $ curl -s -o /dev/null -w "f10m %{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f10m   (client)
+f10m 10485760 bytes 0.694328 s
+exit=0
+### $ curl -s -o /dev/null -w "f100m %{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f100m   (client)
+f100m 104857600 bytes 7.786910 s
+exit=0
+### $ # T4 (client): 100 MB を 1 回   (client)
+exit=0
+### $ hostname -s   (client)
+client
+exit=0
+### $ curl -s -o /dev/null -w "f100m(GRO on) %{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f100m   (client)
+f100m(GRO on) 104857600 bytes 6.995611 s
+exit=0
+### $ # T4 (client): 100 MB をもう 1 回   (client)
+exit=0
+### $ curl -s -o /dev/null -w "f100m(GRO off) %{size_download} bytes %{time_total} s\n" http://192.168.32.20:9090/f100m   (client)
+f100m(GRO off) 104857600 bytes 10.833103 s
+exit=0
+### $ # T4 (client)   (client)
+exit=0
+### $ rm -f ~/ping-flow.txt   (client)
+exit=0
+### $ exit   (client)
+exit
+Connection to 127.0.0.1 closed.

@@ -1,0 +1,59 @@
+# 基礎編 B6(nmcli): client の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 8 章(予想は実験の前に書いた。#1 は、ツールの有無の確認で、すでに見えていた)
+# 注: 一時的なダミー NIC(bs0)とプロファイル(bs-demo)を作り、最後に削除した
+### $ nmcli device status   (client)
+DEVICE  TYPE      STATE                   CONNECTION 
+enp0s3  ethernet  connected               enp0s3     
+lo      loopback  connected (externally)  lo         
+enp0s9  ethernet  unmanaged               --         
+exit=0
+
+### $ nmcli connection show   (client)
+NAME                UUID                                  TYPE      DEVICE 
+enp0s3              9c88906f-5db4-379c-b5e5-12e0781e104d  ethernet  enp0s3 
+lo                  6bdf2c2a-308b-45d0-b5d0-9729cdca237b  loopback  lo     
+Wired connection 1  8d68b025-04bf-3551-9377-661684d79183  ethernet  --     
+exit=0
+
+### $ nmcli -f GENERAL.STATE,IP4.ADDRESS,IP4.GATEWAY device show enp0s3   (client)
+GENERAL.STATE:                          100 (connected)
+IP4.ADDRESS[1]:                         10.0.2.15/24
+IP4.GATEWAY:                            10.0.2.2
+exit=0
+
+### $ sudo nmcli connection add type dummy ifname bs0 con-name bs-demo ip4 10.99.99.1/24; ip -br addr show bs0; nmcli device status   (client)
+Connection 'bs-demo' (a76bff56-a6b2-46b9-83ba-b777243cebc3) successfully added.
+bs0              UNKNOWN        
+DEVICE  TYPE      STATE                                  CONNECTION 
+enp0s3  ethernet  connected                              enp0s3     
+bs0     dummy     connecting (checking IP connectivity)  bs-demo    
+lo      loopback  connected (externally)                 lo         
+enp0s9  ethernet  unmanaged                              --         
+exit=0
+
+### $ sudo ls /etc/NetworkManager/system-connections/   (client)
+bs-demo.nmconnection
+enp0s3.nmconnection
+exit=0
+
+### $ sudo nmcli connection down bs-demo; ip -br addr show bs0   (client)
+Connection 'bs-demo' successfully deactivated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/31)
+Device "bs0" does not exist.
+exit=1
+
+### $ sudo nmcli connection up bs-demo; ip -br addr show bs0   (client)
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/32)
+bs0              UNKNOWN        10.99.99.1/24 
+exit=0
+
+### $ sudo nmcli connection delete bs-demo; ip -br addr show bs0; sudo ls /etc/NetworkManager/system-connections/; ip route | head -3   (client)
+Connection 'bs-demo' (a76bff56-a6b2-46b9-83ba-b777243cebc3) successfully deleted.
+Device "bs0" does not exist.
+enp0s3.nmconnection
+default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100 
+unreachable 192.168.0.0/16 metric 4000 
+exit=0
+

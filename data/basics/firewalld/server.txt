@@ -1,0 +1,43 @@
+# 基礎編 B5(firewalld): server の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 5 章(予想は実験の前に書いた)
+# 注: 実行時の変更のみ(http サービスの追加と、reload で消えること)
+### $ sudo firewall-cmd --get-default-zone; sudo firewall-cmd --get-active-zones; sudo firewall-cmd --list-all   (server)
+public
+public
+  interfaces: enp0s3
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+exit=0
+
+### $ sudo firewall-cmd --add-service=http; sudo firewall-cmd --list-services; sudo firewall-cmd --permanent --list-services   (server)
+success
+cockpit dhcpv6-client http ssh
+cockpit dhcpv6-client ssh
+exit=0
+
+### $ sudo firewall-cmd --reload; sudo firewall-cmd --list-services; sudo firewall-cmd --get-active-zones   (server)
+success
+cockpit dhcpv6-client ssh
+public
+  interfaces: enp0s3
+exit=0
+
+### $ sudo firewall-cmd --get-zone-of-interface=enp0s9; sudo firewall-cmd --get-zone-of-interface=enp0s3   (server)
+no zone
+public
+exit=0
+

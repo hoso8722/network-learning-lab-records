@@ -1,0 +1,25 @@
+# 基礎編 B9(conntrack): router の実験(AI が実行)
+# 出所: AI(Claude Code)が、WSL2 から ssh で実行した、確認の実験の記録(2026-11-19 JST)。labs/common/rec-exec.sh が、コマンドの文字列を、そのまま「### $」の行に書いた
+# 注: 各コマンドの前に、ホスト名が役割と一致するかの確認を、ラッパーが行っている(その確認のコードは、「### $」の行には出ない)
+# 注: 計画: docs/BASICS_EXPERIMENT_PLAN.md の 9 章(予想は実験の前に書いた)
+# 注: 読み取りのみ。client から、ping と 22/tcp への短い接続を出した
+### $ sysctl net.netfilter.nf_conntrack_count net.netfilter.nf_conntrack_max net.netfilter.nf_conntrack_tcp_timeout_established   (router)
+net.netfilter.nf_conntrack_count = 7
+net.netfilter.nf_conntrack_max = 4096
+net.netfilter.nf_conntrack_tcp_timeout_established = 432000
+exit=0
+
+### $ sudo conntrack -L -p tcp 2>&1 | grep 192.168.32.20   (router)
+tcp      6 431998 ESTABLISHED src=192.168.31.10 dst=192.168.32.20 sport=40180 dport=22 src=192.168.32.20 dst=192.168.31.10 sport=22 dport=40180 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+exit=0
+
+### $ sudo conntrack -L -p tcp 2>&1 | grep 192.168.32.20   (router)
+tcp      6 4 CLOSE src=192.168.31.10 dst=192.168.32.20 sport=40180 dport=22 src=192.168.32.20 dst=192.168.31.10 sport=22 dport=40180 [ASSURED] mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+exit=0
+
+### $ sudo conntrack -L -p icmp 2>&1; sudo conntrack -C   (router)
+conntrack v1.4.7 (conntrack-tools): 1 flow entries have been shown.
+icmp     1 29 src=192.168.31.10 dst=192.168.32.20 type=8 code=0 id=11 src=192.168.32.20 dst=192.168.31.10 type=0 code=0 id=11 mark=0 secctx=system_u:object_r:unlabeled_t:s0 use=1
+8
+exit=0
+
